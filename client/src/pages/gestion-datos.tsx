@@ -6,6 +6,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { DataTable } from "@/components/data-table";
 import { SedeForm } from "@/components/forms/sede-form";
 import { VehiculoForm } from "@/components/forms/vehiculo-form";
+import { TerceroForm } from "@/components/forms/tercero-form";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -13,6 +14,7 @@ export default function GestionDatos() {
   const [activeTab, setActiveTab] = useState("sedes");
   const [showSedeForm, setShowSedeForm] = useState(false);
   const [showVehiculoForm, setShowVehiculoForm] = useState(false);
+  const [showTerceroForm, setShowTerceroForm] = useState(false);
   const [showConsecutivoForm, setShowConsecutivoForm] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
 
@@ -23,6 +25,10 @@ export default function GestionDatos() {
 
   const { data: vehiculos = [], isLoading: loadingVehiculos } = useQuery({
     queryKey: ["/api/vehiculos"],
+  });
+
+  const { data: terceros = [], isLoading: loadingTerceros } = useQuery({
+    queryKey: ["/api/terceros"],
   });
 
   const { data: consecutivos = [], isLoading: loadingConsecutivos } = useQuery({
@@ -79,6 +85,46 @@ export default function GestionDatos() {
       title: "Documento",
       render: (value: string, item: any) => `${item.propietario_tipo_doc}-${value}`
     },
+    { 
+      key: "activo", 
+      title: "Estado",
+      render: (value: boolean) => (
+        <Badge variant={value ? "default" : "secondary"}>
+          {value ? "Activo" : "Inactivo"}
+        </Badge>
+      )
+    },
+  ];
+
+  const terceroColumns = [
+    { key: "nombre", title: "Nombre/Razón Social" },
+    { 
+      key: "tipo_documento", 
+      title: "Tipo Doc",
+      render: (value: string) => {
+        const tipos: { [key: string]: string } = {
+          'C': 'Cédula',
+          'N': 'NIT',
+          'P': 'Pasaporte',
+          'E': 'C. Extranjería',
+          'T': 'T. Identidad'
+        };
+        return tipos[value] || value;
+      }
+    },
+    { key: "numero_documento", title: "Número Documento" },
+    { key: "direccion", title: "Dirección" },
+    { 
+      key: "municipio_codigo", 
+      title: "Municipio",
+      render: (value: string) => {
+        if (!value) return "";
+        const municipio = (municipios as any[]).find((m: any) => m.codigo === value);
+        return municipio ? `${municipio.nombre}, ${municipio.departamento}` : value;
+      }
+    },
+    { key: "telefono", title: "Teléfono" },
+    { key: "email", title: "Email" },
     { 
       key: "activo", 
       title: "Estado",
