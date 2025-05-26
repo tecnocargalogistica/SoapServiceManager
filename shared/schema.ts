@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, decimal, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, decimal, jsonb, date } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -114,13 +114,23 @@ export const terceros = pgTable("terceros", {
   id: serial("id").primaryKey(),
   tipo_documento: text("tipo_documento").notNull(), // C, N, P
   numero_documento: text("numero_documento").notNull().unique(),
+  razon_social: text("razon_social"),
   nombre: text("nombre").notNull(),
+  apellido: text("apellido"),
+  direccion: text("direccion"),
   telefono: text("telefono"),
   email: text("email"),
-  direccion: text("direccion"),
   municipio_codigo: text("municipio_codigo"),
+  es_empresa: boolean("es_empresa"),
+  es_conductor: boolean("es_conductor"),
+  es_propietario: boolean("es_propietario"),
+  categoria_licencia: text("categoria_licencia"),
+  numero_licencia: text("numero_licencia"),
+  fecha_vencimiento_licencia: date("fecha_vencimiento_licencia"),
+  id_vehiculo_asignado: integer("id_vehiculo_asignado"),
   activo: boolean("activo").notNull().default(true),
-  created_at: timestamp("created_at").defaultNow()
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow()
 });
 
 // TABLA USUARIOS

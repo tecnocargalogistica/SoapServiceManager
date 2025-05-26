@@ -25,25 +25,47 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
     queryKey: ["/api/municipios"],
   });
 
+  const { data: vehiculos = [] } = useQuery({
+    queryKey: ["/api/vehiculos"],
+  });
+
   const form = useForm<InsertTercero>({
     resolver: zodResolver(insertTerceroSchema),
     defaultValues: tercero ? {
       nombre: tercero.nombre,
       tipo_documento: tercero.tipo_documento,
       numero_documento: tercero.numero_documento,
+      razon_social: tercero.razon_social || "",
+      apellido: tercero.apellido || "",
       direccion: tercero.direccion || "",
       municipio_codigo: tercero.municipio_codigo || "",
       telefono: tercero.telefono || "",
       email: tercero.email || "",
+      es_empresa: tercero.es_empresa || false,
+      es_conductor: tercero.es_conductor || false,
+      es_propietario: tercero.es_propietario || false,
+      categoria_licencia: tercero.categoria_licencia || "",
+      numero_licencia: tercero.numero_licencia || "",
+      fecha_vencimiento_licencia: tercero.fecha_vencimiento_licencia || "",
+      id_vehiculo_asignado: tercero.id_vehiculo_asignado || undefined,
       activo: tercero.activo,
     } : {
       nombre: "",
       tipo_documento: "C",
       numero_documento: "",
+      razon_social: "",
+      apellido: "",
       direccion: "",
       municipio_codigo: "",
       telefono: "",
       email: "",
+      es_empresa: false,
+      es_conductor: false,
+      es_propietario: false,
+      categoria_licencia: "",
+      numero_licencia: "",
+      fecha_vencimiento_licencia: "",
+      id_vehiculo_asignado: undefined,
       activo: true,
     },
   });
