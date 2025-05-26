@@ -1,10 +1,21 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { initializeDatabase } from "./db";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Initialize database on startup
+(async () => {
+  try {
+    await initializeDatabase();
+    log("✅ Base de datos inicializada correctamente");
+  } catch (error) {
+    log("❌ Error inicializando base de datos: " + error);
+  }
+})();
 
 app.use((req, res, next) => {
   const start = Date.now();
