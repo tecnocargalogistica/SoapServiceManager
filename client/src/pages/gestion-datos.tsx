@@ -169,9 +169,20 @@ export default function GestionDatos() {
     setShowVehiculoForm(true);
   };
 
+  const handleAddTercero = () => {
+    setEditingItem(null);
+    setShowTerceroForm(true);
+  };
+
+  const handleEditTercero = (tercero: any) => {
+    setEditingItem(tercero);
+    setShowTerceroForm(true);
+  };
+
   const handleFormSuccess = () => {
     setShowSedeForm(false);
     setShowVehiculoForm(false);
+    setShowTerceroForm(false);
     setShowConsecutivoForm(false);
     setEditingItem(null);
   };
@@ -179,6 +190,7 @@ export default function GestionDatos() {
   const handleFormCancel = () => {
     setShowSedeForm(false);
     setShowVehiculoForm(false);
+    setShowTerceroForm(false);
     setShowConsecutivoForm(false);
     setEditingItem(null);
   };
@@ -193,9 +205,10 @@ export default function GestionDatos() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="sedes">Sedes</TabsTrigger>
           <TabsTrigger value="vehiculos">Vehículos</TabsTrigger>
+          <TabsTrigger value="terceros">Terceros</TabsTrigger>
           <TabsTrigger value="consecutivos">Consecutivos</TabsTrigger>
         </TabsList>
 
@@ -226,6 +239,21 @@ export default function GestionDatos() {
             searchPlaceholder="Buscar vehículos..."
             apiEndpoint="/api/vehiculos"
             queryKey={["/api/vehiculos"]}
+          />
+        </TabsContent>
+
+        <TabsContent value="terceros" className="space-y-6">
+          <DataTable
+            title="Gestión de Terceros"
+            data={terceros}
+            columns={terceroColumns}
+            isLoading={loadingTerceros}
+            onAdd={handleAddTercero}
+            onEdit={handleEditTercero}
+            onView={(tercero) => console.log("Ver tercero:", tercero)}
+            searchPlaceholder="Buscar terceros..."
+            apiEndpoint="/api/terceros"
+            queryKey={["/api/terceros"]}
           />
         </TabsContent>
 
@@ -264,6 +292,17 @@ export default function GestionDatos() {
         <DialogContent className="max-w-2xl">
           <VehiculoForm
             vehiculo={editingItem}
+            onSuccess={handleFormSuccess}
+            onCancel={handleFormCancel}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Formulario de Tercero */}
+      <Dialog open={showTerceroForm} onOpenChange={setShowTerceroForm}>
+        <DialogContent className="max-w-2xl">
+          <TerceroForm
+            tercero={editingItem}
             onSuccess={handleFormSuccess}
             onCancel={handleFormCancel}
           />
