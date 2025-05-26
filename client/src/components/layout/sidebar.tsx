@@ -29,10 +29,7 @@ const navigation = [
   {
     section: "Gestión de Datos",
     items: [
-      { name: "Sedes", href: "/sedes", icon: Building },
-      { name: "Vehículos", href: "/vehiculos", icon: Truck },
-      { name: "Terceros", href: "/terceros", icon: Users },
-      { name: "Municipios", href: "/municipios", icon: MapPin },
+      { name: "Gestión de Datos", href: "/gestion-datos", icon: Building },
     ]
   },
   {

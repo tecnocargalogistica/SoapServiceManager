@@ -25,6 +25,7 @@ function Router() {
             <Route path="/" component={Dashboard} />
             <Route path="/generar-remesas" component={GenerarRemesas} />
             <Route path="/cumplir-remesas" component={CumplirRemesas} />
+            <Route path="/gestion-datos" component={GestionDatos} />
             <Route path="/configuracion" component={Configuracion} />
             <Route component={NotFound} />
           </Switch>
