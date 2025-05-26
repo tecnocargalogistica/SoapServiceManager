@@ -8,6 +8,7 @@ import Dashboard from "@/pages/dashboard";
 import GenerarRemesas from "@/pages/generar-remesas";
 import CumplirRemesas from "@/pages/cumplir-remesas";
 import Configuracion from "@/pages/configuracion";
+import GestionDatos from "@/pages/gestion-datos";
 import NotFound from "@/pages/not-found";
 
 import Sidebar from "@/components/layout/sidebar";
