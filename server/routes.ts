@@ -617,6 +617,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete tercero
+  app.delete("/api/terceros/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteTercero(id);
+      res.json({ success: true, message: "Tercero eliminado exitosamente" });
+    } catch (error) {
+      console.error("Error deleting tercero:", error);
+      res.status(500).json({ error: "Error al eliminar tercero" });
+    }
+  });
+
   // Get tercero by document
   app.get("/api/terceros/documento/:numero", async (req, res) => {
     try {

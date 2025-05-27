@@ -253,6 +253,18 @@ export class DatabaseStorage implements IStorage {
     return tercero;
   }
 
+  async deleteTercero(id: number): Promise<void> {
+    // First check if tercero exists
+    const existing = await db.select().from(terceros).where(eq(terceros.id, id));
+    
+    if (existing.length === 0) {
+      throw new Error(`Tercero con ID ${id} no encontrado`);
+    }
+    
+    // Delete the tercero
+    await db.delete(terceros).where(eq(terceros.id, id));
+  }
+
   // Vehiculos
   async getVehiculos(): Promise<Vehiculo[]> {
     return await db.select().from(vehiculos).where(eq(vehiculos.activo, true));

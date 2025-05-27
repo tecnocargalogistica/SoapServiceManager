@@ -72,6 +72,7 @@ export interface IStorage {
   getTerceroByDocumento(numero: string): Promise<Tercero | undefined>;
   createTercero(tercero: InsertTercero): Promise<Tercero>;
   updateTercero(id: number, tercero: Partial<InsertTercero>): Promise<Tercero>;
+  deleteTercero(id: number): Promise<void>;
 
   // Vehiculos
   getVehiculos(): Promise<Vehiculo[]>;
@@ -501,6 +502,13 @@ export class MemStorage implements IStorage {
     };
     this.tercerosMap.set(id, updated);
     return updated;
+  }
+
+  async deleteTercero(id: number): Promise<void> {
+    if (!this.tercerosMap.has(id)) {
+      throw new Error(`Tercero con ID ${id} no encontrado`);
+    }
+    this.tercerosMap.delete(id);
   }
 
   // Vehiculos
