@@ -145,15 +145,15 @@ export function SedeForm({ sede, onSuccess, onCancel }: SedeFormProps) {
             <div>
               <Label htmlFor="tercero_responsable_id">Responsable</Label>
               <Select 
-                onValueChange={(value) => form.setValue("tercero_responsable_id", value ? parseInt(value) : undefined)}
-                defaultValue={form.getValues("tercero_responsable_id")?.toString()}
+                onValueChange={(value) => form.setValue("tercero_responsable_id", value === "null" ? undefined : parseInt(value))}
+                defaultValue={form.getValues("tercero_responsable_id")?.toString() || "null"}
                 disabled={isLoading}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar responsable" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Sin asignar</SelectItem>
+                  <SelectItem value="null">Sin asignar</SelectItem>
                   {(terceros as any[]).filter((t: any) => t.es_responsable_sede || t.es_empresa).map((tercero: any) => (
                     <SelectItem key={tercero.id} value={tercero.id.toString()}>
                       {tercero.es_empresa ? tercero.razon_social : `${tercero.nombre} ${tercero.apellido}`}
