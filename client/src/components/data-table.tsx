@@ -450,6 +450,122 @@ export function DataTable({
                   </div>
                 </div>
               </div>
+            ) : viewItem.numero_documento ? (
+              /* Vista previa específica para terceros */
+              <div className="space-y-6">
+                {/* Información Personal/Empresarial */}
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-blue-800 mb-3">
+                    {viewItem.es_empresa ? 'Información Empresarial' : 'Información Personal'}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {viewItem.es_empresa ? (
+                      <>
+                        <div><span className="font-medium">Razón Social:</span> {viewItem.razon_social || 'No especificada'}</div>
+                        <div><span className="font-medium">Tipo de Documento:</span> {viewItem.tipo_documento}</div>
+                        <div><span className="font-medium">Número de Documento:</span> {viewItem.numero_documento}</div>
+                      </>
+                    ) : (
+                      <>
+                        <div><span className="font-medium">Nombre:</span> {viewItem.nombre || 'No especificado'}</div>
+                        <div><span className="font-medium">Apellido:</span> {viewItem.apellido || 'No especificado'}</div>
+                        <div><span className="font-medium">Tipo de Documento:</span> {viewItem.tipo_documento}</div>
+                        <div><span className="font-medium">Número de Documento:</span> {viewItem.numero_documento}</div>
+                      </>
+                    )}
+                    <div><span className="font-medium">Email:</span> {viewItem.email || 'No especificado'}</div>
+                    <div><span className="font-medium">Teléfono:</span> {viewItem.telefono || 'No especificado'}</div>
+                  </div>
+                </div>
+
+                {/* Información de Dirección */}
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-green-800 mb-3">Información de Dirección</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><span className="font-medium">Dirección:</span> {viewItem.direccion || 'No especificada'}</div>
+                    <div><span className="font-medium">Ciudad:</span> {viewItem.ciudad || 'No especificada'}</div>
+                  </div>
+                </div>
+
+                {/* Roles y Características */}
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-purple-800 mb-3">Roles y Características</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex items-center space-x-2">
+                      <span className="font-medium">Es Empresa:</span>
+                      <Badge variant={viewItem.es_empresa ? "default" : "secondary"}>
+                        {viewItem.es_empresa ? "Sí" : "No"}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="font-medium">Es Conductor:</span>
+                      <Badge variant={viewItem.es_conductor ? "default" : "secondary"}>
+                        {viewItem.es_conductor ? "Sí" : "No"}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="font-medium">Es Propietario:</span>
+                      <Badge variant={viewItem.es_propietario ? "default" : "secondary"}>
+                        {viewItem.es_propietario ? "Sí" : "No"}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Información de Licencia de Conducir (solo si es conductor) */}
+                {viewItem.es_conductor && (
+                  <div className="bg-amber-50 p-4 rounded-lg">
+                    <h3 className="text-lg font-semibold text-amber-800 mb-3">Información de Licencia de Conducir</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div><span className="font-medium">Categoría de Licencia:</span> {viewItem.categoria_licencia || 'No especificada'}</div>
+                      <div><span className="font-medium">Número de Licencia:</span> {viewItem.numero_licencia || 'No especificado'}</div>
+                      <div>
+                        <span className="font-medium">Fecha de Vencimiento:</span>
+                        {viewItem.fecha_vencimiento_licencia ? (
+                          <span className={`ml-2 px-2 py-1 rounded text-sm ${
+                            new Date(viewItem.fecha_vencimiento_licencia) < new Date() 
+                              ? 'bg-red-100 text-red-800' 
+                              : new Date(viewItem.fecha_vencimiento_licencia).getTime() - new Date().getTime() < 30 * 24 * 60 * 60 * 1000
+                                ? 'bg-amber-100 text-amber-800'
+                                : 'bg-green-100 text-green-800'
+                          }`}>
+                            {new Date(viewItem.fecha_vencimiento_licencia).toLocaleDateString('es-CO')}
+                          </span>
+                        ) : (
+                          <span className="text-gray-500 ml-2">No especificada</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Vehículo Asignado (si aplica) */}
+                {viewItem.id_vehiculo_asignado && (
+                  <div className="bg-indigo-50 p-4 rounded-lg">
+                    <h3 className="text-lg font-semibold text-indigo-800 mb-3">Vehículo Asignado</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div><span className="font-medium">ID del Vehículo:</span> {viewItem.id_vehiculo_asignado}</div>
+                      <div className="text-sm text-gray-600">
+                        <span className="font-medium">Nota:</span> Para ver detalles completos, consulte la sección de vehículos
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Estado y Fechas */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Estado y Fechas</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <span className="font-medium">Estado:</span>
+                      <Badge variant={viewItem.activo ? "default" : "secondary"} className="ml-2">
+                        {viewItem.activo ? "Activo" : "Inactivo"}
+                      </Badge>
+                    </div>
+                    <div><span className="font-medium">Fecha de Registro:</span> {viewItem.created_at ? new Date(viewItem.created_at).toLocaleDateString('es-CO') : 'No disponible'}</div>
+                  </div>
+                </div>
+              </div>
             ) : (
               /* Vista previa genérica para otros tipos de datos */
               <div className="space-y-4">
