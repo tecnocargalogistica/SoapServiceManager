@@ -94,13 +94,17 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
   }, [esEmpresa, form]);
 
   const createMutation = useMutation({
-    mutationFn: (data: InsertTercero) => apiRequest("/api/terceros", "POST", data),
+    mutationFn: async (data: InsertTercero) => {
+      const response = await apiRequest("/api/terceros", "POST", data);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/terceros"] });
       toast({ title: "Tercero creado exitosamente" });
       onSuccess?.();
     },
     onError: (error: any) => {
+      console.error("Error creating tercero:", error);
       toast({ 
         title: "Error al crear tercero", 
         description: error.message || "Error desconocido",
@@ -110,14 +114,17 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: InsertTercero) => 
-      apiRequest(`/api/terceros/${tercero?.id}`, "PUT", data),
+    mutationFn: async (data: InsertTercero) => {
+      const response = await apiRequest(`/api/terceros/${tercero?.id}`, "PUT", data);
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/terceros"] });
       toast({ title: "Tercero actualizado exitosamente" });
       onSuccess?.();
     },
     onError: (error: any) => {
+      console.error("Error updating tercero:", error);
       toast({ 
         title: "Error al actualizar tercero", 
         description: error.message || "Error desconocido",
