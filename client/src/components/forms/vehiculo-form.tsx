@@ -639,10 +639,26 @@ export function VehiculoForm({ vehiculo, onSuccess, onCancel, onCreateTercero }:
                 <div className="space-y-3 mt-2">
                   <FormField
                     control={form.control}
-                    name="tenedor_tipo_doc"
+                    name="tenedor_numero_doc"
                     render={({ field }) => (
                       <FormItem>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select 
+                          value={field.value || ""} 
+                          onValueChange={(value) => {
+                            if (value === "NO_APLICA" || value === "") {
+                              form.setValue("tenedor_numero_doc", "");
+                              form.setValue("tenedor_tipo_doc", "");
+                              form.setValue("tenedor_nombre", "");
+                            } else {
+                              const tercero = terceros.find(t => t.numero_documento === value);
+                              if (tercero) {
+                                form.setValue("tenedor_numero_doc", tercero.numero_documento);
+                                form.setValue("tenedor_tipo_doc", tercero.tipo_documento);
+                                form.setValue("tenedor_nombre", tercero.razon_social || `${tercero.nombre} ${tercero.apellido || ''}`.trim());
+                              }
+                            }
+                          }}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="No aplica / Mismo propietario" />
@@ -650,9 +666,12 @@ export function VehiculoForm({ vehiculo, onSuccess, onCancel, onCreateTercero }:
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="NO_APLICA">No aplica / Mismo propietario</SelectItem>
-                            <SelectItem value="C">Cédula</SelectItem>
-                            <SelectItem value="N">NIT</SelectItem>
-                            <SelectItem value="P">Pasaporte</SelectItem>
+                            {terceros.filter(t => t.activo).map((tercero) => (
+                              <SelectItem key={tercero.id} value={tercero.numero_documento}>
+                                {tercero.razon_social || `${tercero.nombre} ${tercero.apellido || ''}`.trim()} 
+                                ({tercero.tipo_documento}-{tercero.numero_documento})
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -660,39 +679,41 @@ export function VehiculoForm({ vehiculo, onSuccess, onCancel, onCreateTercero }:
                     )}
                   />
                   
-                  <FormField
-                    control={form.control}
-                    name="tenedor_numero_doc"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input placeholder="Número documento" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="tenedor_nombre"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input placeholder="Nombre completo" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {/* Campos ocultos para almacenar datos del tenedor */}
+                  <div className="hidden">
+                    <FormField
+                      control={form.control}
+                      name="tenedor_tipo_doc"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="tenedor_nombre"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
                 <Button 
                   type="button" 
                   variant="outline" 
                   size="sm" 
-                  className="mt-2"
+                  className="mt-2 flex items-center gap-2"
+                  onClick={onCreateTercero}
                 >
-                  + Nuevo
+                  <Plus className="h-4 w-4" />
+                  Crear Tenedor
                 </Button>
               </div>
             </div>

@@ -277,6 +277,11 @@ export default function GestionDatos() {
             vehiculo={editingItem}
             onSuccess={handleFormSuccess}
             onCancel={handleFormCancel}
+            onCreateTercero={() => {
+              setEditingItem(null);
+              setShowVehiculoForm(false);
+              setShowTerceroForm(true);
+            }}
           />
         </DialogContent>
       </Dialog>
