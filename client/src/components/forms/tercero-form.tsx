@@ -95,16 +95,31 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
 
   const createMutation = useMutation({
     mutationFn: async (data: InsertTercero) => {
-      const response = await apiRequest("/api/terceros", "POST", data);
-      return response.json();
+      console.log("Sending data to API:", data);
+      try {
+        const response = await apiRequest("/api/terceros", "POST", data);
+        console.log("API response status:", response.status);
+        const result = await response.json();
+        console.log("API response data:", result);
+        return result;
+      } catch (error) {
+        console.error("Error in mutationFn:", error);
+        throw error;
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Mutation success with data:", data);
       queryClient.invalidateQueries({ queryKey: ["/api/terceros"] });
       toast({ title: "Tercero creado exitosamente" });
       onSuccess?.();
     },
     onError: (error: any) => {
       console.error("Error creating tercero:", error);
+      console.error("Error details:", {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       toast({ 
         title: "Error al crear tercero", 
         description: error.message || "Error desconocido",
@@ -134,6 +149,7 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
   });
 
   const onSubmit = (data: InsertTercero) => {
+    console.log("Form data being submitted:", data);
     if (tercero) {
       updateMutation.mutate(data);
     } else {
