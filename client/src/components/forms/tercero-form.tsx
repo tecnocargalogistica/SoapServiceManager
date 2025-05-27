@@ -447,7 +447,7 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
                     <SelectValue placeholder="Seleccionar vehículo" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Sin vehículo asignado</SelectItem>
+                    <SelectItem value="0">Sin vehículo asignado</SelectItem>
                     {(vehiculos as any[]).map((vehiculo: any) => (
                       <SelectItem key={vehiculo.id} value={vehiculo.id.toString()}>
                         {vehiculo.placa} - {vehiculo.marca} {vehiculo.modelo}
