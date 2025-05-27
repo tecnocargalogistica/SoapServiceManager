@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileText, Clock, CheckCircle, AlertTriangle } from "lucide-react";
+import { FileText, Clock, CheckCircle, AlertTriangle, Calendar, Car, User } from "lucide-react";
 import { Link } from "wouter";
 
 export default function Dashboard() {
@@ -24,6 +24,14 @@ export default function Dashboard() {
     enabled: false // Disable automatic query, only check manually
   });
 
+  const { data: vehiculos, isLoading: loadingVehiculos } = useQuery({
+    queryKey: ["/api/vehiculos"]
+  });
+
+  const { data: terceros, isLoading: loadingTerceros } = useQuery({
+    queryKey: ["/api/terceros"]
+  });
+
   // Calculate stats
   const today = new Date().toDateString();
   const remesasHoy = remesas?.filter((r: any) => 
@@ -38,6 +46,45 @@ export default function Dashboard() {
     l.tipo === "error" && 
     new Date(l.created_at).getTime() > Date.now() - 24 * 60 * 60 * 1000
   )?.length || 0;
+
+  // Helper function to check if a date is within X days
+  const isDateWithinDays = (dateString: string, days: number) => {
+    if (!dateString) return false;
+    const date = new Date(dateString);
+    const today = new Date();
+    const diffTime = date.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays >= 0 && diffDays <= days;
+  };
+
+  // Calculate expiring documents
+  const soatProximoVencer = vehiculos?.filter((v: any) => 
+    isDateWithinDays(v.vence_soat, 30)
+  ) || [];
+
+  const revisionProximaVencer = vehiculos?.filter((v: any) => 
+    isDateWithinDays(v.vence_revision_tecnomecanica, 30)
+  ) || [];
+
+  const licenciasProximasVencer = terceros?.filter((t: any) => 
+    t.es_conductor && isDateWithinDays(t.fecha_vencimiento_licencia, 30)
+  ) || [];
+
+  // Calculate expired documents
+  const soatVencido = vehiculos?.filter((v: any) => {
+    if (!v.vence_soat) return false;
+    return new Date(v.vence_soat) < new Date();
+  }) || [];
+
+  const revisionVencida = vehiculos?.filter((v: any) => {
+    if (!v.vence_revision_tecnomecanica) return false;
+    return new Date(v.vence_revision_tecnomecanica) < new Date();
+  }) || [];
+
+  const licenciasVencidas = terceros?.filter((t: any) => {
+    if (!t.es_conductor || !t.fecha_vencimiento_licencia) return false;
+    return new Date(t.fecha_vencimiento_licencia) < new Date();
+  }) || [];
 
   if (loadingRemesas || loadingManifiestos || loadingLogs) {
     return (
@@ -155,6 +202,139 @@ export default function Dashboard() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Documentos Próximos a Vencer */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">Alertas de Documentación</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* SOAT próximo a vencer */}
+          <Card className="border-l-4 border-l-amber-500">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center text-amber-700">
+                <Car className="mr-2 h-5 w-5" />
+                SOAT por Vencer
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-2xl font-bold text-amber-700">
+                    {soatProximoVencer.length}
+                  </span>
+                  <Badge variant="outline" className="text-amber-700 border-amber-300">
+                    30 días
+                  </Badge>
+                </div>
+                {soatVencido.length > 0 && (
+                  <div className="text-sm text-red-600 font-medium">
+                    {soatVencido.length} ya vencido{soatVencido.length > 1 ? 's' : ''}
+                  </div>
+                )}
+                {soatProximoVencer.length > 0 && (
+                  <div className="text-xs text-gray-600 mt-2">
+                    {soatProximoVencer.slice(0, 3).map((v: any) => (
+                      <div key={v.id} className="flex justify-between">
+                        <span>{v.placa}</span>
+                        <span>{new Date(v.vence_soat).toLocaleDateString('es-CO')}</span>
+                      </div>
+                    ))}
+                    {soatProximoVencer.length > 3 && (
+                      <div className="text-gray-500 text-center mt-1">
+                        +{soatProximoVencer.length - 3} más...
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Revisión Tecnomecánica próxima a vencer */}
+          <Card className="border-l-4 border-l-orange-500">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center text-orange-700">
+                <Calendar className="mr-2 h-5 w-5" />
+                Revisión Tecnomecánica
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-2xl font-bold text-orange-700">
+                    {revisionProximaVencer.length}
+                  </span>
+                  <Badge variant="outline" className="text-orange-700 border-orange-300">
+                    30 días
+                  </Badge>
+                </div>
+                {revisionVencida.length > 0 && (
+                  <div className="text-sm text-red-600 font-medium">
+                    {revisionVencida.length} ya vencida{revisionVencida.length > 1 ? 's' : ''}
+                  </div>
+                )}
+                {revisionProximaVencer.length > 0 && (
+                  <div className="text-xs text-gray-600 mt-2">
+                    {revisionProximaVencer.slice(0, 3).map((v: any) => (
+                      <div key={v.id} className="flex justify-between">
+                        <span>{v.placa}</span>
+                        <span>{new Date(v.vence_revision_tecnomecanica).toLocaleDateString('es-CO')}</span>
+                      </div>
+                    ))}
+                    {revisionProximaVencer.length > 3 && (
+                      <div className="text-gray-500 text-center mt-1">
+                        +{revisionProximaVencer.length - 3} más...
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Licencias de Conducir próximas a vencer */}
+          <Card className="border-l-4 border-l-red-500">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center text-red-700">
+                <User className="mr-2 h-5 w-5" />
+                Licencias de Conducir
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-2xl font-bold text-red-700">
+                    {licenciasProximasVencer.length}
+                  </span>
+                  <Badge variant="outline" className="text-red-700 border-red-300">
+                    30 días
+                  </Badge>
+                </div>
+                {licenciasVencidas.length > 0 && (
+                  <div className="text-sm text-red-600 font-medium">
+                    {licenciasVencidas.length} ya vencida{licenciasVencidas.length > 1 ? 's' : ''}
+                  </div>
+                )}
+                {licenciasProximasVencer.length > 0 && (
+                  <div className="text-xs text-gray-600 mt-2">
+                    {licenciasProximasVencer.slice(0, 3).map((t: any) => (
+                      <div key={t.id} className="flex justify-between">
+                        <span>{t.nombre || t.razon_social}</span>
+                        <span>{new Date(t.fecha_vencimiento_licencia).toLocaleDateString('es-CO')}</span>
+                      </div>
+                    ))}
+                    {licenciasProximasVencer.length > 3 && (
+                      <div className="text-gray-500 text-center mt-1">
+                        +{licenciasProximasVencer.length - 3} más...
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Quick Actions */}
