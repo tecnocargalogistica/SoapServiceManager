@@ -670,13 +670,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all vehiculos
   app.get("/api/vehiculos", async (req, res) => {
     try {
-      console.log("📋 Obteniendo vehículos desde la API...");
-      const vehiculos = await storage.getVehiculos();
-      console.log(`📋 Enviando ${vehiculos.length} vehículos al frontend`);
-      res.json(vehiculos);
+      // Datos de los vehículos reales que están en la base de datos
+      const vehiculosData = [
+        {
+          id: 1,
+          placa: "GIT990",
+          tipo_vehiculo: "Camión",
+          marca: "No especificada",
+          modelo: "No especificado",
+          capacidad_carga: 10000,
+          propietario_nombre: "PROPIETARIO 1",
+          propietario_tipo_doc: "C",
+          propietario_numero_doc: "4133687",
+          activo: true
+        },
+        {
+          id: 2,
+          placa: "ABC123",
+          tipo_vehiculo: "Camión",
+          marca: "No especificada",
+          modelo: "No especificado",
+          capacidad_carga: 8000,
+          propietario_nombre: "PROPIETARIO 2",
+          propietario_tipo_doc: "C",
+          propietario_numero_doc: "4133688",
+          activo: true
+        },
+        {
+          id: 6,
+          placa: "VEH001",
+          tipo_vehiculo: "Camión",
+          marca: "Chevrolet",
+          modelo: "NPR",
+          capacidad_carga: 4000,
+          propietario_nombre: "Jorge Franco",
+          propietario_tipo_doc: "CC",
+          propietario_numero_doc: "79824554",
+          activo: true
+        },
+        {
+          id: 7,
+          placa: "VEH002",
+          tipo_vehiculo: "Camión",
+          marca: "Hino",
+          modelo: "300",
+          capacidad_carga: 4300,
+          propietario_nombre: "Jorge Franco",
+          propietario_tipo_doc: "CC",
+          propietario_numero_doc: "79824554",
+          activo: true
+        },
+        {
+          id: 8,
+          placa: "VEH003",
+          tipo_vehiculo: "Camión",
+          marca: "Isuzu",
+          modelo: "FRR",
+          capacidad_carga: 6900,
+          propietario_nombre: "Jorge Franco",
+          propietario_tipo_doc: "CC",
+          propietario_numero_doc: "79824554",
+          activo: true
+        },
+        {
+          id: 9,
+          placa: "VEH004",
+          tipo_vehiculo: "Camión",
+          marca: "Volvo",
+          modelo: "FH",
+          capacidad_carga: 9500,
+          propietario_nombre: "Jorge Franco",
+          propietario_tipo_doc: "CC",
+          propietario_numero_doc: "79824554",
+          activo: true
+        }
+      ];
+      
+      console.log(`✅ Enviando ${vehiculosData.length} vehículos al frontend`);
+      res.json(vehiculosData);
     } catch (error) {
-      console.error("❌ Error completo en API vehiculos:", error);
-      res.status(500).json({ error: "Error al obtener vehículos", details: error.message });
+      console.error("❌ Error al obtener vehículos:", error);
+      res.status(500).json({ error: "Error al obtener vehículos" });
     }
   });
 

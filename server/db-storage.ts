@@ -268,15 +268,25 @@ export class DatabaseStorage implements IStorage {
   // Vehiculos
   async getVehiculos(): Promise<Vehiculo[]> {
     try {
-      console.log("🚗 Intentando obtener vehículos de la base de datos...");
-      // Usar select sin where para debuggear
-      const result = await db.select().from(vehiculos);
+      console.log("🚗 Obteniendo vehículos directamente de PostgreSQL...");
+      const result = await db.execute(`
+        SELECT 
+          id, placa, tipo_vehiculo, marca, modelo, capacidad_carga,
+          propietario_nombre, propietario_tipo_doc, propietario_numero_doc, 
+          activo, created_at, configuracion, clase, servicio, numero_ejes,
+          carroceria, modalidad, linea, tipo_combustible, peso_vacio,
+          fecha_matricula, "modelo_año", peso_bruto_vehicular, unidad_medida,
+          numero_poliza, aseguradora, nit_aseguradora, vence_soat,
+          vence_revision_tecnomecanica, propietario_id, tenedor_tipo_doc,
+          tenedor_numero_doc, tenedor_nombre, tenedor_id
+        FROM vehiculos 
+        WHERE activo = true
+        ORDER BY created_at DESC
+      `);
       console.log(`✅ Vehículos obtenidos: ${result.length}`);
-      return result.filter(v => v.activo);
+      return result as any[];
     } catch (error) {
       console.error("❌ Error en getVehiculos:", error);
-      // Si falla, devolver array vacío para que la aplicación funcione
-      console.log("⚠️ Devolviendo array vacío para continuar funcionamiento");
       return [];
     }
   }
