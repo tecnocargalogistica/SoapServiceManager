@@ -180,11 +180,17 @@ export const vehiculos = pgTable("vehiculos", {
   propietario_tipo_doc: text("propietario_tipo_doc").notNull(), // C, N, P
   propietario_numero_doc: text("propietario_numero_doc").notNull(),
   propietario_nombre: text("propietario_nombre").notNull(),
+  propietario_id: integer("propietario_id"),
   
   // Tenedor (si es diferente al propietario)
   tenedor_tipo_doc: text("tenedor_tipo_doc"),
   tenedor_numero_doc: text("tenedor_numero_doc"),
   tenedor_nombre: text("tenedor_nombre"),
+  tenedor_id: integer("tenedor_id"),
+  
+  // Campos adicionales que faltaban
+  tipo_vehiculo: text("tipo_vehiculo"),
+  modelo: text("modelo"),
   
   activo: boolean("activo").notNull().default(true),
   created_at: timestamp("created_at").defaultNow()

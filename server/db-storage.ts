@@ -267,7 +267,15 @@ export class DatabaseStorage implements IStorage {
 
   // Vehiculos
   async getVehiculos(): Promise<Vehiculo[]> {
-    return await db.select().from(vehiculos).where(eq(vehiculos.activo, true));
+    try {
+      console.log("🚗 Intentando obtener vehículos de la base de datos...");
+      const result = await db.select().from(vehiculos).where(eq(vehiculos.activo, true));
+      console.log(`✅ Vehículos obtenidos: ${result.length}`);
+      return result;
+    } catch (error) {
+      console.error("❌ Error en getVehiculos:", error);
+      throw error;
+    }
   }
 
   async getVehiculoByPlaca(placa: string): Promise<Vehiculo | undefined> {
