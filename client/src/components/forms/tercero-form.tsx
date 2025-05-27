@@ -150,10 +150,25 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
 
   const onSubmit = (data: InsertTercero) => {
     console.log("Form data being submitted:", data);
+    
+    // Clean up empty date fields - convert empty strings to null
+    const cleanedData = {
+      ...data,
+      fecha_vencimiento_licencia: data.fecha_vencimiento_licencia === "" ? null : data.fecha_vencimiento_licencia,
+      categoria_licencia: data.categoria_licencia === "" ? null : data.categoria_licencia,
+      numero_licencia: data.numero_licencia === "" ? null : data.numero_licencia,
+      razon_social: data.razon_social === "" ? null : data.razon_social,
+      apellido: data.apellido === "" ? null : data.apellido,
+      direccion: data.direccion === "" ? null : data.direccion,
+      municipio_codigo: data.municipio_codigo === "" ? null : data.municipio_codigo,
+      telefono: data.telefono === "" ? null : data.telefono,
+      email: data.email === "" ? null : data.email,
+    };
+    
     if (tercero) {
-      updateMutation.mutate(data);
+      updateMutation.mutate(cleanedData);
     } else {
-      createMutation.mutate(data);
+      createMutation.mutate(cleanedData);
     }
   };
 

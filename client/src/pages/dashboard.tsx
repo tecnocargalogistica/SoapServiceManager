@@ -20,7 +20,8 @@ export default function Dashboard() {
 
   const { data: connectionStatus, isLoading: loadingConnection } = useQuery({
     queryKey: ["/api/rndc/test"],
-    refetchInterval: 30000 // Check connection every 30 seconds
+    refetchInterval: false, // No auto refresh to avoid blocking
+    enabled: false // Disable automatic query, only check manually
   });
 
   // Calculate stats
