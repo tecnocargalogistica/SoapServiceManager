@@ -205,11 +205,10 @@ export default function GestionDatos() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="sedes">Sedes</TabsTrigger>
           <TabsTrigger value="vehiculos">Vehículos</TabsTrigger>
           <TabsTrigger value="terceros">Terceros</TabsTrigger>
-          <TabsTrigger value="consecutivos">Consecutivos</TabsTrigger>
         </TabsList>
 
         <TabsContent value="sedes" className="space-y-6">
@@ -257,23 +256,7 @@ export default function GestionDatos() {
           />
         </TabsContent>
 
-        <TabsContent value="consecutivos" className="space-y-6">
-          <DataTable
-            title="Gestión de Consecutivos"
-            data={consecutivos}
-            columns={consecutivoColumns}
-            isLoading={loadingConsecutivos}
-            onAdd={() => setShowConsecutivoForm(true)}
-            onEdit={(consecutivo) => {
-              setEditingItem(consecutivo);
-              setShowConsecutivoForm(true);
-            }}
-            onView={(consecutivo) => console.log("Ver consecutivo:", consecutivo)}
-            searchPlaceholder="Buscar consecutivos..."
-            apiEndpoint="/api/consecutivos"
-            queryKey={["/api/consecutivos"]}
-          />
-        </TabsContent>
+
       </Tabs>
 
       {/* Formulario de Sede */}
@@ -309,20 +292,7 @@ export default function GestionDatos() {
         </DialogContent>
       </Dialog>
 
-      {/* Formulario de Consecutivo */}
-      <Dialog open={showConsecutivoForm} onOpenChange={setShowConsecutivoForm}>
-        <DialogContent className="max-w-lg">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">
-              {editingItem ? "Editar Consecutivo" : "Nuevo Consecutivo"}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              Los consecutivos se actualizan automáticamente al generar remesas y manifiestos.
-            </p>
-            {/* Aquí iría el formulario de consecutivos */}
-          </div>
-        </DialogContent>
-      </Dialog>
+
     </div>
   );
 }
