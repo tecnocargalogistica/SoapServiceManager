@@ -335,23 +335,137 @@ export function DataTable({
       {/* Vista previa Dialog */}
       {viewItem && (
         <Dialog open={!!viewItem} onOpenChange={() => setViewItem(null)}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-6xl w-[95vw] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Vista Previa</DialogTitle>
+              <DialogTitle className="text-xl font-bold">
+                Vista Previa - {title}
+                {viewItem.placa && ` - ${viewItem.placa}`}
+                {viewItem.nombre && ` - ${viewItem.nombre}`}
+              </DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
-              {columns.map((column) => (
-                <div key={column.key} className="grid grid-cols-3 gap-4">
-                  <div className="font-medium">{column.title}:</div>
-                  <div className="col-span-2">
-                    {column.render 
-                      ? column.render(viewItem[column.key], viewItem)
-                      : String(viewItem[column.key] || '')
-                    }
+            
+            {/* Vista previa específica para vehículos */}
+            {viewItem.placa ? (
+              <div className="space-y-6">
+                {/* Información Básica */}
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-blue-800 mb-3">Información Básica</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div><span className="font-medium">Placa:</span> {viewItem.placa}</div>
+                    <div><span className="font-medium">Tipo de Vehículo:</span> {viewItem.tipo_vehiculo || 'No especificado'}</div>
+                    <div><span className="font-medium">Marca:</span> {viewItem.marca || 'No especificada'}</div>
+                    <div><span className="font-medium">Modelo:</span> {viewItem.modelo || 'No especificado'}</div>
+                    <div><span className="font-medium">Configuración:</span> {viewItem.configuracion || 'No especificada'}</div>
+                    <div><span className="font-medium">Clase:</span> {viewItem.clase || 'No especificada'}</div>
                   </div>
                 </div>
-              ))}
-            </div>
+
+                {/* Características Técnicas */}
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-green-800 mb-3">Características Técnicas</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div><span className="font-medium">Servicio:</span> {viewItem.servicio || 'No especificado'}</div>
+                    <div><span className="font-medium">Número de Ejes:</span> {viewItem.numero_ejes || 'No especificado'}</div>
+                    <div><span className="font-medium">Carrocería:</span> {viewItem.carroceria || 'No especificada'}</div>
+                    <div><span className="font-medium">Modalidad:</span> {viewItem.modalidad || 'No especificada'}</div>
+                    <div><span className="font-medium">Línea:</span> {viewItem.linea || 'No especificada'}</div>
+                    <div><span className="font-medium">Tipo de Combustible:</span> {viewItem.tipo_combustible || 'No especificado'}</div>
+                  </div>
+                </div>
+
+                {/* Capacidades y Pesos */}
+                <div className="bg-yellow-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-yellow-800 mb-3">Capacidades y Pesos</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div><span className="font-medium">Capacidad de Carga:</span> {viewItem.capacidad_carga?.toLocaleString()} kg</div>
+                    <div><span className="font-medium">Peso Vacío:</span> {viewItem.peso_vacio ? `${viewItem.peso_vacio.toLocaleString()} kg` : 'No especificado'}</div>
+                    <div><span className="font-medium">Peso Bruto Vehicular:</span> {viewItem.peso_bruto_vehicular ? `${viewItem.peso_bruto_vehicular.toLocaleString()} kg` : 'No especificado'}</div>
+                    <div><span className="font-medium">Unidad de Medida:</span> {viewItem.unidad_medida || 'Kilogramos'}</div>
+                    <div><span className="font-medium">Fecha de Matrícula:</span> {viewItem.fecha_matricula ? new Date(viewItem.fecha_matricula).toLocaleDateString('es-CO') : 'No especificada'}</div>
+                    <div><span className="font-medium">Modelo/Año:</span> {viewItem.modelo_año || 'No especificado'}</div>
+                  </div>
+                </div>
+
+                {/* Información del SOAT */}
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-purple-800 mb-3">Información del SOAT</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div><span className="font-medium">Número de Póliza:</span> {viewItem.numero_poliza || 'No especificado'}</div>
+                    <div><span className="font-medium">Aseguradora:</span> {viewItem.aseguradora || 'No especificada'}</div>
+                    <div><span className="font-medium">NIT Aseguradora:</span> {viewItem.nit_aseguradora || 'No especificado'}</div>
+                    <div>
+                      <span className="font-medium">Vence SOAT:</span> 
+                      <span className={`ml-2 px-2 py-1 rounded text-sm ${
+                        viewItem.vence_soat && new Date(viewItem.vence_soat) < new Date() 
+                          ? 'bg-red-100 text-red-800' 
+                          : 'bg-green-100 text-green-800'
+                      }`}>
+                        {viewItem.vence_soat ? new Date(viewItem.vence_soat).toLocaleDateString('es-CO') : 'No especificada'}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="font-medium">Vence Revisión Tecnomecánica:</span>
+                      <span className={`ml-2 px-2 py-1 rounded text-sm ${
+                        viewItem.vence_revision_tecnomecanica && new Date(viewItem.vence_revision_tecnomecanica) < new Date() 
+                          ? 'bg-red-100 text-red-800' 
+                          : 'bg-green-100 text-green-800'
+                      }`}>
+                        {viewItem.vence_revision_tecnomecanica ? new Date(viewItem.vence_revision_tecnomecanica).toLocaleDateString('es-CO') : 'No especificada'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Información del Propietario */}
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-orange-800 mb-3">Información del Propietario</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><span className="font-medium">Nombre:</span> {viewItem.propietario_nombre}</div>
+                    <div><span className="font-medium">Documento:</span> {viewItem.propietario_tipo_doc}-{viewItem.propietario_numero_doc}</div>
+                  </div>
+                </div>
+
+                {/* Información del Tenedor (si existe) */}
+                {(viewItem.tenedor_nombre || viewItem.tenedor_numero_doc) && (
+                  <div className="bg-indigo-50 p-4 rounded-lg">
+                    <h3 className="text-lg font-semibold text-indigo-800 mb-3">Información del Tenedor</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div><span className="font-medium">Nombre:</span> {viewItem.tenedor_nombre || 'No especificado'}</div>
+                      <div><span className="font-medium">Documento:</span> {viewItem.tenedor_tipo_doc && viewItem.tenedor_numero_doc ? `${viewItem.tenedor_tipo_doc}-${viewItem.tenedor_numero_doc}` : 'No especificado'}</div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Estado y Fechas */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">Estado y Fechas</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <span className="font-medium">Estado:</span>
+                      <Badge variant={viewItem.activo ? "default" : "secondary"} className="ml-2">
+                        {viewItem.activo ? "Activo" : "Inactivo"}
+                      </Badge>
+                    </div>
+                    <div><span className="font-medium">Fecha de Registro:</span> {viewItem.created_at ? new Date(viewItem.created_at).toLocaleDateString('es-CO') : 'No disponible'}</div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Vista previa genérica para otros tipos de datos */
+              <div className="space-y-4">
+                {columns.map((column) => (
+                  <div key={column.key} className="grid grid-cols-3 gap-4">
+                    <div className="font-medium">{column.title}:</div>
+                    <div className="col-span-2">
+                      {column.render 
+                        ? column.render(viewItem[column.key], viewItem)
+                        : String(viewItem[column.key] || '')
+                      }
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       )}
