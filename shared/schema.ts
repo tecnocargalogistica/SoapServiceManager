@@ -101,10 +101,12 @@ export const sedes = pgTable("sedes", {
   id: serial("id").primaryKey(),
   codigo_sede: text("codigo_sede").notNull().unique(),
   nombre: text("nombre").notNull(),
+  tipo_sede: text("tipo_sede").notNull().default("granja"), // 'planta', 'granja'
   direccion: text("direccion"),
   municipio_codigo: text("municipio_codigo").notNull(),
   telefono: text("telefono"),
   valor_tonelada: decimal("valor_tonelada", { precision: 8, scale: 2 }),
+  tercero_responsable_id: integer("tercero_responsable_id").references(() => terceros.id),
   activo: boolean("activo").notNull().default(true),
   created_at: timestamp("created_at").defaultNow()
 });
@@ -124,6 +126,7 @@ export const terceros = pgTable("terceros", {
   es_empresa: boolean("es_empresa"),
   es_conductor: boolean("es_conductor"),
   es_propietario: boolean("es_propietario"),
+  es_responsable_sede: boolean("es_responsable_sede").notNull().default(false),
   categoria_licencia: text("categoria_licencia"),
   numero_licencia: text("numero_licencia"),
   fecha_vencimiento_licencia: date("fecha_vencimiento_licencia"),
