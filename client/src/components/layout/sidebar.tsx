@@ -36,7 +36,6 @@ const navigation = [
     section: "Sistema",
     items: [
       { name: "Configuraciones", href: "/configuracion", icon: Settings },
-      { name: "Consecutivos", href: "/consecutivos", icon: Hash },
       { name: "Log de Actividades", href: "/logs", icon: History },
     ]
   }
