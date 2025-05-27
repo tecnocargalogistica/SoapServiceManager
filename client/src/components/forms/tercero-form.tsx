@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -70,6 +71,28 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
     },
   });
 
+  // Limpiar campos cuando se cambia el tipo de tercero
+  const esEmpresa = form.watch("es_empresa");
+  
+  // Efecto para limpiar/llenar campos según el tipo
+  useEffect(() => {
+    if (esEmpresa) {
+      // Si es empresa, limpiar nombre y apellido, y usar razón social como nombre si está vacío
+      const razonSocial = form.getValues("razon_social");
+      if (razonSocial && !form.getValues("nombre")) {
+        form.setValue("nombre", razonSocial);
+      }
+      form.setValue("apellido", "");
+    } else {
+      // Si no es empresa, asegurar que el nombre no esté vacío
+      const nombre = form.getValues("nombre");
+      const razonSocial = form.getValues("razon_social");
+      if (!nombre && razonSocial) {
+        form.setValue("nombre", razonSocial);
+      }
+    }
+  }, [esEmpresa, form]);
+
   const createMutation = useMutation({
     mutationFn: (data: InsertTercero) => apiRequest("/api/terceros", "POST", data),
     onSuccess: () => {
@@ -124,40 +147,62 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Información Básica</h3>
             
-            <div className="grid grid-cols-2 gap-4">
+            {/* Campos para personas naturales (no empresas) */}
+            {!form.watch("es_empresa") && (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="nombre">Nombre *</Label>
+                  <Input
+                    id="nombre"
+                    {...form.register("nombre")}
+                    placeholder="Juan Pérez"
+                    disabled={isLoading}
+                  />
+                  {form.formState.errors.nombre && (
+                    <p className="text-sm text-red-500">{form.formState.errors.nombre.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="apellido">Apellido</Label>
+                  <Input
+                    id="apellido"
+                    {...form.register("apellido")}
+                    placeholder="García López"
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Campo para empresas */}
+            {form.watch("es_empresa") && (
               <div>
-                <Label htmlFor="nombre">Nombre *</Label>
+                <Label htmlFor="razon_social">Razón Social *</Label>
                 <Input
-                  id="nombre"
-                  {...form.register("nombre")}
-                  placeholder="Juan Pérez"
+                  id="razon_social"
+                  {...form.register("razon_social")}
+                  placeholder="EMPRESA TRANSPORTE S.A.S."
                   disabled={isLoading}
                 />
-                {form.formState.errors.nombre && (
-                  <p className="text-sm text-red-500">{form.formState.errors.nombre.message}</p>
+                {form.formState.errors.razon_social && (
+                  <p className="text-sm text-red-500">{form.formState.errors.razon_social.message}</p>
                 )}
               </div>
+            )}
 
+            {/* Campo opcional para personas naturales */}
+            {!form.watch("es_empresa") && (
               <div>
-                <Label htmlFor="apellido">Apellido</Label>
+                <Label htmlFor="razon_social">Razón Social (Opcional)</Label>
                 <Input
-                  id="apellido"
-                  {...form.register("apellido")}
-                  placeholder="García López"
+                  id="razon_social"
+                  {...form.register("razon_social")}
+                  placeholder="EMPRESA PERSONAL LTDA"
                   disabled={isLoading}
                 />
               </div>
-            </div>
-
-            <div>
-              <Label htmlFor="razon_social">Razón Social</Label>
-              <Input
-                id="razon_social"
-                {...form.register("razon_social")}
-                placeholder="EMPRESA TRANSPORTE S.A.S."
-                disabled={isLoading}
-              />
-            </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
