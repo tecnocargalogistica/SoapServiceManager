@@ -44,6 +44,17 @@ export default function GestionDatos() {
     { key: "codigo_sede", title: "Código" },
     { key: "nombre", title: "Nombre" },
     { 
+      key: "tipo_sede", 
+      title: "Tipo",
+      render: (value: string) => (
+        <Badge variant={value === "planta" ? "default" : "outline"} className={
+          value === "planta" ? "bg-blue-600" : "bg-green-600 text-white border-green-600"
+        }>
+          {value === "planta" ? "🏭 Planta" : "🚜 Granja"}
+        </Badge>
+      )
+    },
+    { 
       key: "municipio_codigo", 
       title: "Municipio",
       render: (value: string) => {
@@ -57,6 +68,19 @@ export default function GestionDatos() {
       key: "valor_tonelada", 
       title: "Valor/Ton",
       render: (value: string) => value ? `$${Number(value).toLocaleString()}` : ""
+    },
+    { 
+      key: "tercero_responsable_id", 
+      title: "Responsable",
+      render: (value: number, item: any) => {
+        if (!value) return <span className="text-gray-400">Sin asignar</span>;
+        const tercero = terceros.find((t: any) => t.id === value);
+        return tercero ? (
+          <span className="text-sm">
+            {tercero.es_empresa ? tercero.razon_social : `${tercero.nombre} ${tercero.apellido}`}
+          </span>
+        ) : <span className="text-gray-400">No encontrado</span>;
+      }
     },
     { 
       key: "activo", 
@@ -125,6 +149,29 @@ export default function GestionDatos() {
     },
     { key: "telefono", title: "Teléfono" },
     { key: "email", title: "Email" },
+    { 
+      key: "roles", 
+      title: "Roles",
+      render: (value: any, item: any) => (
+        <div className="flex gap-1 flex-wrap">
+          {item.es_conductor && (
+            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+              🚗 Conductor
+            </Badge>
+          )}
+          {item.es_propietario && (
+            <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+              🏠 Propietario
+            </Badge>
+          )}
+          {item.es_responsable_sede && (
+            <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
+              🏢 Resp. Sede
+            </Badge>
+          )}
+        </div>
+      )
+    },
     { 
       key: "activo", 
       title: "Estado",
