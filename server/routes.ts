@@ -688,6 +688,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update vehiculo
+  app.patch("/api/vehiculos/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const vehiculo = await storage.updateVehiculo(id, req.body);
+      res.json(vehiculo);
+    } catch (error) {
+      console.error("Error updating vehiculo:", error);
+      res.status(500).json({ error: "Error al actualizar vehículo" });
+    }
+  });
+
+  // Delete vehiculo
+  app.delete("/api/vehiculos/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteVehiculo(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting vehiculo:", error);
+      res.status(500).json({ error: "Error al eliminar vehículo" });
+    }
+  });
+
   // ===== MUNICIPIOS ROUTES =====
   
   // Get all municipios

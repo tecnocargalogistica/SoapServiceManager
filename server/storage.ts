@@ -78,6 +78,8 @@ export interface IStorage {
   getVehiculos(): Promise<Vehiculo[]>;
   getVehiculoByPlaca(placa: string): Promise<Vehiculo | undefined>;
   createVehiculo(vehiculo: InsertVehiculo): Promise<Vehiculo>;
+  updateVehiculo(id: number, vehiculo: Partial<InsertVehiculo>): Promise<Vehiculo>;
+  deleteVehiculo(id: number): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -529,6 +531,25 @@ export class MemStorage implements IStorage {
     };
     this.vehiculosMap.set(id, vehiculo);
     return vehiculo;
+  }
+
+  async updateVehiculo(id: number, updates: Partial<InsertVehiculo>): Promise<Vehiculo> {
+    const existing = this.vehiculosMap.get(id);
+    if (!existing) {
+      throw new Error("Vehículo no encontrado");
+    }
+
+    const updated: Vehiculo = { 
+      ...existing, 
+      ...updates,
+      id // Ensure ID doesn't change
+    };
+    this.vehiculosMap.set(id, updated);
+    return updated;
+  }
+
+  async deleteVehiculo(id: number): Promise<void> {
+    this.vehiculosMap.delete(id);
   }
 }
 

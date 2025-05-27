@@ -280,4 +280,18 @@ export class DatabaseStorage implements IStorage {
     const [vehiculo] = await db.insert(vehiculos).values(insertVehiculo).returning();
     return vehiculo;
   }
+
+  async updateVehiculo(id: number, updates: Partial<InsertVehiculo>): Promise<Vehiculo> {
+    const [vehiculo] = await db.update(vehiculos)
+      .set(updates)
+      .where(eq(vehiculos.id, id))
+      .returning();
+    return vehiculo;
+  }
+
+  async deleteVehiculo(id: number): Promise<void> {
+    await db.update(vehiculos)
+      .set({ activo: false })
+      .where(eq(vehiculos.id, id));
+  }
 }
