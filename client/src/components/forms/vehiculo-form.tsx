@@ -170,7 +170,7 @@ export function VehiculoForm({ vehiculo, onSuccess, onCancel }: VehiculoFormProp
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full max-w-6xl mx-auto">
       <DialogHeader>
         <DialogTitle>{vehiculo ? "Editar Vehículo" : "Nuevo Vehículo"}</DialogTitle>
       </DialogHeader>

@@ -272,7 +272,7 @@ export default function GestionDatos() {
 
       {/* Formulario de Vehículo */}
       <Dialog open={showVehiculoForm} onOpenChange={setShowVehiculoForm}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-7xl w-[95vw] max-h-[85vh] overflow-y-auto">
           <VehiculoForm
             vehiculo={editingItem}
             onSuccess={handleFormSuccess}
