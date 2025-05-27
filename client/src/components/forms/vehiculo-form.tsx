@@ -604,7 +604,7 @@ export function VehiculoForm({ vehiculo, onSuccess, onCancel, onCreateTercero }:
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input {...field} />
+                            <Input {...field} value={field.value || ""} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -615,7 +615,7 @@ export function VehiculoForm({ vehiculo, onSuccess, onCancel, onCreateTercero }:
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input {...field} />
+                            <Input {...field} value={field.value || ""} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -687,7 +687,7 @@ export function VehiculoForm({ vehiculo, onSuccess, onCancel, onCreateTercero }:
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input {...field} />
+                            <Input {...field} value={field.value || ""} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -698,7 +698,7 @@ export function VehiculoForm({ vehiculo, onSuccess, onCancel, onCreateTercero }:
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input {...field} />
+                            <Input {...field} value={field.value || ""} />
                           </FormControl>
                         </FormItem>
                       )}
