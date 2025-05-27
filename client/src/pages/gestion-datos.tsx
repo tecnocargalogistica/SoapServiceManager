@@ -300,7 +300,7 @@ export default function GestionDatos() {
 
       {/* Formulario de Tercero */}
       <Dialog open={showTerceroForm} onOpenChange={setShowTerceroForm}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <TerceroForm
             tercero={editingItem}
             onSuccess={handleFormSuccess}
