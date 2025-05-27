@@ -53,6 +53,8 @@ export function DataTable({
   const [viewItem, setViewItem] = useState<any>(null);
   const [deleteItem, setDeleteItem] = useState<any>(null);
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -89,6 +91,18 @@ export function DataTable({
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
+
+  // Cálculos de paginación
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, endIndex);
+
+  // Resetear página cuando cambia la búsqueda
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+  };
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -161,7 +175,7 @@ export function DataTable({
               <Input
                 placeholder={searchPlaceholder}
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="pl-8"
               />
             </div>
@@ -183,86 +197,137 @@ export function DataTable({
               {searchTerm ? "No se encontraron resultados" : "No hay datos disponibles"}
             </div>
           ) : (
-            <div className="border rounded-md">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b bg-muted/50">
-                      <th className="p-2 text-left">
-                        <Checkbox
-                          checked={allSelected}
-                          onCheckedChange={handleSelectAll}
-                          ref={(ref) => {
-                            if (ref) ref.indeterminate = someSelected;
-                          }}
-                        />
-                      </th>
-                      {columns.map((column) => (
-                        <th key={column.key} className="p-2 text-left font-medium">
-                          {column.title}
-                        </th>
-                      ))}
-                      <th className="p-2 text-right font-medium">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredData.map((item) => (
-                      <tr key={item.id} className="border-b hover:bg-muted/25">
-                        <td className="p-2">
+            <>
+              <div className="border rounded-md">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b bg-muted/50">
+                        <th className="p-2 text-left">
                           <Checkbox
-                            checked={selectedItems.has(item.id)}
-                            onCheckedChange={(checked) => handleSelectItem(item.id, checked as boolean)}
+                            checked={allSelected}
+                            onCheckedChange={handleSelectAll}
                           />
-                        </td>
+                        </th>
                         {columns.map((column) => (
-                          <td key={column.key} className="p-2">
-                            {column.render 
-                              ? column.render(item[column.key], item)
-                              : String(item[column.key] || '')
-                            }
-                          </td>
+                          <th key={column.key} className="p-2 text-left font-medium">
+                            {column.title}
+                          </th>
                         ))}
-                        <td className="p-2 text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              {onView && (
-                                <DropdownMenuItem onClick={() => setViewItem(item)}>
-                                  <Eye className="h-4 w-4 mr-2" />
-                                  Vista previa
-                                </DropdownMenuItem>
-                              )}
-                              {onEdit && (
-                                <DropdownMenuItem onClick={() => onEdit(item)}>
-                                  <Edit className="h-4 w-4 mr-2" />
-                                  Editar
-                                </DropdownMenuItem>
-                              )}
-                              {(onDelete || apiEndpoint) && (
-                                <>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem 
-                                    onClick={() => setDeleteItem(item)}
-                                    className="text-destructive"
-                                  >
-                                    <Trash2 className="h-4 w-4 mr-2" />
-                                    Eliminar
-                                  </DropdownMenuItem>
-                                </>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </td>
+                        <th className="p-2 text-right font-medium">Acciones</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {paginatedData.map((item) => (
+                        <tr key={item.id} className="border-b hover:bg-muted/25">
+                          <td className="p-2">
+                            <Checkbox
+                              checked={selectedItems.has(item.id)}
+                              onCheckedChange={(checked) => handleSelectItem(item.id, checked as boolean)}
+                            />
+                          </td>
+                          {columns.map((column) => (
+                            <td key={column.key} className="p-2">
+                              {column.render 
+                                ? column.render(item[column.key], item)
+                                : String(item[column.key] || '')
+                              }
+                            </td>
+                          ))}
+                          <td className="p-2 text-right">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                {onView && (
+                                  <DropdownMenuItem onClick={() => setViewItem(item)}>
+                                    <Eye className="h-4 w-4 mr-2" />
+                                    Vista previa
+                                  </DropdownMenuItem>
+                                )}
+                                {onEdit && (
+                                  <DropdownMenuItem onClick={() => onEdit(item)}>
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    Editar
+                                  </DropdownMenuItem>
+                                )}
+                                {(onDelete || apiEndpoint) && (
+                                  <>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem 
+                                      onClick={() => setDeleteItem(item)}
+                                      className="text-destructive"
+                                    >
+                                      <Trash2 className="h-4 w-4 mr-2" />
+                                      Eliminar
+                                    </DropdownMenuItem>
+                                  </>
+                                )}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
+
+              {/* Controles de paginación */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between mt-4">
+                  <div className="text-sm text-muted-foreground">
+                    Mostrando {startIndex + 1} a {Math.min(endIndex, filteredData.length)} de {filteredData.length} resultados
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Anterior
+                    </Button>
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1)
+                        .filter(page => 
+                          page === 1 || 
+                          page === totalPages || 
+                          Math.abs(page - currentPage) <= 2
+                        )
+                        .map((page, index, array) => (
+                          <div key={page} className="flex items-center">
+                            {index > 0 && array[index - 1] !== page - 1 && (
+                              <span className="mx-1 text-muted-foreground">...</span>
+                            )}
+                            <Button
+                              variant={currentPage === page ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setCurrentPage(page)}
+                              className="w-8 h-8 p-0"
+                            >
+                              {page}
+                            </Button>
+                          </div>
+                        ))}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      Siguiente
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </CardContent>
       </Card>
