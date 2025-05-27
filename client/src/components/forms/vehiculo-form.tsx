@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +12,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import type { Vehiculo, InsertVehiculo } from "../../../../shared/schema";
+import { Plus } from "lucide-react";
+import type { Vehiculo, InsertVehiculo, Tercero } from "../../../../shared/schema";
 
 // Schema de validación del formulario
 const vehiculoFormSchema = z.object({
@@ -60,12 +61,18 @@ interface VehiculoFormProps {
   vehiculo?: Vehiculo;
   onSuccess?: () => void;
   onCancel?: () => void;
+  onCreateTercero?: () => void;
 }
 
-export function VehiculoForm({ vehiculo, onSuccess, onCancel }: VehiculoFormProps) {
+export function VehiculoForm({ vehiculo, onSuccess, onCancel, onCreateTercero }: VehiculoFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showTenedor, setShowTenedor] = useState(false);
+
+  // Cargar terceros
+  const { data: terceros = [] } = useQuery({
+    queryKey: ["/api/terceros"],
+  }) as { data: Tercero[] };
   
   const form = useForm<VehiculoFormData>({
     resolver: zodResolver(vehiculoFormSchema),
@@ -556,19 +563,32 @@ export function VehiculoForm({ vehiculo, onSuccess, onCancel }: VehiculoFormProp
                 <div className="space-y-3 mt-2">
                   <FormField
                     control={form.control}
-                    name="propietario_tipo_doc"
+                    name="propietario_numero_doc"
                     render={({ field }) => (
                       <FormItem>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select 
+                          value={field.value} 
+                          onValueChange={(value) => {
+                            const tercero = terceros.find(t => t.numero_documento === value);
+                            if (tercero) {
+                              form.setValue("propietario_numero_doc", tercero.numero_documento);
+                              form.setValue("propietario_tipo_doc", tercero.tipo_documento);
+                              form.setValue("propietario_nombre", tercero.razon_social || `${tercero.nombre} ${tercero.apellido || ''}`.trim());
+                            }
+                          }}
+                        >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Seleccione propietario" />
+                              <SelectValue placeholder="Seleccionar propietario..." />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="C">Cédula</SelectItem>
-                            <SelectItem value="N">NIT</SelectItem>
-                            <SelectItem value="P">Pasaporte</SelectItem>
+                            {terceros.filter(t => t.es_propietario).map((tercero) => (
+                              <SelectItem key={tercero.id} value={tercero.numero_documento}>
+                                {tercero.razon_social || `${tercero.nombre} ${tercero.apellido || ''}`.trim()} 
+                                ({tercero.tipo_documento}-{tercero.numero_documento})
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -576,39 +596,41 @@ export function VehiculoForm({ vehiculo, onSuccess, onCancel }: VehiculoFormProp
                     )}
                   />
                   
-                  <FormField
-                    control={form.control}
-                    name="propietario_numero_doc"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input placeholder="Número documento" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="propietario_nombre"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input placeholder="Nombre completo" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {/* Campos ocultos para almacenar datos del propietario */}
+                  <div className="hidden">
+                    <FormField
+                      control={form.control}
+                      name="propietario_tipo_doc"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="propietario_nombre"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
                 <Button 
                   type="button" 
                   variant="outline" 
                   size="sm" 
-                  className="mt-2"
+                  className="mt-2 flex items-center gap-2"
+                  onClick={onCreateTercero}
                 >
-                  + Nuevo
+                  <Plus className="h-4 w-4" />
+                  Crear Propietario
                 </Button>
               </div>
               
