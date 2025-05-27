@@ -240,6 +240,19 @@ export class DatabaseStorage implements IStorage {
     return tercero;
   }
 
+  async updateTercero(id: number, updates: Partial<InsertTercero>): Promise<Tercero> {
+    const [tercero] = await db.update(terceros)
+      .set(updates)
+      .where(eq(terceros.id, id))
+      .returning();
+    
+    if (!tercero) {
+      throw new Error(`Tercero con ID ${id} no encontrado`);
+    }
+    
+    return tercero;
+  }
+
   // Vehiculos
   async getVehiculos(): Promise<Vehiculo[]> {
     return await db.select().from(vehiculos).where(eq(vehiculos.activo, true));

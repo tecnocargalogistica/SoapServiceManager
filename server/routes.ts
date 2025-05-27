@@ -582,6 +582,135 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== TERCEROS ROUTES =====
+  
+  // Get all terceros
+  app.get("/api/terceros", async (req, res) => {
+    try {
+      const terceros = await storage.getTerceros();
+      res.json(terceros);
+    } catch (error) {
+      res.status(500).json({ error: "Error al obtener terceros" });
+    }
+  });
+
+  // Create new tercero
+  app.post("/api/terceros", async (req, res) => {
+    try {
+      const tercero = await storage.createTercero(req.body);
+      res.json(tercero);
+    } catch (error) {
+      console.error("Error creating tercero:", error);
+      res.status(500).json({ error: "Error al crear tercero" });
+    }
+  });
+
+  // Update tercero
+  app.put("/api/terceros/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const tercero = await storage.updateTercero(id, req.body);
+      res.json(tercero);
+    } catch (error) {
+      console.error("Error updating tercero:", error);
+      res.status(500).json({ error: "Error al actualizar tercero" });
+    }
+  });
+
+  // Get tercero by document
+  app.get("/api/terceros/documento/:numero", async (req, res) => {
+    try {
+      const tercero = await storage.getTerceroByDocumento(req.params.numero);
+      if (!tercero) {
+        return res.status(404).json({ error: "Tercero no encontrado" });
+      }
+      res.json(tercero);
+    } catch (error) {
+      res.status(500).json({ error: "Error al buscar tercero" });
+    }
+  });
+
+  // ===== SEDES ROUTES =====
+  
+  // Get all sedes
+  app.get("/api/sedes", async (req, res) => {
+    try {
+      const sedes = await storage.getSedes();
+      res.json(sedes);
+    } catch (error) {
+      res.status(500).json({ error: "Error al obtener sedes" });
+    }
+  });
+
+  // Create new sede
+  app.post("/api/sedes", async (req, res) => {
+    try {
+      const sede = await storage.createSede(req.body);
+      res.json(sede);
+    } catch (error) {
+      console.error("Error creating sede:", error);
+      res.status(500).json({ error: "Error al crear sede" });
+    }
+  });
+
+  // ===== VEHICULOS ROUTES =====
+  
+  // Get all vehiculos
+  app.get("/api/vehiculos", async (req, res) => {
+    try {
+      const vehiculos = await storage.getVehiculos();
+      res.json(vehiculos);
+    } catch (error) {
+      res.status(500).json({ error: "Error al obtener vehículos" });
+    }
+  });
+
+  // Create new vehiculo
+  app.post("/api/vehiculos", async (req, res) => {
+    try {
+      const vehiculo = await storage.createVehiculo(req.body);
+      res.json(vehiculo);
+    } catch (error) {
+      console.error("Error creating vehiculo:", error);
+      res.status(500).json({ error: "Error al crear vehículo" });
+    }
+  });
+
+  // ===== MUNICIPIOS ROUTES =====
+  
+  // Get all municipios
+  app.get("/api/municipios", async (req, res) => {
+    try {
+      const municipios = await storage.getMunicipios();
+      res.json(municipios);
+    } catch (error) {
+      res.status(500).json({ error: "Error al obtener municipios" });
+    }
+  });
+
+  // Create new municipio
+  app.post("/api/municipios", async (req, res) => {
+    try {
+      const municipio = await storage.createMunicipio(req.body);
+      res.json(municipio);
+    } catch (error) {
+      console.error("Error creating municipio:", error);
+      res.status(500).json({ error: "Error al crear municipio" });
+    }
+  });
+
+  // ===== CONSECUTIVOS ROUTES =====
+  
+  // Get all consecutivos
+  app.get("/api/consecutivos", async (req, res) => {
+    try {
+      const consecutivos = await storage.getConsecutivos();
+      res.json(consecutivos);
+    } catch (error) {
+      res.status(500).json({ error: "Error al obtener consecutivos" });
+    }
+  });
+
   // Test RNDC connection
   app.get("/api/rndc/test", async (req, res) => {
     try {
