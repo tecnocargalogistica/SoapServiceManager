@@ -25,23 +25,31 @@ export function SedeForm({ sede, onSuccess, onCancel }: SedeFormProps) {
     queryKey: ["/api/municipios"],
   });
 
+  const { data: terceros = [] } = useQuery({
+    queryKey: ["/api/terceros"],
+  });
+
   const form = useForm<InsertSede>({
     resolver: zodResolver(insertSedeSchema),
     defaultValues: sede ? {
       codigo_sede: sede.codigo_sede,
       nombre: sede.nombre,
+      tipo_sede: sede.tipo_sede || "granja",
       direccion: sede.direccion || "",
       municipio_codigo: sede.municipio_codigo,
       telefono: sede.telefono || "",
       valor_tonelada: sede.valor_tonelada || "",
+      tercero_responsable_id: sede.tercero_responsable_id || undefined,
       activo: sede.activo,
     } : {
       codigo_sede: "",
       nombre: "",
+      tipo_sede: "granja",
       direccion: "",
       municipio_codigo: "",
       telefono: "",
       valor_tonelada: "",
+      tercero_responsable_id: undefined,
       activo: true,
     },
   });
@@ -110,6 +118,49 @@ export function SedeForm({ sede, onSuccess, onCancel }: SedeFormProps) {
               {form.formState.errors.nombre && (
                 <p className="text-sm text-red-500">{form.formState.errors.nombre.message}</p>
               )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="tipo_sede">Tipo de Sede *</Label>
+              <Select 
+                onValueChange={(value) => form.setValue("tipo_sede", value)}
+                defaultValue={form.getValues("tipo_sede")}
+                disabled={isLoading}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="planta">🏭 Planta de Producción</SelectItem>
+                  <SelectItem value="granja">🚜 Granja</SelectItem>
+                </SelectContent>
+              </Select>
+              {form.formState.errors.tipo_sede && (
+                <p className="text-sm text-red-500">{form.formState.errors.tipo_sede.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="tercero_responsable_id">Responsable</Label>
+              <Select 
+                onValueChange={(value) => form.setValue("tercero_responsable_id", value ? parseInt(value) : undefined)}
+                defaultValue={form.getValues("tercero_responsable_id")?.toString()}
+                disabled={isLoading}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar responsable" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Sin asignar</SelectItem>
+                  {(terceros as any[]).filter((t: any) => t.es_responsable_sede || t.es_empresa).map((tercero: any) => (
+                    <SelectItem key={tercero.id} value={tercero.id.toString()}>
+                      {tercero.es_empresa ? tercero.razon_social : `${tercero.nombre} ${tercero.apellido}`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
