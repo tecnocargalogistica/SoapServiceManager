@@ -670,10 +670,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all vehiculos
   app.get("/api/vehiculos", async (req, res) => {
     try {
+      console.log("📋 Obteniendo vehículos desde la API...");
       const vehiculos = await storage.getVehiculos();
+      console.log(`📋 Enviando ${vehiculos.length} vehículos al frontend`);
       res.json(vehiculos);
     } catch (error) {
-      res.status(500).json({ error: "Error al obtener vehículos" });
+      console.error("❌ Error completo en API vehiculos:", error);
+      res.status(500).json({ error: "Error al obtener vehículos", details: error.message });
     }
   });
 
