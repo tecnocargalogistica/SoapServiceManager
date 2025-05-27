@@ -151,13 +151,41 @@ export const usuarios = pgTable("usuarios", {
 export const vehiculos = pgTable("vehiculos", {
   id: serial("id").primaryKey(),
   placa: text("placa").notNull().unique(),
-  capacidad_carga: integer("capacidad_carga").notNull(), // En kilogramos
-  tipo_vehiculo: text("tipo_vehiculo"),
+  
+  // Características Generales
+  configuracion: text("configuracion"), // Ej: CAMIÓN RÍGIDO DE 2 EJES
+  clase: text("clase"), // Ej: CAMION
   marca: text("marca"),
-  modelo: text("modelo"),
+  servicio: text("servicio"), // Ej: PÚBLICO
+  numero_ejes: integer("numero_ejes"),
+  carroceria: text("carroceria"), // Ej: ESTACAS
+  modalidad: text("modalidad"), // Ej: CARGA
+  linea: text("linea"),
+  tipo_combustible: text("tipo_combustible"), // Ej: DIESEL
+  capacidad_carga: integer("capacidad_carga").notNull(), // En kilogramos
+  peso_vacio: integer("peso_vacio"),
+  fecha_matricula: date("fecha_matricula"),
+  modelo_año: integer("modelo_año"),
+  peso_bruto_vehicular: integer("peso_bruto_vehicular"),
+  unidad_medida: text("unidad_medida").default("Kilogramos"),
+  
+  // Información SOAT y Revisión Tecnomecánica
+  numero_poliza: text("numero_poliza"),
+  aseguradora: text("aseguradora"),
+  nit_aseguradora: text("nit_aseguradora"),
+  vence_soat: date("vence_soat"),
+  vence_revision_tecnomecanica: date("vence_revision_tecnomecanica"),
+  
+  // Propietario
   propietario_tipo_doc: text("propietario_tipo_doc").notNull(), // C, N, P
   propietario_numero_doc: text("propietario_numero_doc").notNull(),
   propietario_nombre: text("propietario_nombre").notNull(),
+  
+  // Tenedor (si es diferente al propietario)
+  tenedor_tipo_doc: text("tenedor_tipo_doc"),
+  tenedor_numero_doc: text("tenedor_numero_doc"),
+  tenedor_nombre: text("tenedor_nombre"),
+  
   activo: boolean("activo").notNull().default(true),
   created_at: timestamp("created_at").defaultNow()
 });
