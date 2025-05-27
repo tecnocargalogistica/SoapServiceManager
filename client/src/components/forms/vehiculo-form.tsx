@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import type { Vehiculo, InsertVehiculo } from "../../../shared/schema";
+import type { Vehiculo, InsertVehiculo } from "../../../../shared/schema";
 
 // Schema de validación del formulario
 const vehiculoFormSchema = z.object({
@@ -59,9 +59,10 @@ type VehiculoFormData = z.infer<typeof vehiculoFormSchema>;
 interface VehiculoFormProps {
   vehiculo?: Vehiculo;
   onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export function VehiculoForm({ vehiculo, onSuccess }: VehiculoFormProps) {
+export function VehiculoForm({ vehiculo, onSuccess, onCancel }: VehiculoFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showTenedor, setShowTenedor] = useState(false);
@@ -142,15 +143,9 @@ export function VehiculoForm({ vehiculo, onSuccess }: VehiculoFormProps) {
       };
 
       if (vehiculo) {
-        return apiRequest(`/api/vehiculos/${vehiculo.id}`, {
-          method: "PATCH",
-          body: JSON.stringify(cleanData)
-        });
+        return apiRequest(`/api/vehiculos/${vehiculo.id}`, "PATCH", cleanData);
       } else {
-        return apiRequest("/api/vehiculos", {
-          method: "POST",
-          body: JSON.stringify(cleanData)
-        });
+        return apiRequest("/api/vehiculos", "POST", cleanData);
       }
     },
     onSuccess: () => {
@@ -632,7 +627,7 @@ export function VehiculoForm({ vehiculo, onSuccess }: VehiculoFormProps) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="">No aplica / Mismo propietario</SelectItem>
+                            <SelectItem value="NO_APLICA">No aplica / Mismo propietario</SelectItem>
                             <SelectItem value="C">Cédula</SelectItem>
                             <SelectItem value="N">NIT</SelectItem>
                             <SelectItem value="P">Pasaporte</SelectItem>
@@ -683,7 +678,7 @@ export function VehiculoForm({ vehiculo, onSuccess }: VehiculoFormProps) {
 
           {/* BOTONES */}
           <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline">
+            <Button type="button" variant="outline" onClick={onCancel}>
               Cancelar
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
