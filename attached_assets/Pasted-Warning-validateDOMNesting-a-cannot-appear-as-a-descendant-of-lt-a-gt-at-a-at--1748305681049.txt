@@ -1,0 +1,31 @@
+Warning: validateDOMNesting(...): <a> cannot appear as a descendant of &lt;a&gt;.
+    at a
+    at a
+    at https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=3a5f1d8b:337:18
+    at div
+    at nav
+    at aside
+    at Sidebar (https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/src/components/layout/sidebar.tsx:60:22)
+    at div
+    at Router
+    at Provider (https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-OXZDJRWN.js?v=3a5f1d8b:38:15)
+    at TooltipProvider (https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=3a5f1d8b:61:5)
+    at QueryClientProvider (https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=3a5f1d8b:2805:3)
+    at App
+at a
+at a
+at https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=3a5f1d8b:337:18
+at div
+at nav
+at aside
+at Sidebar (https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/src/components/layout/sidebar.tsx:60:22)
+at div
+at Router
+at Provider (https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-OXZDJRWN.js?v=3a5f1d8b:38:15)
+at TooltipProvider (https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=3a5f1d8b:61:5)
+at QueryClientProvider (https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=3a5f1d8b:2805:3)
+at App
+at t.value (https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://2273e512-31ef-4ab1-aeb5-8d23b350daa6-00-3pam6n89mbc2p.picard.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400

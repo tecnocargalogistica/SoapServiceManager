@@ -50,19 +50,19 @@ export default function Sidebar() {
     const Icon = item.icon;
 
     return (
-      <Link key={item.href} href={item.href}>
-        <a
-          className={cn(
-            "flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors",
-            isActive
-              ? "text-primary-600 bg-primary-50 border-l-4 border-primary-600"
-              : "text-gray-700 hover:bg-gray-100",
-            isMainItem && "mb-4"
-          )}
-        >
-          <Icon className={cn("w-5 h-5", isActive ? "text-primary-600" : "text-gray-400")} />
-          <span>{item.name}</span>
-        </a>
+      <Link 
+        key={item.href} 
+        href={item.href}
+        className={cn(
+          "flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors",
+          isActive
+            ? "text-primary-600 bg-primary-50 border-l-4 border-primary-600"
+            : "text-gray-700 hover:bg-gray-100",
+          isMainItem && "mb-4"
+        )}
+      >
+        <Icon className={cn("w-5 h-5", isActive ? "text-primary-600" : "text-gray-400")} />
+        <span>{item.name}</span>
       </Link>
     );
   };
