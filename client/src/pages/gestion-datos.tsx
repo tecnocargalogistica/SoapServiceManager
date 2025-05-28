@@ -59,7 +59,12 @@ export default function GestionDatos() {
       title: "Municipio",
       render: (value: string) => {
         const municipio = municipios.find((m: any) => m.codigo === value);
-        return municipio ? `${municipio.nombre}, ${municipio.departamento}` : value;
+        return municipio ? (
+          <div className="text-sm">
+            <div className="font-medium">{municipio.nombre}, {municipio.departamento}</div>
+            <div className="text-gray-500">Código: {value}</div>
+          </div>
+        ) : value;
       }
     },
     { key: "direccion", title: "Dirección" },
@@ -144,7 +149,12 @@ export default function GestionDatos() {
       render: (value: string) => {
         if (!value) return "";
         const municipio = (municipios as any[]).find((m: any) => m.codigo === value);
-        return municipio ? `${municipio.nombre}, ${municipio.departamento}` : value;
+        return municipio ? (
+          <div className="text-sm">
+            <div className="font-medium">{municipio.nombre}, {municipio.departamento}</div>
+            <div className="text-gray-500">Código: {value}</div>
+          </div>
+        ) : value;
       }
     },
     { key: "telefono", title: "Teléfono" },
