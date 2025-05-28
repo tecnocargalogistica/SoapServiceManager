@@ -88,15 +88,60 @@ export default function SOAPCliente() {
     setLastRequestStatus(null);
 
     try {
-      const response = await apiRequest('/api/rndc/raw-response');
+      const response = await apiRequest('/api/rndc/test-specific-xml', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ xmlContent: xmlRequest })
+      });
       
       if (response.ok) {
-        const responseText = await response.text();
-        setXmlResponse(responseText);
-        setLastRequestStatus("success");
+        const responseData = await response.json();
+        
+        // Formatear la respuesta de manera clara y legible
+        let formattedResponse = `=== RESPUESTA DEL RNDC ===\n\n`;
+        
+        if (responseData.success) {
+          formattedResponse += `✅ Estado: EXITOSO\n\n`;
+          
+          if (responseData.data?.rawResponse) {
+            // Extraer y formatear el XML interno del RNDC
+            const rawXml = responseData.data.rawResponse;
+            
+            // Buscar el contenido dentro de <return>
+            const returnMatch = rawXml.match(/<return[^>]*>(.*?)<\/return>/s);
+            if (returnMatch) {
+              const innerXml = returnMatch[1]
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&amp;/g, '&');
+              
+              formattedResponse += `📄 Respuesta procesada por el RNDC:\n${innerXml}\n\n`;
+            }
+            
+            formattedResponse += `🔍 Respuesta SOAP completa:\n${rawXml}`;
+          }
+          
+          if (responseData.consecutivo) {
+            formattedResponse += `\n\n🔢 Consecutivo: ${responseData.consecutivo}`;
+          }
+          
+        } else {
+          formattedResponse += `❌ Estado: ERROR\n\n`;
+          formattedResponse += `💬 Mensaje: ${responseData.mensaje || 'Error desconocido'}\n\n`;
+          if (responseData.error) {
+            formattedResponse += `🚨 Error: ${responseData.error}`;
+          }
+        }
+        
+        setXmlResponse(formattedResponse);
+        setLastRequestStatus(responseData.success ? "success" : "error");
+        
         toast({
-          title: "Solicitud enviada",
-          description: "Respuesta recibida del RNDC"
+          title: responseData.success ? "¡Respuesta exitosa del RNDC!" : "Respuesta del RNDC",
+          description: responseData.success ? "El RNDC procesó tu solicitud correctamente" : "Revisa la respuesta para más detalles",
+          variant: responseData.success ? "default" : "destructive"
         });
       } else {
         const errorText = await response.text();
