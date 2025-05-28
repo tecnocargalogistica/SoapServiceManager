@@ -202,23 +202,34 @@ export default function Configuracion() {
           <Button
             onClick={async () => {
               try {
-                const response = await fetch('/api/rndc/test-real', {
+                const response = await fetch('/api/rndc/test-specific-xml', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await response.json();
-                console.log('🎯 RESPUESTA COMPLETA DEL RNDC:', data);
-                alert(`RESPUESTA DEL RNDC:\n\nÉxito: ${data.success}\nConsecutivo: ${data.consecutivo}\nMensaje: ${data.response?.mensaje || 'Sin mensaje'}\n\nRevisa la consola del navegador para ver la respuesta completa.`);
+                console.log('🎯 RESPUESTA EXACTA DEL RNDC (XML ESPECÍFICO):', data);
+                
+                // Mostrar información detallada
+                const mensaje = data.response?.mensaje || data.response?.error || 'Sin mensaje';
+                const detalles = JSON.stringify(data.response?.data || {}, null, 2);
+                
+                alert(`RESPUESTA DEL RNDC (XML ESPECÍFICO):\n\nÉxito: ${data.success}\nConsecutivo: 79824014\nMensaje: ${mensaje}\n\nDetalles completos en la consola del navegador.`);
+                
+                // También mostrar en consola con más detalle
+                console.log('📄 XML Enviado:', data.xmlSent);
+                console.log('📥 Respuesta completa:', data.response);
+                console.log('🔍 Data del RNDC:', data.response?.data);
+                
               } catch (error) {
-                console.error('Error:', error);
-                alert('Error al probar RNDC: ' + error);
+                console.error('Error al enviar XML específico:', error);
+                alert('Error al probar XML específico: ' + error);
               }
             }}
             variant="outline"
             size="sm"
           >
             <TestTube className="h-4 w-4 mr-2" />
-            Probar RNDC Real
+            Probar XML Específico
           </Button>
           
           <Button 

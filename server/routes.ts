@@ -992,6 +992,103 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test specific XML to RNDC - see exact response
+  app.post("/api/rndc/test-specific-xml", async (req, res) => {
+    try {
+      const config = await storage.getConfiguracionActiva();
+      if (!config) {
+        return res.status(400).json({ error: "No hay configuración activa" });
+      }
+
+      const soapProxy = new SOAPProxy(config.endpoint_primary, config.endpoint_backup, config.timeout);
+      
+      // Exact XML from user
+      const specificXML = `<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:BPMServicesIntf-IBPMServices">
+  <ns0:Header/>
+  <ns0:Body>
+    <ns1:AtenderMensajeRNDC>
+      <Request>
+        <root>
+          <acceso>
+            <username>TRANSPORTES@739</username>
+            <password>Alejandro_1971</password>
+          </acceso>
+          <solicitud>
+            <tipo>1</tipo>
+            <procesoid>3</procesoid>
+          </solicitud>
+          <variables>
+            <NUMNITEMPRESATRANSPORTE>9013690938</NUMNITEMPRESATRANSPORTE>
+            <CONSECUTIVOREMESA>79824014</CONSECUTIVOREMESA>
+            <CODOPERACIONTRANSPORTE>G</CODOPERACIONTRANSPORTE>
+            <CODNATURALEZACARGA>1</CODNATURALEZACARGA>
+            <CANTIDADCARGADA>7000</CANTIDADCARGADA>
+            <UNIDADMEDIDACAPACIDAD>1</UNIDADMEDIDACAPACIDAD>
+            <CODTIPOEMPAQUE>0</CODTIPOEMPAQUE>
+            <MERCANCIAREMESA>002309</MERCANCIAREMESA>
+            <DESCRIPCIONCORTAPRODUCTO>ALIMENTO PARA AVES DE CORRAL</DESCRIPCIONCORTAPRODUCTO>
+            <CODTIPOIDREMITENTE>N</CODTIPOIDREMITENTE>
+            <NUMIDREMITENTE>8600588314</NUMIDREMITENTE>
+            <CODSEDEREMITENTE>002</CODSEDEREMITENTE>
+            <CODTIPOIDDESTINATARIO>N</CODTIPOIDDESTINATARIO>
+            <NUMIDDESTINATARIO>8600588314</NUMIDDESTINATARIO>
+            <CODSEDEDESTINATARIO>009</CODSEDEDESTINATARIO>
+            <DUENOPOLIZA>N</DUENOPOLIZA>
+            <HORASPACTOCARGA>2</HORASPACTOCARGA>
+            <HORASPACTODESCARGUE>2</HORASPACTODESCARGUE>
+            <CODTIPOIDPROPIETARIO>N</CODTIPOIDPROPIETARIO>
+            <NUMIDPROPIETARIO>9013690938</NUMIDPROPIETARIO>
+            <CODSEDEPROPIETARIO>01</CODSEDEPROPIETARIO>
+            <FECHACITAPACTADACARGUE>28/05/2025</FECHACITAPACTADACARGUE>
+            <HORACITAPACTADACARGUE>08:00</HORACITAPACTADACARGUE>
+            <FECHACITAPACTADADESCARGUE>28/05/2025</FECHACITAPACTADADESCARGUE>
+            <HORACITAPACTADADESCARGUEREMESA>13:00</HORACITAPACTADADESCARGUEREMESA>
+          </variables>
+        </root>
+      </Request>
+    </ns1:AtenderMensajeRNDC>
+  </ns0:Body>
+</ns0:Envelope>`;
+
+      console.log("🎯 === ENVIANDO XML ESPECÍFICO AL RNDC ===");
+      console.log("📧 Usuario: TRANSPORTES@739");
+      console.log("🔢 Consecutivo: 79824014");
+      console.log("🏢 NIT: 9013690938");
+      console.log("📡 Endpoint:", config.endpoint_primary);
+
+      const response = await soapProxy.sendSOAPRequest(specificXML);
+      
+      console.log("📥 === RESPUESTA EXACTA DEL RNDC ===");
+      console.log("✅ Success:", response.success);
+      console.log("📄 Data (completo):", JSON.stringify(response.data, null, 2));
+      console.log("❌ Error:", response.error);
+      console.log("💬 Mensaje:", response.mensaje);
+      console.log("🔍 Raw Response (completo):", JSON.stringify(response, null, 2));
+
+      res.json({
+        success: response.success,
+        consecutivo: "79824014",
+        xmlSent: specificXML,
+        response: {
+          success: response.success,
+          data: response.data,
+          error: response.error,
+          mensaje: response.mensaje,
+          raw: response
+        },
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error("💥 ERROR ESPECÍFICO en XML:", error);
+      res.status(500).json({ 
+        error: "Error al enviar XML específico",
+        details: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
   // Test real SOAP request to RNDC - see exact response
   app.post("/api/rndc/test-real", async (req, res) => {
     try {
