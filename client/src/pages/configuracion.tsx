@@ -6,14 +6,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DataTable } from "@/components/data-table";
+import { MunicipioForm } from "@/components/forms/municipio-form";
 import { useToast } from "@/hooks/use-toast";
-import { Save, TestTube, Settings, Database, Wifi, WifiOff, MapPin } from "lucide-react";
+import { Save, TestTube, Settings, Database, Wifi, WifiOff, MapPin, Upload, Plus } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function Configuracion() {
   const [formData, setFormData] = useState<any>({});
   const [isTestingConnection, setIsTestingConnection] = useState(false);
+  const [showMunicipioForm, setShowMunicipioForm] = useState(false);
+  const [editingMunicipio, setEditingMunicipio] = useState<any>(null);
+  const [showExcelUpload, setShowExcelUpload] = useState(false);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -92,6 +97,21 @@ export default function Configuracion() {
     setIsTestingConnection(true);
     testConnectionMutation.mutate();
     setTimeout(() => setIsTestingConnection(false), 2000);
+  };
+
+  const handleAddMunicipio = () => {
+    setEditingMunicipio(null);
+    setShowMunicipioForm(true);
+  };
+
+  const handleEditMunicipio = (municipio: any) => {
+    setEditingMunicipio(municipio);
+    setShowMunicipioForm(true);
+  };
+
+  const handleMunicipioFormSuccess = () => {
+    setShowMunicipioForm(false);
+    setEditingMunicipio(null);
   };
 
   if (isLoading) {
@@ -323,6 +343,24 @@ export default function Configuracion() {
               </CardTitle>
             </CardHeader>
             <CardContent>
+              <div className="flex justify-end mb-4 space-x-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowExcelUpload(true)}
+                  className="flex items-center space-x-2"
+                >
+                  <Upload className="h-4 w-4" />
+                  <span>Cargar desde Excel</span>
+                </Button>
+                <Button 
+                  onClick={handleAddMunicipio}
+                  className="flex items-center space-x-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Agregar Municipio</span>
+                </Button>
+              </div>
+              
               <DataTable
                 title="Catálogo de Municipios RNDC"
                 data={municipios}
@@ -344,7 +382,9 @@ export default function Configuracion() {
                 searchPlaceholder="Buscar municipios por nombre o código..."
                 apiEndpoint="/api/municipios"
                 queryKey={["/api/municipios"]}
-                hideActions={true}
+                onAdd={handleAddMunicipio}
+                onEdit={handleEditMunicipio}
+                onView={(municipio) => console.log("Ver municipio:", municipio)}
               />
             </CardContent>
           </Card>
@@ -406,6 +446,72 @@ export default function Configuracion() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Diálogo para formulario de municipio */}
+      <Dialog open={showMunicipioForm} onOpenChange={setShowMunicipioForm}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {editingMunicipio ? "Editar Municipio" : "Nuevo Municipio"}
+            </DialogTitle>
+          </DialogHeader>
+          <MunicipioForm
+            municipio={editingMunicipio}
+            onSuccess={handleMunicipioFormSuccess}
+            onCancel={() => setShowMunicipioForm(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Diálogo para carga masiva desde Excel */}
+      <Dialog open={showExcelUpload} onOpenChange={setShowExcelUpload}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Cargar Municipios desde Excel</DialogTitle>
+          </DialogHeader>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="excel-file">Archivo Excel</Label>
+                  <Input
+                    id="excel-file"
+                    type="file"
+                    accept=".xlsx,.xls,.csv"
+                    className="mt-1"
+                  />
+                  <p className="text-sm text-gray-500 mt-2">
+                    Formatos soportados: .xlsx, .xls, .csv
+                  </p>
+                </div>
+                
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-blue-800 mb-2">Formato requerido:</h4>
+                  <div className="text-sm text-blue-700">
+                    <p><strong>Columnas necesarias:</strong></p>
+                    <ul className="list-disc list-inside mt-1 space-y-1">
+                      <li><strong>CODIGO</strong> - Código DANE del municipio</li>
+                      <li><strong>NOMBRE</strong> - Nombre del municipio</li>
+                      <li><strong>DEPARTAMENTO</strong> - Nombre del departamento</li>
+                      <li><strong>ACTIVO</strong> - "SI" o "NO" (opcional, por defecto "SI")</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setShowExcelUpload(false)}>
+                    Cancelar
+                  </Button>
+                  <Button>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Cargar Municipios
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
