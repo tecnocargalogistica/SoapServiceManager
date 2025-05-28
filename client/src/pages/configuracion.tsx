@@ -199,6 +199,28 @@ export default function Configuracion() {
             )}
           </Badge>
           
+          <Button
+            onClick={async () => {
+              try {
+                const response = await fetch('/api/rndc/test-real', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                console.log('🎯 RESPUESTA COMPLETA DEL RNDC:', data);
+                alert(`RESPUESTA DEL RNDC:\n\nÉxito: ${data.success}\nConsecutivo: ${data.consecutivo}\nMensaje: ${data.response?.mensaje || 'Sin mensaje'}\n\nRevisa la consola del navegador para ver la respuesta completa.`);
+              } catch (error) {
+                console.error('Error:', error);
+                alert('Error al probar RNDC: ' + error);
+              }
+            }}
+            variant="outline"
+            size="sm"
+          >
+            <TestTube className="h-4 w-4 mr-2" />
+            Probar RNDC Real
+          </Button>
+          
           <Button 
             variant="outline"
             onClick={handleTestConnection}
