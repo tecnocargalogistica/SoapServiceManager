@@ -666,7 +666,7 @@ export function VehiculoForm({ vehiculo, onSuccess, onCancel, onCreateTercero }:
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="NO_APLICA">No aplica / Mismo propietario</SelectItem>
-                            {terceros.filter(t => t.activo).map((tercero) => (
+                            {terceros.filter(t => t.activo && t.numero_documento && t.numero_documento.trim() !== '').map((tercero) => (
                               <SelectItem key={tercero.id} value={tercero.numero_documento}>
                                 {tercero.razon_social || `${tercero.nombre} ${tercero.apellido || ''}`.trim()} 
                                 ({tercero.tipo_documento}-{tercero.numero_documento})
