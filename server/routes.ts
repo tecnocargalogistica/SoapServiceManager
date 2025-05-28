@@ -812,6 +812,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update municipio
+  app.patch("/api/municipios/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const municipio = await storage.updateMunicipio(id, req.body);
+      res.json(municipio);
+    } catch (error) {
+      console.error("Error updating municipio:", error);
+      res.status(500).json({ error: "Error al actualizar municipio" });
+    }
+  });
+
+  // Bulk create municipios from Excel
+  app.post("/api/municipios/bulk", upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No se encontró archivo" });
+      }
+
+      const csvContent = req.file.buffer.toString('utf-8');
+      const rows = csvContent.split('\n').slice(1); // Skip header
+      
+      const results = [];
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i].trim();
+        if (!row) continue;
+
+        try {
+          const [codigo, nombre, departamento, activo] = row.split(',').map(cell => cell.trim().replace(/"/g, ''));
+          
+          if (!codigo || !nombre || !departamento) {
+            throw new Error("Faltan campos requeridos");
+          }
+
+          const municipioData = {
+            codigo,
+            nombre,
+            departamento,
+            activo: activo?.toUpperCase() === 'NO' ? false : true
+          };
+
+          const existingMunicipio = await storage.getMunicipioByCodigo(codigo);
+          if (existingMunicipio) {
+            throw new Error(`Municipio con código ${codigo} ya existe`);
+          }
+
+          const municipio = await storage.createMunicipio(municipioData);
+          results.push({ success: true, row: i + 2, municipio });
+          successCount++;
+
+        } catch (error) {
+          results.push({ 
+            success: false, 
+            row: i + 2, 
+            error: String(error),
+            data: row 
+          });
+          errorCount++;
+        }
+      }
+
+      res.json({
+        success: true,
+        totalProcessed: results.length,
+        successCount,
+        errorCount,
+        results
+      });
+
+    } catch (error) {
+      console.error("Error in bulk municipios upload:", error);
+      res.status(500).json({ error: "Error al procesar archivo de municipios" });
+    }
+  });
+
   // ===== CONSECUTIVOS ROUTES =====
   
   // Get all consecutivos

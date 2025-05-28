@@ -178,6 +178,17 @@ export class DatabaseStorage implements IStorage {
     return municipio;
   }
 
+  async updateMunicipio(id: number, updates: Partial<InsertMunicipio>): Promise<Municipio> {
+    const [municipio] = await db.update(municipios)
+      .set(updates)
+      .where(eq(municipios.id, id))
+      .returning();
+    if (!municipio) {
+      throw new Error(`Municipio con ID ${id} no encontrado`);
+    }
+    return municipio;
+  }
+
   // Remesas
   async getRemesas(): Promise<Remesa[]> {
     return await db.select().from(remesas).orderBy(desc(remesas.created_at));

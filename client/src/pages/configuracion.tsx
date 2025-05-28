@@ -19,6 +19,7 @@ export default function Configuracion() {
   const [showMunicipioForm, setShowMunicipioForm] = useState(false);
   const [editingMunicipio, setEditingMunicipio] = useState<any>(null);
   const [showExcelUpload, setShowExcelUpload] = useState(false);
+  const [uploadingExcel, setUploadingExcel] = useState(false);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -112,6 +113,47 @@ export default function Configuracion() {
   const handleMunicipioFormSuccess = () => {
     setShowMunicipioForm(false);
     setEditingMunicipio(null);
+  };
+
+  const handleExcelUpload = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const file = formData.get('file') as File;
+    
+    if (!file) {
+      toast({ title: "Por favor selecciona un archivo", variant: "destructive" });
+      return;
+    }
+
+    setUploadingExcel(true);
+    
+    try {
+      const uploadFormData = new FormData();
+      uploadFormData.append('file', file);
+      
+      const response = await fetch('/api/municipios/bulk', {
+        method: 'POST',
+        body: uploadFormData,
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        toast({ 
+          title: "Municipios cargados exitosamente",
+          description: `${result.successCount} municipios creados, ${result.errorCount} errores`
+        });
+        queryClient.invalidateQueries({ queryKey: ["/api/municipios"] });
+        setShowExcelUpload(false);
+      } else {
+        toast({ title: "Error al procesar archivo", variant: "destructive" });
+      }
+      
+    } catch (error) {
+      toast({ title: "Error al cargar archivo", variant: "destructive" });
+    } finally {
+      setUploadingExcel(false);
+    }
   };
 
   if (isLoading) {

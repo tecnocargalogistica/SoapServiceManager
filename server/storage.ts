@@ -54,6 +54,7 @@ export interface IStorage {
   getMunicipios(): Promise<Municipio[]>;
   getMunicipioByCodigo(codigo: string): Promise<Municipio | undefined>;
   createMunicipio(municipio: InsertMunicipio): Promise<Municipio>;
+  updateMunicipio(id: number, municipio: Partial<InsertMunicipio>): Promise<Municipio>;
 
   // Remesas
   getRemesas(): Promise<Remesa[]>;
@@ -417,6 +418,15 @@ export class MemStorage implements IStorage {
     const municipio: Municipio = { ...insertMunicipio, id };
     this.municipiosMap.set(id, municipio);
     return municipio;
+  }
+
+  async updateMunicipio(id: number, updates: Partial<InsertMunicipio>): Promise<Municipio> {
+    const existing = this.municipiosMap.get(id);
+    if (!existing) throw new Error("Municipio no encontrado");
+    
+    const updated: Municipio = { ...existing, ...updates };
+    this.municipiosMap.set(id, updated);
+    return updated;
   }
 
   // Remesas
