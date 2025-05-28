@@ -520,6 +520,11 @@ export default function Configuracion() {
       {/* Diálogo para formulario de consecutivo */}
       <Dialog open={showConsecutivoForm} onOpenChange={setShowConsecutivoForm}>
         <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              {editingConsecutivo ? "Editar Consecutivo" : "Nuevo Consecutivo"}
+            </DialogTitle>
+          </DialogHeader>
           <ConsecutivoForm
             consecutivo={editingConsecutivo}
             onSuccess={() => {

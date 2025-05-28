@@ -52,7 +52,7 @@ export function ConsecutivoForm({ consecutivo, onSuccess, onCancel }: Consecutiv
       
       const method = consecutivo ? "PATCH" : "POST";
       
-      const response = await apiRequest(method, endpoint, data);
+      const response = await apiRequest(endpoint, method, data);
       return response.json();
     },
     onSuccess: () => {
