@@ -263,6 +263,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           const xml = xmlGenerator.generateRemesaXML(xmlData);
 
+          console.log(`📄 === XML GENERADO PARA REMESA ${consecutivo} ===`);
+          console.log(xml);
+          console.log(`📄 === FIN XML REMESA ${consecutivo} ===`);
+
           // Store document
           const documento = await storage.createDocumento({
             tipo: "remesa",
