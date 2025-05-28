@@ -54,7 +54,7 @@ export class XMLGenerator {
       <Request>
         <root>
           <acceso>
-            <username>${data.config.usuario}</username>
+            <usuario>${data.config.usuario}</usuario>
             <password>${data.config.password}</password>
           </acceso>
           <solicitud>
