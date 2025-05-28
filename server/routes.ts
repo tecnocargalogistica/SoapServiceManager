@@ -123,16 +123,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No se ha enviado ningún archivo" });
       }
 
+      console.log(`📁 Archivo recibido: ${req.file.originalname}, tamaño: ${req.file.size} bytes`);
+      console.log(`📁 Tipo de archivo detectado: ${req.file.originalname.endsWith('.csv') ? 'CSV' : 'Excel'}`);
+      
+      if (req.file.originalname.endsWith('.csv')) {
+        console.log(`📋 Contenido CSV preview: ${req.file.buffer.toString('utf8').substring(0, 200)}...`);
+      }
+
       // Log upload activity
       await storage.createLogActividad({
         tipo: "info",
         modulo: "excel-upload",
-        mensaje: `Archivo Excel cargado: ${req.file.originalname}`,
+        mensaje: `Archivo cargado: ${req.file.originalname}`,
         detalles: { fileSize: req.file.size, originalName: req.file.originalname }
       });
 
       // Parse Excel data using buffer and filename
       const excelRows = excelProcessor.parseExcelData(req.file.buffer, req.file.originalname);
+      console.log(`📊 Filas procesadas: ${excelRows.length}`);
+      
+      if (excelRows.length > 0) {
+        console.log(`📄 Primera fila de datos:`, JSON.stringify(excelRows[0], null, 2));
+      }
       
       // Validate batch
       const validationResult = await excelProcessor.validateBatch(excelRows);
