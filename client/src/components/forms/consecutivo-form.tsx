@@ -53,7 +53,10 @@ export function ConsecutivoForm({ consecutivo, onSuccess, onCancel }: Consecutiv
       const method = consecutivo ? "PATCH" : "POST";
       
       const response = await apiRequest(endpoint, method, data);
-      return response.json();
+      if (!response.ok) {
+        throw new Error(`Error del servidor: ${response.status}`);
+      }
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/consecutivos"] });
