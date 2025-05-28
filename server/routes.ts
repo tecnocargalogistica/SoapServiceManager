@@ -217,6 +217,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
           
           console.log(`🚛 Vehículo encontrado: ${vehiculo.placa}, capacidad real de BD: ${vehiculo.capacidad_carga}`);
+          
+          // FORCE using real database capacity - override any memory/cache issues
+          const capacidadReal = parseInt(vehiculo.capacidad_carga.toString());
+          console.log(`✅ Forzando capacidad real de BD: ${capacidadReal}`);
 
           // Get next consecutive
           const consecutivo = await storage.getNextConsecutivo("remesa");
@@ -241,7 +245,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             consecutivo,
             codigoSedeRemitente: sedeRemitente.codigo_sede, // PLANTA
             codigoSedeDestinatario: sedeDestinatario.codigo_sede, // GRANJA
-            cantidadCargada: vehiculo.capacidad_carga,
+            cantidadCargada: capacidadReal, // Using forced real capacity from database
             fechaCitaCargue: fechaCita,
             fechaCitaDescargue: fechaCita,
             conductorId: row.IDENTIFICACION,
