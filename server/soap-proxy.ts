@@ -23,12 +23,21 @@ export class SOAPProxy {
       try {
         console.log(`Intentando envío a endpoint: ${endpoint}`);
         
-        const response = await fetch(endpoint, {
+        // Construir URL correcta para SOAP si solo es la base
+        let soapUrl = endpoint;
+        if (!soapUrl.includes('?') && !soapUrl.endsWith('/')) {
+          soapUrl = `${endpoint}?intf=IBPMServices`;
+        }
+        
+        console.log(`📡 Enviando SOAP a: ${soapUrl}`);
+        
+        const response = await fetch(soapUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'text/xml; charset=utf-8',
-            'SOAPAction': '',
-            'Accept': 'text/xml'
+            'SOAPAction': 'urn:BPMServicesIntf-IBPMServices#AtenderMensajeRNDC',
+            'Accept': 'text/xml, application/xml',
+            'User-Agent': 'RNDC-Client/1.0'
           },
           body: xmlContent,
           signal: AbortSignal.timeout(this.timeout)
