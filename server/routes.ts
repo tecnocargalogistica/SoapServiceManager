@@ -992,6 +992,108 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test real SOAP request to RNDC - see exact response
+  app.post("/api/rndc/test-real", async (req, res) => {
+    try {
+      const config = await storage.getConfiguracionActiva();
+      if (!config) {
+        return res.status(400).json({ error: "No hay configuración activa" });
+      }
+
+      const soapProxy = new SOAPProxy(config.endpoint_primary, config.endpoint_backup, config.timeout);
+      const consecutivo = await storage.getNextConsecutivo("remesa");
+      
+      // Generate test XML with real credentials
+      const testXML = `<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:BPMServicesIntf-IBPMServices">
+  <ns0:Header/>
+  <ns0:Body>
+    <ns1:AtenderMensajeRNDC>
+      <Request>
+        <root>
+          <acceso>
+            <username>${config.usuario}</username>
+            <password>${config.password}</password>
+          </acceso>
+          <solicitud>
+            <tipo>1</tipo>
+            <procesoid>3</procesoid>
+          </solicitud>
+          <variables>
+            <NUMNITEMPRESATRANSPORTE>${config.empresa_nit}</NUMNITEMPRESATRANSPORTE>
+            <CONSECUTIVOREMESA>${consecutivo}</CONSECUTIVOREMESA>
+            <CODOPERACIONTRANSPORTE>G</CODOPERACIONTRANSPORTE>
+            <CODNATURALEZACARGA>1</CODNATURALEZACARGA>
+            <CANTIDADCARGADA>7000</CANTIDADCARGADA>
+            <UNIDADMEDIDACAPACIDAD>1</UNIDADMEDIDACAPACIDAD>
+            <CODTIPOEMPAQUE>0</CODTIPOEMPAQUE>
+            <MERCANCIAREMESA>002309</MERCANCIAREMESA>
+            <DESCRIPCIONCORTAPRODUCTO>ALIMENTO PARA AVES DE CORRAL</DESCRIPCIONCORTAPRODUCTO>
+            <CODTIPOIDREMITENTE>N</CODTIPOIDREMITENTE>
+            <NUMIDREMITENTE>8600588314</NUMIDREMITENTE>
+            <CODSEDEREMITENTE>002</CODSEDEREMITENTE>
+            <CODTIPOIDDESTINATARIO>N</CODTIPOIDDESTINATARIO>
+            <NUMIDDESTINATARIO>8600588314</NUMIDDESTINATARIO>
+            <CODSEDEDESTINATARIO>009</CODSEDEDESTINATARIO>
+            <DUENOPOLIZA>N</DUENOPOLIZA>
+            <HORASPACTOCARGA>2</HORASPACTOCARGA>
+            <HORASPACTODESCARGUE>2</HORASPACTODESCARGUE>
+            <CODTIPOIDPROPIETARIO>N</CODTIPOIDPROPIETARIO>
+            <NUMIDPROPIETARIO>${config.empresa_nit}</NUMIDPROPIETARIO>
+            <CODSEDEPROPIETARIO>01</CODSEDEPROPIETARIO>
+            <FECHACITAPACTADACARGUE>28/05/2025</FECHACITAPACTADACARGUE>
+            <HORACITAPACTADACARGUE>08:00</HORACITAPACTADACARGUE>
+            <FECHACITAPACTADADESCARGUE>28/05/2025</FECHACITAPACTADADESCARGUE>
+            <HORACITAPACTADADESCARGUEREMESA>13:00</HORACITAPACTADADESCARGUEREMESA>
+          </variables>
+        </root>
+      </Request>
+    </ns1:AtenderMensajeRNDC>
+  </ns0:Body>
+</ns0:Envelope>`;
+
+      console.log("🚀 === ENVIANDO SOLICITUD AL RNDC ===");
+      console.log("📧 Usuario:", config.usuario);
+      console.log("🔢 Consecutivo:", consecutivo);
+      console.log("🏢 NIT:", config.empresa_nit);
+      console.log("📡 Endpoint:", config.endpoint_primary);
+
+      const response = await soapProxy.sendSOAPRequest(testXML);
+      
+      console.log("📥 === RESPUESTA COMPLETA DEL RNDC ===");
+      console.log("✅ Success:", response.success);
+      console.log("📄 Data:", JSON.stringify(response.data, null, 2));
+      console.log("❌ Error:", response.error);
+      console.log("💬 Mensaje:", response.mensaje);
+      console.log("🔍 Raw Response:", response);
+
+      res.json({
+        success: response.success,
+        consecutivo: consecutivo,
+        request: {
+          usuario: config.usuario,
+          empresa_nit: config.empresa_nit,
+          endpoint: config.endpoint_primary
+        },
+        response: {
+          success: response.success,
+          data: response.data,
+          error: response.error,
+          mensaje: response.mensaje,
+          raw: response
+        },
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error("💥 ERROR COMPLETO en prueba RNDC:", error);
+      res.status(500).json({ 
+        error: "Error al enviar solicitud al RNDC",
+        details: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
