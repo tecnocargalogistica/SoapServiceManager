@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DataTable } from "@/components/data-table";
 import { useToast } from "@/hooks/use-toast";
-import { Save, TestTube, Settings, Database, Wifi, WifiOff } from "lucide-react";
+import { Save, TestTube, Settings, Database, Wifi, WifiOff, MapPin } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function Configuracion() {
@@ -31,6 +32,10 @@ export default function Configuracion() {
 
   const { data: consecutivos } = useQuery({
     queryKey: ["/api/consecutivos"]
+  });
+
+  const { data: municipios = [] } = useQuery({
+    queryKey: ["/api/municipios"]
   });
 
   const updateConfigMutation = useMutation({
@@ -136,7 +141,7 @@ export default function Configuracion() {
       </div>
 
       <Tabs defaultValue="soap" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="soap" className="flex items-center space-x-2">
             <Settings className="h-4 w-4" />
             <span>Configuración SOAP</span>
@@ -144,6 +149,10 @@ export default function Configuracion() {
           <TabsTrigger value="consecutivos" className="flex items-center space-x-2">
             <Database className="h-4 w-4" />
             <span>Consecutivos</span>
+          </TabsTrigger>
+          <TabsTrigger value="municipios" className="flex items-center space-x-2">
+            <MapPin className="h-4 w-4" />
+            <span>Municipios</span>
           </TabsTrigger>
           <TabsTrigger value="sistema" className="flex items-center space-x-2">
             <Settings className="h-4 w-4" />
@@ -300,6 +309,43 @@ export default function Configuracion() {
                   </tbody>
                 </table>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Municipios */}
+        <TabsContent value="municipios">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <MapPin className="h-5 w-5" />
+                <span>Gestión de Municipios</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DataTable
+                title="Catálogo de Municipios RNDC"
+                data={municipios}
+                columns={[
+                  { key: "codigo", title: "Código DANE" },
+                  { key: "nombre", title: "Municipio" },
+                  { key: "departamento", title: "Departamento" },
+                  { 
+                    key: "activo", 
+                    title: "Estado",
+                    render: (value: boolean) => (
+                      <Badge variant={value ? "default" : "secondary"}>
+                        {value ? "Activo" : "Inactivo"}
+                      </Badge>
+                    )
+                  }
+                ]}
+                isLoading={false}
+                searchPlaceholder="Buscar municipios por nombre o código..."
+                apiEndpoint="/api/municipios"
+                queryKey={["/api/municipios"]}
+                hideActions={true}
+              />
             </CardContent>
           </Card>
         </TabsContent>
