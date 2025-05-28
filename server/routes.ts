@@ -131,11 +131,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         detalles: { fileSize: req.file.size, originalName: req.file.originalname }
       });
 
-      // Convert buffer to string (assuming CSV format for simplicity)
-      const csvContent = req.file.buffer.toString('utf8');
-      
-      // Parse Excel data
-      const excelRows = excelProcessor.parseExcelData(csvContent);
+      // Parse Excel data using buffer and filename
+      const excelRows = excelProcessor.parseExcelData(req.file.buffer, req.file.originalname);
       
       // Validate batch
       const validationResult = await excelProcessor.validateBatch(excelRows);

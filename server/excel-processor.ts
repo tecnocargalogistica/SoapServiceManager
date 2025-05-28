@@ -1,3 +1,5 @@
+import * as XLSX from 'xlsx';
+
 export interface ExcelRow {
   GRANJA: string;
   PLANTA: string;
@@ -28,37 +30,84 @@ export interface BatchProcessingResult {
 
 export class ExcelProcessor {
   
-  parseExcelData(csvContent: string): ExcelRow[] {
-    const lines = csvContent.split('\n');
-    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-    const rows: ExcelRow[] = [];
+  parseExcelData(buffer: Buffer, filename: string): ExcelRow[] {
+    try {
+      let workbook: XLSX.WorkBook;
+      
+      // Handle different file types
+      if (filename.endsWith('.csv')) {
+        const csvContent = buffer.toString('utf8');
+        const lines = csvContent.split('\n');
+        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+        const rows: ExcelRow[] = [];
 
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) continue;
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!line) continue;
 
-      const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
-      const row: any = {};
+          const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+          const row: any = {};
 
-      headers.forEach((header, index) => {
-        row[header] = values[index] || '';
-      });
+          headers.forEach((header, index) => {
+            row[header] = values[index] || '';
+          });
 
-      // Ensure required fields exist
-      if (row.GRANJA || row.PLANTA || row.PLACA) {
-        rows.push({
-          GRANJA: row.GRANJA || '',
-          PLANTA: row.PLANTA || '',
-          PLACA: row.PLACA || '',
-          FECHA_CITA: row.FECHA_CITA || '',
-          IDENTIFICACION: row.IDENTIFICACION || '',
-          TONELADAS: parseFloat(row.TONELADAS) || 0,
-          ...row
-        });
+          // Ensure required fields exist
+          if (row.GRANJA || row.PLANTA || row.PLACA) {
+            rows.push({
+              GRANJA: row.GRANJA || '',
+              PLANTA: row.PLANTA || '',
+              PLACA: row.PLACA || '',
+              FECHA_CITA: row.FECHA_CITA || '',
+              IDENTIFICACION: row.IDENTIFICACION || '',
+              TONELADAS: parseFloat(row.TONELADAS) || 0
+            });
+          }
+        }
+        return rows;
+      } else {
+        // Handle Excel files (.xlsx, .xls)
+        workbook = XLSX.read(buffer, { type: 'buffer' });
       }
+      
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      
+      if (jsonData.length === 0) {
+        return [];
+      }
+      
+      const headers = jsonData[0] as string[];
+      const rows: ExcelRow[] = [];
+      
+      for (let i = 1; i < jsonData.length; i++) {
+        const rowData = jsonData[i] as any[];
+        if (!rowData || rowData.length === 0) continue;
+        
+        const row: any = {};
+        headers.forEach((header, index) => {
+          row[header] = rowData[index] || '';
+        });
+        
+        // Ensure required fields exist
+        if (row.GRANJA || row.PLANTA || row.PLACA) {
+          rows.push({
+            GRANJA: String(row.GRANJA || '').trim(),
+            PLANTA: String(row.PLANTA || '').trim(),
+            PLACA: String(row.PLACA || '').trim(),
+            FECHA_CITA: String(row.FECHA_CITA || '').trim(),
+            IDENTIFICACION: String(row.IDENTIFICACION || '').trim(),
+            TONELADAS: parseFloat(row.TONELADAS) || 0
+          });
+        }
+      }
+      
+      return rows;
+    } catch (error) {
+      console.error('Error parsing Excel data:', error);
+      return [];
     }
-
-    return rows;
   }
 
   validateExcelRow(row: ExcelRow, rowNumber: number): ProcessingResult {
