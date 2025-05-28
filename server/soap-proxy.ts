@@ -23,13 +23,10 @@ export class SOAPProxy {
       try {
         console.log(`Intentando envío a endpoint: ${endpoint}`);
         
-        // Usar la URL exacta que funciona en SoapUI
-        let soapUrl = 'http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices';
-        console.log(`🎯 Usando endpoint verificado en SoapUI`);
+        console.log(`🎯 Usando endpoint personalizado: ${endpoint}`);
+        console.log(`📡 Enviando SOAP a: ${endpoint}`);
         
-        console.log(`📡 Enviando SOAP a: ${soapUrl}`);
-        
-        const response = await fetch(soapUrl, {
+        const response = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'text/xml; charset=utf-8',
