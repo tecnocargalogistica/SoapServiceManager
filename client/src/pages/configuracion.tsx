@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DataTable } from "@/components/data-table";
 import { MunicipioForm } from "@/components/forms/municipio-form";
+import { ConsecutivoForm } from "@/components/forms/consecutivo-form";
 import { useToast } from "@/hooks/use-toast";
 import { Save, TestTube, Settings, Database, Wifi, WifiOff, MapPin, Upload, Plus } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
@@ -20,6 +21,8 @@ export default function Configuracion() {
   const [editingMunicipio, setEditingMunicipio] = useState<any>(null);
   const [showExcelUpload, setShowExcelUpload] = useState(false);
   const [uploadingExcel, setUploadingExcel] = useState(false);
+  const [showConsecutivoForm, setShowConsecutivoForm] = useState(false);
+  const [editingConsecutivo, setEditingConsecutivo] = useState<any>(null);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -108,6 +111,11 @@ export default function Configuracion() {
   const handleEditMunicipio = (municipio: any) => {
     setEditingMunicipio(municipio);
     setShowMunicipioForm(true);
+  };
+
+  const handleEditConsecutivo = (consecutivo: any) => {
+    setEditingConsecutivo(consecutivo);
+    setShowConsecutivoForm(true);
   };
 
   const handleMunicipioFormSuccess = () => {
@@ -362,7 +370,11 @@ export default function Configuracion() {
                           {consecutivo.prefijo || "-"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleEditConsecutivo(consecutivo)}
+                          >
                             Editar
                           </Button>
                         </td>
@@ -501,6 +513,24 @@ export default function Configuracion() {
             municipio={editingMunicipio}
             onSuccess={handleMunicipioFormSuccess}
             onCancel={() => setShowMunicipioForm(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Diálogo para formulario de consecutivo */}
+      <Dialog open={showConsecutivoForm} onOpenChange={setShowConsecutivoForm}>
+        <DialogContent className="max-w-lg">
+          <ConsecutivoForm
+            consecutivo={editingConsecutivo}
+            onSuccess={() => {
+              setShowConsecutivoForm(false);
+              setEditingConsecutivo(null);
+              queryClient.invalidateQueries({ queryKey: ["/api/consecutivos"] });
+            }}
+            onCancel={() => {
+              setShowConsecutivoForm(false);
+              setEditingConsecutivo(null);
+            }}
           />
         </DialogContent>
       </Dialog>
