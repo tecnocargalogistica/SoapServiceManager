@@ -953,6 +953,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update consecutivo
+  app.patch("/api/consecutivos/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updated = await storage.updateConsecutivo(id, req.body);
+      res.json(updated);
+    } catch (error) {
+      console.error("Error updating consecutivo:", error);
+      res.status(500).json({ error: "Error al actualizar consecutivo" });
+    }
+  });
+
   // Test RNDC connection
   app.get("/api/rndc/test", async (req, res) => {
     try {
