@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Download, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 
 interface XMLPreviewProps {
   data: any;
@@ -15,12 +16,18 @@ interface XMLPreviewProps {
 export default function XMLPreview({ data, type, config, className }: XMLPreviewProps) {
   const { toast } = useToast();
 
+  // Obtener el próximo consecutivo del sistema
+  const { data: consecutivos } = useQuery({
+    queryKey: ['/api/consecutivos'],
+    enabled: type === "remesa"
+  });
+
   const xmlContent = useMemo(() => {
     if (!data || !config) return "";
 
     switch (type) {
       case "remesa":
-        return generateRemesaXML(data, config);
+        return generateRemesaXML(data, config, consecutivos);
       case "manifiesto":
         return generateManifiestoXML(data, config);
       case "cumplimiento":
@@ -28,7 +35,7 @@ export default function XMLPreview({ data, type, config, className }: XMLPreview
       default:
         return "";
     }
-  }, [data, type, config]);
+  }, [data, type, config, consecutivos]);
 
   const handleCopyXML = async () => {
     try {
@@ -123,7 +130,7 @@ export default function XMLPreview({ data, type, config, className }: XMLPreview
 }
 
 // XML Generation Functions
-function generateRemesaXML(data: any, config: any): string {
+function generateRemesaXML(data: any, config: any, consecutivos?: any): string {
   const formatDate = (date: string) => {
     // If date is already in DD/MM/YYYY format, use it directly
     if (date && date.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
@@ -139,6 +146,10 @@ function generateRemesaXML(data: any, config: any): string {
 
   // Get vehicle capacity - default to 7000 if not specified
   const capacidadVehiculo = data.capacidad_vehiculo || 7000;
+  
+  // Get next consecutive from system
+  const remesaConsecutivo = consecutivos?.find((c: any) => c.tipo === 'remesa');
+  const nextConsecutivo = remesaConsecutivo ? (remesaConsecutivo.ultimo_numero + 1).toString() : new Date().getFullYear().toString() + (new Date().getMonth() + 1).toString().padStart(2, '0') + new Date().getDate().toString().padStart(2, '0') + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
   
   // Format fecha properly
   const fechaFormateada = data.FECHA_CITA ? formatDate(data.FECHA_CITA) : '28/05/2025';
@@ -159,7 +170,7 @@ function generateRemesaXML(data: any, config: any): string {
           </solicitud>
           <variables>
             <NUMNITEMPRESATRANSPORTE>${config.empresa_nit}</NUMNITEMPRESATRANSPORTE>
-            <CONSECUTIVOREMESA>${new Date().getFullYear()}${(new Date().getMonth() + 1).toString().padStart(2, '0')}${new Date().getDate().toString().padStart(2, '0')}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}</CONSECUTIVOREMESA>
+            <CONSECUTIVOREMESA>${nextConsecutivo}</CONSECUTIVOREMESA>
             <CODOPERACIONTRANSPORTE>G</CODOPERACIONTRANSPORTE>
             <CODNATURALEZACARGA>1</CODNATURALEZACARGA>
             <CANTIDADCARGADA>${capacidadVehiculo}</CANTIDADCARGADA>
