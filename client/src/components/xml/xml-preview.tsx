@@ -125,9 +125,23 @@ export default function XMLPreview({ data, type, config, className }: XMLPreview
 // XML Generation Functions
 function generateRemesaXML(data: any, config: any): string {
   const formatDate = (date: string) => {
+    // If date is already in DD/MM/YYYY format, use it directly
+    if (date && date.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+      return date;
+    }
+    // Otherwise try to parse and format
     const d = new Date(date);
+    if (isNaN(d.getTime())) {
+      return '28/05/2025'; // Fallback to a valid date
+    }
     return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
   };
+
+  // Get vehicle capacity - default to 7000 if not specified
+  const capacidadVehiculo = data.capacidad_vehiculo || 7000;
+  
+  // Format fecha properly
+  const fechaFormateada = data.FECHA_CITA ? formatDate(data.FECHA_CITA) : '28/05/2025';
 
   return `<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:BPMServicesIntf-IBPMServices">
   <ns0:Header/>
@@ -148,7 +162,7 @@ function generateRemesaXML(data: any, config: any): string {
             <CONSECUTIVOREMESA>20250419</CONSECUTIVOREMESA>
             <CODOPERACIONTRANSPORTE>G</CODOPERACIONTRANSPORTE>
             <CODNATURALEZACARGA>1</CODNATURALEZACARGA>
-            <CANTIDADCARGADA>10000</CANTIDADCARGADA>
+            <CANTIDADCARGADA>${capacidadVehiculo}</CANTIDADCARGADA>
             <UNIDADMEDIDACAPACIDAD>1</UNIDADMEDIDACAPACIDAD>
             <CODTIPOEMPAQUE>0</CODTIPOEMPAQUE>
             <MERCANCIAREMESA>002309</MERCANCIAREMESA>
@@ -165,9 +179,9 @@ function generateRemesaXML(data: any, config: any): string {
             <CODTIPOIDPROPIETARIO>N</CODTIPOIDPROPIETARIO>
             <NUMIDPROPIETARIO>${config.empresa_nit}</NUMIDPROPIETARIO>
             <CODSEDEPROPIETARIO>01</CODSEDEPROPIETARIO>
-            <FECHACITAPACTADACARGUE>${data.FECHA_CITA ? formatDate(data.FECHA_CITA) : '19/04/2025'}</FECHACITAPACTADACARGUE>
+            <FECHACITAPACTADACARGUE>${fechaFormateada}</FECHACITAPACTADACARGUE>
             <HORACITAPACTADACARGUE>08:00</HORACITAPACTADACARGUE>
-            <FECHACITAPACTADADESCARGUE>${data.FECHA_CITA ? formatDate(data.FECHA_CITA) : '19/04/2025'}</FECHACITAPACTADADESCARGUE>
+            <FECHACITAPACTADADESCARGUE>${fechaFormateada}</FECHACITAPACTADADESCARGUE>
             <HORACITAPACTADADESCARGUEREMESA>13:00</HORACITAPACTADADESCARGUEREMESA>
           </variables>
         </root>
