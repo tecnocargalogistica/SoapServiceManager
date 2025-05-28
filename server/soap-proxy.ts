@@ -82,17 +82,22 @@ export class SOAPProxy {
 
   private parseSOAPResponse(responseXml: string): any {
     try {
-      // Basic XML parsing - in a real implementation, you'd use a proper XML parser
-      const isSuccess = responseXml.includes('exitoso') || responseXml.includes('SUCCESS') || !responseXml.includes('ERROR');
+      // Check for specific RNDC success indicators
+      const hasIngresoId = responseXml.includes('<ingresoid>');
+      const hasErrorMsg = responseXml.includes('<ErrorMSG>') || responseXml.includes('Error RNDC');
+      const isSuccess = hasIngresoId && !hasErrorMsg;
       
       // Extract relevant information from the response
       const consecutivoMatch = responseXml.match(/<CONSECUTIVO[^>]*>([^<]+)</i);
       const mensajeMatch = responseXml.match(/<MENSAJE[^>]*>([^<]+)</i);
+      const ingresoIdMatch = responseXml.match(/<ingresoid[^>]*>([^<]+)</i);
+      const errorMatch = responseXml.match(/<ErrorMSG[^>]*>([^<]+)</i);
       
       return {
         success: isSuccess,
         consecutivo: consecutivoMatch ? consecutivoMatch[1] : null,
-        mensaje: mensajeMatch ? mensajeMatch[1] : 'Respuesta procesada',
+        ingresoId: ingresoIdMatch ? ingresoIdMatch[1] : null,
+        mensaje: errorMatch ? errorMatch[1] : (mensajeMatch ? mensajeMatch[1] : 'Respuesta procesada'),
         rawResponse: responseXml
       };
     } catch (error) {

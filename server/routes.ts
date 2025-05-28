@@ -341,12 +341,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
 
           results.push({
-            success: true,
+            success: soapResponse ? soapResponse.success : true,
             consecutivo,
             granja: row.GRANJA,
             placa: row.PLACA,
             soapResponse,
-            xml
+            xml,
+            respuesta_xml: soapResponse ? soapResponse.data?.rawResponse : null,
+            mensaje_rndc: soapResponse ? soapResponse.mensaje : null,
+            ingreso_id: soapResponse ? soapResponse.data?.ingresoId : null
           });
 
           successCount++;

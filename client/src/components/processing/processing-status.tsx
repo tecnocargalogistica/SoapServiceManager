@@ -154,6 +154,9 @@ export default function ProcessingStatus({ result, type }: ProcessingStatusProps
                     Respuesta
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Respuesta XML
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Acciones
                   </th>
                 </tr>
@@ -190,9 +193,36 @@ export default function ProcessingStatus({ result, type }: ProcessingStatusProps
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 max-w-48 truncate">
                       {item.success 
-                        ? (item.soapResponse?.mensaje || "Procesado exitosamente")
+                        ? (item.mensaje_rndc || item.soapResponse?.mensaje || "Procesado exitosamente")
                         : (item.error || "Error desconocido")
                       }
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 max-w-32">
+                      {item.respuesta_xml ? (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            // Create a modal or dialog to show the full XML
+                            const newWindow = window.open('', '_blank');
+                            if (newWindow) {
+                              newWindow.document.write(`
+                                <html>
+                                  <head><title>Respuesta XML del RNDC</title></head>
+                                  <body>
+                                    <h3>Respuesta XML del RNDC</h3>
+                                    <pre style="white-space: pre-wrap; font-family: monospace; background: #f5f5f5; padding: 10px; border-radius: 5px;">${item.respuesta_xml}</pre>
+                                  </body>
+                                </html>
+                              `);
+                            }
+                          }}
+                        >
+                          Ver XML
+                        </Button>
+                      ) : (
+                        <span className="text-gray-400">Sin respuesta</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <Button variant="ghost" size="sm">
