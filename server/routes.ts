@@ -203,12 +203,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (!vehiculo) {
             throw new Error(`Vehículo con placa "${row.PLACA}" no encontrado`);
           }
+          
+          console.log(`🚛 Vehículo encontrado: ${vehiculo.placa}, capacidad: ${vehiculo.capacidad_carga}`);
 
           // Get next consecutive
           const consecutivo = await storage.getNextConsecutivo("remesa");
           
           // Format dates
           const fechaCita = excelProcessor.formatDateForXML(row.FECHA_CITA);
+          console.log(`📅 Fecha original: "${row.FECHA_CITA}", formateada: "${fechaCita}"`);
           
           // Generate XML - CORRECTED MAPPING according to updated document
           // PLANTA -> CODSEDEREMITENTE (origen)
@@ -223,6 +226,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             conductorId: row.IDENTIFICACION,
             config
           };
+          
+          console.log(`📦 XML Data: capacidad=${xmlData.cantidadCargada}, fecha=${xmlData.fechaCitaCargue}`);
 
           const xml = xmlGenerator.generateRemesaXML(xmlData);
 

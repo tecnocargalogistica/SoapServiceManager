@@ -248,12 +248,26 @@ export class ExcelProcessor {
 
   formatDateForXML(dateString: string): string {
     // Handle different date formats
-    if (!dateString) return '';
+    if (!dateString || dateString.trim() === '') return '';
 
     let date: Date;
 
-    // Try parsing different formats
-    if (dateString.includes('/')) {
+    // Check if it's an Excel serial number (numeric value > 1000)
+    const numericValue = parseFloat(dateString);
+    if (!isNaN(numericValue) && numericValue > 1000) {
+      // Excel date serial number - convert from Excel date (starts from 1900-01-01)
+      // Excel incorrectly treats 1900 as a leap year, so we need to adjust
+      const excelEpoch = new Date(1900, 0, 1);
+      const daysOffset = numericValue - 1; // Excel uses 1-based indexing
+      date = new Date(excelEpoch.getTime() + (daysOffset * 24 * 60 * 60 * 1000));
+      
+      // Adjust for Excel's leap year bug
+      if (numericValue > 59) {
+        date = new Date(date.getTime() - (24 * 60 * 60 * 1000));
+      }
+    }
+    // Try parsing different text formats
+    else if (dateString.includes('/')) {
       // DD/MM/YYYY format
       const parts = dateString.split('/');
       if (parts.length === 3) {
@@ -265,10 +279,12 @@ export class ExcelProcessor {
       // YYYY-MM-DD format
       date = new Date(dateString);
     } else {
-      return '';
+      // Try direct parsing
+      date = new Date(dateString);
     }
 
     if (isNaN(date.getTime())) {
+      console.error('Error parsing date:', dateString);
       return '';
     }
 
