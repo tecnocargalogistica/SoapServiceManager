@@ -49,7 +49,7 @@ export default function Configuracion() {
 
   const updateConfigMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await apiRequest("POST", "/api/configuracion", data);
+      const response = await apiRequest("/api/configuracion", "POST", data);
       return response.json();
     },
     onSuccess: () => {
