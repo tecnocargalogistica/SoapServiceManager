@@ -34,6 +34,12 @@ const navigation = [
     ]
   },
   {
+    section: "Herramientas",
+    items: [
+      { name: "Cliente SOAP", href: "/soap-cliente", icon: Code2 },
+    ]
+  },
+  {
     section: "Sistema",
     items: [
       { name: "Configuraciones", href: "/configuracion", icon: Settings },
