@@ -83,8 +83,8 @@ export class SOAPProxy {
   private parseSOAPResponse(responseXml: string): any {
     try {
       // Check for specific RNDC success indicators
-      const hasIngresoId = responseXml.includes('<ingresoid>');
-      const hasErrorMsg = responseXml.includes('<ErrorMSG>') || responseXml.includes('Error RNDC');
+      const hasIngresoId = responseXml.includes('<ingresoid>') || responseXml.includes('&lt;ingresoid&gt;');
+      const hasErrorMsg = responseXml.includes('<ErrorMSG>') || responseXml.includes('Error RNDC') || responseXml.includes('&lt;ErrorMSG&gt;');
       const isSuccess = hasIngresoId && !hasErrorMsg;
       
       // Extract relevant information from the response
