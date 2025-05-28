@@ -277,7 +277,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           // Send to RNDC if not preview-only mode
           if (mode !== "preview_only") {
+            console.log("🚀 === ENVIANDO REMESA AL RNDC ===");
+            console.log("📧 Usuario:", config.usuario);
+            console.log("🔢 Consecutivo:", consecutivo);
+            console.log("🏢 NIT:", config.empresa_nit);
+            console.log("📡 Endpoint:", config.endpoint_primary);
+            console.log("🌿 Granja:", row.GRANJA);
+            console.log("🚛 Placa:", row.PLACA);
+
             soapResponse = await soapProxy.sendSOAPRequest(xml);
+            
+            console.log("📥 === RESPUESTA COMPLETA DEL RNDC ===");
+            console.log("✅ Success:", soapResponse.success);
+            console.log("📄 Data:", JSON.stringify(soapResponse.data, null, 2));
+            console.log("❌ Error:", soapResponse.error);
+            console.log("💬 Mensaje:", soapResponse.mensaje);
+            console.log("🔍 Raw Response:", soapResponse.data?.rawResponse);
+            
             estado = soapResponse.success ? "exitoso" : "error";
             
             // Update document with response
