@@ -159,7 +159,7 @@ function generateRemesaXML(data: any, config: any): string {
           </solicitud>
           <variables>
             <NUMNITEMPRESATRANSPORTE>${config.empresa_nit}</NUMNITEMPRESATRANSPORTE>
-            <CONSECUTIVOREMESA>20250419</CONSECUTIVOREMESA>
+            <CONSECUTIVOREMESA>${new Date().getFullYear()}${(new Date().getMonth() + 1).toString().padStart(2, '0')}${new Date().getDate().toString().padStart(2, '0')}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}</CONSECUTIVOREMESA>
             <CODOPERACIONTRANSPORTE>G</CODOPERACIONTRANSPORTE>
             <CODNATURALEZACARGA>1</CODNATURALEZACARGA>
             <CANTIDADCARGADA>${capacidadVehiculo}</CANTIDADCARGADA>
