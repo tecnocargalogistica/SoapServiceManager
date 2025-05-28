@@ -216,13 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             throw new Error(`Vehículo con placa "${row.PLACA}" no encontrado`);
           }
           
-          console.log(`🚛 Vehículo encontrado: ${vehiculo.placa}, capacidad: ${vehiculo.capacidad_carga}`);
-          
-          // FORCE CORRECT VALUES - Override any cached/wrong values
-          if (vehiculo.placa === "GIT990") {
-            vehiculo.capacidad_carga = 7000; // Force correct capacity from database
-            console.log(`✅ Forced correct capacity for GIT990: ${vehiculo.capacidad_carga}`);
-          }
+          console.log(`🚛 Vehículo encontrado: ${vehiculo.placa}, capacidad real de BD: ${vehiculo.capacidad_carga}`);
 
           // Get next consecutive
           const consecutivo = await storage.getNextConsecutivo("remesa");

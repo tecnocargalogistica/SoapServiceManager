@@ -44,12 +44,7 @@ export interface CumplimientoXMLData {
 export class XMLGenerator {
 
   generateRemesaXML(data: RemesaXMLData): string {
-    // FORCE CORRECT CAPACITY for GIT990 vehicle
-    let cantidadCargada = data.cantidadCargada;
-    if (cantidadCargada === 10000) {
-      cantidadCargada = 7000;
-      console.log(`✅ XML Generator: Forced correct capacity from 10000 to 7000`);
-    }
+    console.log(`🔧 XML Generator: Usando capacidad real del vehículo: ${data.cantidadCargada}`);
     
     return `<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:BPMServicesIntf-IBPMServices">
   <ns0:Header/>
@@ -70,7 +65,7 @@ export class XMLGenerator {
             <CONSECUTIVOREMESA>${data.consecutivo}</CONSECUTIVOREMESA>
             <CODOPERACIONTRANSPORTE>G</CODOPERACIONTRANSPORTE>
             <CODNATURALEZACARGA>1</CODNATURALEZACARGA>
-            <CANTIDADCARGADA>${cantidadCargada}</CANTIDADCARGADA>
+            <CANTIDADCARGADA>${data.cantidadCargada}</CANTIDADCARGADA>
             <UNIDADMEDIDACAPACIDAD>1</UNIDADMEDIDACAPACIDAD>
             <CODTIPOEMPAQUE>0</CODTIPOEMPAQUE>
             <MERCANCIAREMESA>002309</MERCANCIAREMESA>
