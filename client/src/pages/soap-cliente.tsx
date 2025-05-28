@@ -88,13 +88,7 @@ export default function SOAPCliente() {
     setLastRequestStatus(null);
 
     try {
-      const response = await apiRequest('/api/rndc/test-specific-xml', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ xmlContent: xmlRequest })
-      });
+      const response = await apiRequest('/api/rndc/test-specific-xml', 'POST', { xmlContent: xmlRequest });
       
       if (response.ok) {
         const responseData = await response.json();
