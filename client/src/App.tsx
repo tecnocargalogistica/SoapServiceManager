@@ -9,6 +9,7 @@ import GenerarRemesas from "@/pages/generar-remesas";
 import CumplirRemesas from "@/pages/cumplir-remesas";
 import Configuracion from "@/pages/configuracion";
 import GestionDatos from "@/pages/gestion-datos";
+import SOAPCliente from "@/pages/soap-cliente";
 import NotFound from "@/pages/not-found";
 
 import Sidebar from "@/components/layout/sidebar";
@@ -26,6 +27,7 @@ function Router() {
             <Route path="/generar-remesas" component={GenerarRemesas} />
             <Route path="/cumplir-remesas" component={CumplirRemesas} />
             <Route path="/gestion-datos" component={GestionDatos} />
+            <Route path="/soap-cliente" component={SOAPCliente} />
             <Route path="/configuracion" component={Configuracion} />
             <Route component={NotFound} />
           </Switch>

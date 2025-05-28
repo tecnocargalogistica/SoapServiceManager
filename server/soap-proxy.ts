@@ -23,11 +23,11 @@ export class SOAPProxy {
       try {
         console.log(`Intentando envío a endpoint: ${endpoint}`);
         
-        // Usar endpoint específico del servicio SOAP según documentación RNDC
+        // Usar endpoint directo del servicio SOAP según el WSDL del RNDC
         let soapUrl = endpoint;
         if (soapUrl.includes('rndcws.mintransporte.gov.co:8080')) {
-          // Usar la URL específica del servicio IBPMServices
-          soapUrl = soapUrl.replace('/ws', '') + '?intf=IBPMServices';
+          // Usar el endpoint directo para SOAP tal como indica el WSDL
+          soapUrl = soapUrl.replace(/\/ws$/, '');
         }
         
         console.log(`📡 Enviando SOAP a: ${soapUrl}`);

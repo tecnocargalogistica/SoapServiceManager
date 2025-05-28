@@ -13,7 +13,8 @@ import {
   Hash, 
   History,
   User,
-  LogOut
+  LogOut,
+  Code2
 } from "lucide-react";
 
 const navigation = [

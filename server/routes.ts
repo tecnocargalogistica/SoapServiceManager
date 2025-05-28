@@ -503,6 +503,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint para ver la respuesta CRUDA del RNDC
+  app.get('/api/rndc/raw-response', async (req: Request, res: Response) => {
+    try {
+      const soapProxy = new SOAPProxy(
+        'http://rndcws.mintransporte.gov.co:8080/ws',
+        'http://rndcws2.mintransporte.gov.co:8080/ws'
+      );
+
+      const remesa = await storage.getRemesaByConsecutivo('79824014');
+      const config = await storage.getConfiguracionActiva();
+      
+      if (!remesa || !config) {
+        return res.status(400).send('Error: Datos faltantes');
+      }
+
+      const xmlContent = await xmlGenerator.generateRemesaXML(remesa, config);
+      const result = await soapProxy.sendSOAPRequest(xmlContent);
+      
+      // Devolver SOLO la respuesta cruda del RNDC como texto plano
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      res.send(`=== RESPUESTA EXACTA DEL RNDC ===\n\n${result.data?.rawResponse || 'Sin respuesta del RNDC'}\n\n=== FIN RESPUESTA ===`);
+    } catch (error) {
+      res.status(500).send(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    }
+  });
+
   // Generate manifiestos for completed remesas
   app.post("/api/manifiestos/generate", async (req, res) => {
     try {
