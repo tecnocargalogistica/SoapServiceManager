@@ -23,10 +23,10 @@ export class SOAPProxy {
       try {
         console.log(`Intentando envío a endpoint: ${endpoint}`);
         
-        // Construir URL correcta para SOAP si solo es la base
+        // Usar endpoint SOAP directo
         let soapUrl = endpoint;
-        if (!soapUrl.includes('?') && !soapUrl.endsWith('/')) {
-          soapUrl = `${endpoint}?intf=IBPMServices`;
+        if (soapUrl === 'http://rndcws.mintransporte.gov.co:8080') {
+          soapUrl = 'http://rndcws.mintransporte.gov.co:8080/soap/IBPMServices';
         }
         
         console.log(`📡 Enviando SOAP a: ${soapUrl}`);
