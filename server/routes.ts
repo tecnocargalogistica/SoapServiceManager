@@ -284,6 +284,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log("📡 Endpoint:", config.endpoint_primary);
             console.log("🌿 Granja:", row.GRANJA);
             console.log("🚛 Placa:", row.PLACA);
+            console.log("📄 === XML ENVIADO (COMPLETO) ===");
+            console.log(xml);
+            console.log("📄 === FIN XML ===");
 
             soapResponse = await soapProxy.sendSOAPRequest(xml);
             
