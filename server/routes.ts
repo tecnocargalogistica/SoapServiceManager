@@ -506,16 +506,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Endpoint específico para el Cliente SOAP con XML personalizado
   app.post('/api/rndc/test-specific-xml', async (req: Request, res: Response) => {
     try {
-      const { xmlContent } = req.body;
+      const { xmlContent, endpoint } = req.body;
       
       if (!xmlContent) {
         return res.status(400).json({ error: "XML content is required" });
       }
 
-      const soapProxy = new SOAPProxy(
-        'http://rndcws.mintransporte.gov.co:8080/ws',
-        'http://rndcws2.mintransporte.gov.co:8080/ws'
-      );
+      // Usar el endpoint proporcionado por el usuario o el por defecto
+      const primaryEndpoint = endpoint || 'http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices';
+      const backupEndpoint = 'http://rndcws.mintransporte.gov.co:8080/ws';
+
+      const soapProxy = new SOAPProxy(primaryEndpoint, backupEndpoint);
 
       console.log('📥 === RESPUESTA EXACTA DEL RNDC ===');
       const result = await soapProxy.sendSOAPRequest(xmlContent);
