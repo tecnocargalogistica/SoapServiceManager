@@ -483,7 +483,19 @@ export function DataTable({
                   <h3 className="text-lg font-semibold text-green-800 mb-3">Información de Dirección</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div><span className="font-medium">Dirección:</span> {viewItem.direccion || 'No especificada'}</div>
-                    <div><span className="font-medium">Ciudad:</span> {viewItem.ciudad || 'No especificada'}</div>
+                    <div>
+                      <span className="font-medium">Municipio:</span> 
+                      {viewItem.municipio_codigo ? (
+                        <div className="mt-1">
+                          <div className="font-medium text-sm">
+                            {viewItem.ciudad || 'No especificada'}
+                          </div>
+                          <div className="text-gray-500 text-xs">Código: {viewItem.municipio_codigo}</div>
+                        </div>
+                      ) : (
+                        <span className="ml-2">{viewItem.ciudad || 'No especificada'}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
