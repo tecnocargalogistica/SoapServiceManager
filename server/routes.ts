@@ -288,6 +288,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
           }
 
+          // Parse date properly for database storage
+          let fechaParaDB: Date;
+          try {
+            if (fechaCita && fechaCita.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+              // DD/MM/YYYY format - parse manually
+              const [day, month, year] = fechaCita.split('/').map(Number);
+              fechaParaDB = new Date(year, month - 1, day);
+            } else {
+              fechaParaDB = new Date(fechaCita);
+            }
+            console.log(`📅 Fecha para DB: ${fechaParaDB.toISOString()}`);
+          } catch (error) {
+            console.error(`❌ Error parseando fecha para DB: ${error}`);
+            fechaParaDB = new Date(); // Use current date as fallback
+          }
+
           // Store remesa
           await storage.createRemesa({
             consecutivo,
@@ -295,8 +311,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             codigo_sede_destinatario: sedeDestinatario.codigo_sede,
             placa: row.PLACA,
             cantidad_cargada: vehiculo.capacidad_carga,
-            fecha_cita_cargue: new Date(row.FECHA_CITA),
-            fecha_cita_descargue: new Date(row.FECHA_CITA),
+            fecha_cita_cargue: fechaParaDB,
+            fecha_cita_descargue: fechaParaDB,
             conductor_id: row.IDENTIFICACION,
             toneladas: row.TONELADAS.toString(),
             estado: estado === "exitoso" ? "enviada" : "generada",
