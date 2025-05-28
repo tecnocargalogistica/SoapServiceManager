@@ -437,21 +437,42 @@ export default function GenerarRemesas() {
             </div>
 
             <div className="bg-gray-900 rounded-lg p-4 h-96 overflow-y-auto font-mono text-sm">
-              <div className="space-y-1 text-gray-300">
+              <div className="space-y-2 text-gray-300">
                 {processingResult?.results?.map((result: any, index: number) => (
-                  <div key={index} className="flex">
-                    <span className="text-gray-500">{new Date().toLocaleTimeString()}</span>
-                    <span className={`mx-2 ${
-                      result.success ? "text-green-400" : "text-red-400"
-                    }`}>
-                      [{result.success ? "SUCCESS" : "ERROR"}]
-                    </span>
-                    <span>
-                      {result.success 
-                        ? `Remesa ${result.consecutivo} generada exitosamente`
-                        : `Error: ${result.error}`
-                      }
-                    </span>
+                  <div key={index} className="border-b border-gray-700 pb-2">
+                    {/* Header line */}
+                    <div className="flex">
+                      <span className="text-gray-500">{new Date().toLocaleTimeString()}</span>
+                      <span className={`mx-2 ${
+                        result.success ? "text-green-400" : "text-red-400"
+                      }`}>
+                        [{result.success ? "SUCCESS" : "ERROR"}]
+                      </span>
+                      <span>
+                        Remesa {result.consecutivo} - Granja: {result.granja} - Placa: {result.placa}
+                      </span>
+                    </div>
+                    
+                    {/* RNDC Response */}
+                    {result.rndcMessage && (
+                      <div className="ml-4 mt-1 text-yellow-300">
+                        📡 RNDC: {result.rndcMessage}
+                      </div>
+                    )}
+                    
+                    {/* Raw RNDC Response if available */}
+                    {result.rndcResponse && (
+                      <div className="ml-4 mt-1 text-blue-300">
+                        🔍 Respuesta RNDC: {JSON.stringify(result.rndcResponse, null, 2)}
+                      </div>
+                    )}
+                    
+                    {/* Error details */}
+                    {!result.success && result.error && (
+                      <div className="ml-4 mt-1 text-red-300">
+                        ❌ Error: {result.error}
+                      </div>
+                    )}
                   </div>
                 ))}
                 
