@@ -99,7 +99,7 @@ export const remesas = pgTable("remesas", {
 // TABLA SEDES
 export const sedes = pgTable("sedes", {
   id: serial("id").primaryKey(),
-  codigo_sede: text("codigo_sede").notNull().unique(),
+  codigo_sede: text("codigo_sede").notNull(),
   nombre: text("nombre").notNull(),
   tipo_sede: text("tipo_sede").notNull().default("granja"), // 'planta', 'granja'
   direccion: text("direccion"),
