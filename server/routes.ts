@@ -210,11 +210,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Format dates
           const fechaCita = excelProcessor.formatDateForXML(row.FECHA_CITA);
           
-          // Generate XML
+          // Generate XML - CORRECTED MAPPING according to original document
+          // GRANJA -> CODSEDEREMITENTE (origen)
+          // PLANTA -> CODSEDEDESTINATARIO (destino)
           const xmlData = {
             consecutivo,
-            codigoSedeRemitente: sedeRemitente.codigo_sede,
-            codigoSedeDestinatario: sedeDestinatario.codigo_sede,
+            codigoSedeRemitente: sedeRemitente.codigo_sede, // GRANJA
+            codigoSedeDestinatario: sedeDestinatario.codigo_sede, // PLANTA
             cantidadCargada: vehiculo.capacidad_carga,
             fechaCitaCargue: fechaCita,
             fechaCitaDescargue: fechaCita,
