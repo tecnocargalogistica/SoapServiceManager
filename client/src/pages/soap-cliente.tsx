@@ -117,9 +117,8 @@ export default function SOAPCliente() {
             formattedResponse += `🔍 Respuesta SOAP completa:\n${rawXml}`;
           }
           
-          if (responseData.consecutivo) {
-            formattedResponse += `\n\n🔢 Consecutivo: ${responseData.consecutivo}`;
-          }
+          // NO mostrar consecutivo de la base de datos local para consultas personalizadas
+          // El consecutivo solo es relevante para remesas generadas automáticamente
           
         } else {
           formattedResponse += `❌ Estado: ERROR\n\n`;

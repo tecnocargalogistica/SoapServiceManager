@@ -503,6 +503,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint específico para el Cliente SOAP con XML personalizado
+  app.post('/api/rndc/test-specific-xml', async (req: Request, res: Response) => {
+    try {
+      const { xmlContent } = req.body;
+      
+      if (!xmlContent) {
+        return res.status(400).json({ error: "XML content is required" });
+      }
+
+      const soapProxy = new SOAPProxy(
+        'http://rndcws.mintransporte.gov.co:8080/ws',
+        'http://rndcws2.mintransporte.gov.co:8080/ws'
+      );
+
+      console.log('📥 === RESPUESTA EXACTA DEL RNDC ===');
+      const result = await soapProxy.sendSOAPRequest(xmlContent);
+      console.log('✅ Success:', result.success);
+      console.log('📄 Data (completo):', JSON.stringify(result.data, null, 2));
+      console.log('❌ Error:', result.error);
+      console.log('💬 Mensaje:', result.mensaje);
+      console.log('🔍 Raw Response (completo):', JSON.stringify(result, null, 2));
+
+      res.json(result);
+    } catch (error) {
+      console.error('Error in SOAP test:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Error desconocido' 
+      });
+    }
+  });
+
   // Endpoint para ver la respuesta CRUDA del RNDC
   app.get('/api/rndc/raw-response', async (req: Request, res: Response) => {
     try {
