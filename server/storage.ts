@@ -163,7 +163,7 @@ export class MemStorage implements IStorage {
 
     // Create default vehicles
     const defaultVehiculos = [
-      { placa: "GIT990", capacidad_carga: 10000, propietario_tipo_doc: "C", propietario_numero_doc: "4133687", propietario_nombre: "PROPIETARIO 1" },
+      { placa: "GIT990", capacidad_carga: 7000, propietario_tipo_doc: "C", propietario_numero_doc: "4133687", propietario_nombre: "PROPIETARIO 1" },
       { placa: "ABC123", capacidad_carga: 8000, propietario_tipo_doc: "C", propietario_numero_doc: "4133688", propietario_nombre: "PROPIETARIO 2" },
       { placa: "XYZ789", capacidad_carga: 12000, propietario_tipo_doc: "C", propietario_numero_doc: "4133689", propietario_nombre: "PROPIETARIO 3" }
     ];

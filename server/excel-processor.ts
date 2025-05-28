@@ -255,31 +255,34 @@ export class ExcelProcessor {
     // Check if it's an Excel serial number (numeric value > 1000)
     const numericValue = parseFloat(dateString);
     if (!isNaN(numericValue) && numericValue > 1000) {
-      // Excel date serial number - convert from Excel date (starts from 1900-01-01)
-      // Excel incorrectly treats 1900 as a leap year, so we need to adjust
-      const excelEpoch = new Date(1900, 0, 1);
-      const daysOffset = numericValue - 1; // Excel uses 1-based indexing
-      date = new Date(excelEpoch.getTime() + (daysOffset * 24 * 60 * 60 * 1000));
+      // Excel date serial number - convert from Excel date
+      // Excel epoch is January 1, 1900, but Excel incorrectly treats 1900 as a leap year
+      // So dates after Feb 28, 1900 are off by one day
+      const millisecondsPerDay = 24 * 60 * 60 * 1000;
+      const excelEpochOffset = new Date(1899, 11, 30); // December 30, 1899
       
-      // Adjust for Excel's leap year bug
-      if (numericValue > 59) {
-        date = new Date(date.getTime() - (24 * 60 * 60 * 1000));
-      }
+      date = new Date(excelEpochOffset.getTime() + (numericValue * millisecondsPerDay));
     }
     // Try parsing different text formats
     else if (dateString.includes('/')) {
-      // DD/MM/YYYY format
+      // DD/MM/YYYY or MM/DD/YYYY format
       const parts = dateString.split('/');
       if (parts.length === 3) {
-        date = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+        // Assume DD/MM/YYYY format first
+        const day = parseInt(parts[0]);
+        const month = parseInt(parts[1]);
+        const year = parseInt(parts[2]);
+        
+        // Create date in YYYY-MM-DD format to avoid ambiguity
+        date = new Date(year, month - 1, day);
       } else {
         return '';
       }
     } else if (dateString.includes('-')) {
-      // YYYY-MM-DD format
+      // YYYY-MM-DD or DD-MM-YYYY format
       date = new Date(dateString);
     } else {
-      // Try direct parsing
+      // Try direct parsing as last resort
       date = new Date(dateString);
     }
 
