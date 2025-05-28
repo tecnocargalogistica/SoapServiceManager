@@ -110,11 +110,13 @@ export class SOAPProxy {
 
   async testConnection(): Promise<boolean> {
     try {
-      // Simple connectivity test
+      // Test con un XML básico válido para RNDC
       const testXml = `<?xml version="1.0" encoding="utf-8"?>
-        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:BPMServicesIntf-IBPMServices">
           <soap:Body>
-            <test>connectivity</test>
+            <urn:AtenderMensajeRNDC>
+              <Request>&lt;MENSAJE&gt;&lt;CABECERA&gt;&lt;VERSION&gt;01&lt;/VERSION&gt;&lt;/CABECERA&gt;&lt;/MENSAJE&gt;</Request>
+            </urn:AtenderMensajeRNDC>
           </soap:Body>
         </soap:Envelope>`;
       
