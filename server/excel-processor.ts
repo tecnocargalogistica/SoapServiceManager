@@ -55,7 +55,12 @@ export class ExcelProcessor {
           const row: any = {};
 
           headers.forEach((header, index) => {
-            row[header] = values[index] || '';
+            // Map CSV fields to expected field names
+            let fieldName = header;
+            if (header === 'CEDULA') fieldName = 'IDENTIFICACION';
+            if (header === 'UBICACIÓN') fieldName = 'UBICACION';
+            
+            row[fieldName] = values[index] || '';
           });
 
           // Ensure required fields exist
