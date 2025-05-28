@@ -121,7 +121,7 @@ export class MemStorage implements IStorage {
     // Create default consecutivos
     const currentYear = new Date().getFullYear();
     const defaultConsecutivos = [
-      { tipo: "remesa", ultimo_numero: 20250419, año: currentYear },
+      { tipo: "remesa", ultimo_numero: 20250420, año: currentYear },
       { tipo: "manifiesto", ultimo_numero: 79154, año: currentYear }
     ];
 
