@@ -583,7 +583,7 @@ export function VehiculoForm({ vehiculo, onSuccess, onCancel, onCreateTercero }:
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {terceros.filter(t => t.es_propietario).map((tercero) => (
+                            {terceros.filter(t => t.es_propietario && t.numero_documento && t.numero_documento.trim() !== '').map((tercero) => (
                               <SelectItem key={tercero.id} value={tercero.numero_documento}>
                                 {tercero.razon_social || `${tercero.nombre} ${tercero.apellido || ''}`.trim()} 
                                 ({tercero.tipo_documento}-{tercero.numero_documento})
