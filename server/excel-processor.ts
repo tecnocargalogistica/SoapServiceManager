@@ -38,14 +38,20 @@ export class ExcelProcessor {
       if (filename.endsWith('.csv')) {
         const csvContent = buffer.toString('utf8');
         const lines = csvContent.split('\n');
-        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+        
+        // Detect separator (semicolon or comma)
+        const separator = lines[0].includes(';') ? ';' : ',';
+        console.log(`📋 CSV separator detected: "${separator}"`);
+        
+        const headers = lines[0].split(separator).map(h => h.trim().replace(/"/g, ''));
+        console.log(`📋 CSV headers:`, headers);
         const rows: ExcelRow[] = [];
 
         for (let i = 1; i < lines.length; i++) {
           const line = lines[i].trim();
           if (!line) continue;
 
-          const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+          const values = line.split(separator).map(v => v.trim().replace(/"/g, ''));
           const row: any = {};
 
           headers.forEach((header, index) => {
