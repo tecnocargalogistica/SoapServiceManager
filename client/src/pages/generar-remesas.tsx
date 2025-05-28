@@ -55,7 +55,7 @@ export default function GenerarRemesas() {
 
   const processRemesasMutation = useMutation({
     mutationFn: async (data: { data: any[], mode: string }) => {
-      const response = await apiRequest("POST", "/api/remesas/process", data);
+      const response = await apiRequest("/api/remesas/process", "POST", data);
       return response.json();
     },
     onSuccess: (result) => {
