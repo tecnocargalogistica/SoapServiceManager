@@ -513,14 +513,16 @@ export default function Configuracion() {
           </DialogHeader>
           <Card>
             <CardContent className="pt-6">
-              <div className="space-y-4">
+              <form onSubmit={handleExcelUpload} className="space-y-4">
                 <div>
-                  <Label htmlFor="excel-file">Archivo Excel</Label>
+                  <Label htmlFor="file">Archivo Excel</Label>
                   <Input
-                    id="excel-file"
+                    id="file"
+                    name="file"
                     type="file"
                     accept=".xlsx,.xls,.csv"
                     className="mt-1"
+                    required
                   />
                   <p className="text-sm text-gray-500 mt-2">
                     Formatos soportados: .xlsx, .xls, .csv
@@ -541,15 +543,20 @@ export default function Configuracion() {
                 </div>
                 
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setShowExcelUpload(false)}>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setShowExcelUpload(false)}
+                    disabled={uploadingExcel}
+                  >
                     Cancelar
                   </Button>
-                  <Button>
+                  <Button type="submit" disabled={uploadingExcel}>
                     <Upload className="h-4 w-4 mr-2" />
-                    Cargar Municipios
+                    {uploadingExcel ? "Cargando..." : "Cargar Municipios"}
                   </Button>
                 </div>
-              </div>
+              </form>
             </CardContent>
           </Card>
         </DialogContent>
