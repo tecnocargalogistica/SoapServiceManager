@@ -346,8 +346,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             granja: row.GRANJA,
             placa: row.PLACA,
             soapResponse,
-            rndcResponse: soapResponse?.data || null,
-            rndcMessage: soapResponse?.mensaje || "Sin respuesta",
             xml
           });
 
