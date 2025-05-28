@@ -98,8 +98,8 @@ export class ExcelProcessor {
           GRANJA: String(row.GRANJA || row.Granja || row.granja || '').trim(),
           PLANTA: String(row.PLANTA || row.Planta || row.planta || '').trim(),
           PLACA: String(row.PLACA || row.Placa || row.placa || '').trim(),
-          FECHA_CITA: String(row.FECHA_CITA || row['Fecha Cita'] || row.fecha_cita || '').trim(),
-          IDENTIFICACION: String(row.IDENTIFICACION || row.Identificacion || row.identificacion || row.CEDULA || row.Cedula || row.cedula || '').trim(),
+          FECHA_CITA: String(row.FECHA_CITA || row['FECHA CITA'] || row.fecha_cita || '').trim(),
+          IDENTIFICACION: String(row.IDENTIFICACION || row.Identificacion || row.identificacion || row.CEDULA || row.Cedula || row.cedula || row.CONDUCTOR || '').trim(),
           TONELADAS: parseFloat(row.TONELADAS || row.Toneladas || row.toneladas || 0)
         };
         
