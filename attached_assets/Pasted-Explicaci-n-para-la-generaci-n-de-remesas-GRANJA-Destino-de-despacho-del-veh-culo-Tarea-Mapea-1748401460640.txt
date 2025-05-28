@@ -1,0 +1,64 @@
+Explicación para la generación de remesas:
+GRANJA : Destino de despacho del vehículo. Tarea: (Mapear el campo GRANJA del Excel cargado con la tabla  (sedes) y buscar el valor (nombres)  luego cargar el valor ( codigo_sede )en el XML para generar remesas en el valor <CODSEDEDESTINATARIO >).
+
+PLANTA: Origen de despacho del vehículo. Tarea (Mapear el campo PLANTA  con la tabla (sedes) y buscar el valor  (nombres)  luego cargar el valor ( codigo_sede ) en el XML  para generar la remesa en el valor  < <CODSEDEREMITENTE>.
+
+PLACA: vehículo en el que se llevara la carga. Tarea (Mapear el campo PLACA con la tabla  (vehiculos) y buscar el valor (capacidad_carga) luego cargar el valor en el XML para generar la remesa  en el valor  <CANTIDADCARGADA>.
+
+FECHA_CITA: fecha de la cita para el cargue y el descargue. Tarea (Mapear el campo  FECHA_CITA del Excel  y colocarlo en el XML en el campo <FECHACITAPACTADACARGUE> y el mismo en el otro campo <FECHACITAPACTADADESCARGUE>  en el XML  para generar la remesa. Los demás campos son fijos y generaran un XML que será enviado al SOAP del ministerio de transporte (Nota: antes de enviar generar un preview del xml), a continuación se entrega un ejemplo de xml para generar remesas.
+
+
+
+
+
+FORMATO ARCHVIO XML PARA GENERACION DE REMESAS
+
+<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:BPMServicesIntf-IBPMServices">
+  <ns0:Header/>
+  <ns0:Body>
+    <ns1:AtenderMensajeRNDC>
+      <Request>
+        <root>
+ <acceso>
+  <username>TRANSPORTES@739</username> de la tabla configuración el campo (usuario)
+  <password>Alejandro_1971</password>de la tabla configuración el campo (password)
+ </acceso>
+ <solicitud>
+  <tipo>1</tipo>
+  <procesoid>3</procesoid>
+ </solicitud>
+ <variables>
+  <NUMNITEMPRESATRANSPORTE>9013690938</NUMNITEMPRESATRANSPORTE> Campo Fijo
+  <CONSECUTIVOREMESA>20250419</CONSECUTIVOREMESA>el siguiente valor de la tabla (consecutivos)
+  <CODOPERACIONTRANSPORTE>G</CODOPERACIONTRANSPORTE> Campo Fijo
+  <CODNATURALEZACARGA>1</CODNATURALEZACARGA>Campo Fijo
+  <CANTIDADCARGADA>10000</CANTIDADCARGADA>buscar en la tabla vehiculos (capacidad_carga)
+  <UNIDADMEDIDACAPACIDAD>1</UNIDADMEDIDACAPACIDAD> Campo Fijo
+  <CODTIPOEMPAQUE>0</CODTIPOEMPAQUE> Campo fijo
+  <MERCANCIAREMESA>002309</MERCANCIAREMESA> Campo Fijo
+  <DESCRIPCIONCORTAPRODUCTO>ALIMENTO PARA AVES DE CORRAL</DESCRIPCIONCORTAPRODUCTO> Campo Fijo
+  <CODTIPOIDREMITENTE>N</CODTIPOIDREMITENTE>Campo Fijo
+  <NUMIDREMITENTE>8600588314</NUMIDREMITENTE>Campo Fijo
+  <CODSEDEREMITENTE>002</CODSEDEREMITENTE>  
+  <CODTIPOIDDESTINATARIO>N</CODTIPOIDDESTINATARIO>Campo Fijo
+  <NUMIDDESTINATARIO>8600588314</NUMIDDESTINATARIO>Campo Fijo
+  <CODSEDEDESTINATARIO>009</CODSEDEDESTINATARIO> 
+  <DUENOPOLIZA>N</DUENOPOLIZA>Campo Fijo
+  <HORASPACTOCARGA>2</HORASPACTOCARGA> Campo Fijo
+  <HORASPACTODESCARGUE>2</HORASPACTODESCARGUE> Campo Fijo
+  <CODTIPOIDPROPIETARIO>N</CODTIPOIDPROPIETARIO>Campo Fijo
+  <NUMIDPROPIETARIO>9013690938</NUMIDPROPIETARIO>Campo Fijo
+  <CODSEDEPROPIETARIO>01</CODSEDEPROPIETARIO>Campo Fijo
+  <FECHACITAPACTADACARGUE>19/04/2025</FECHACITAPACTADACARGUE> 
+  <HORACITAPACTADACARGUE>08:00</HORACITAPACTADACARGUE>Campo Fijo
+  <FECHACITAPACTADADESCARGUE>19/04/2025</FECHACITAPACTADADESCARGUE> 
+  <HORACITAPACTADADESCARGUEREMESA>13:00</HORACITAPACTADADESCARGUEREMESA>Campo Fijo
+ </variables>
+</root>
+         </Request>
+      </urn:AtenderMensajeRNDC>
+   </soapenv:Body>
+</soapenv:Envelope>
+
+
+Cuando se termine de generar el lote de remesas a partir del archivo Excel se debe generar el siguiente proceso que es generar el manifiesto de carga. Tarea Generar el siguiente proceso que es generar el manifiesto de carga a partir de la remesa donde se tomara parte de la información de la remesa y la otra parte de el resultado de mapear algunos campos.

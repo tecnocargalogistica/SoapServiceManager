@@ -187,15 +187,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (const row of data) {
         try {
           // Get sede codes
-          const sedeRemitente = await storage.getSedeByNombre(row.GRANJA);
-          const sedeDestinatario = await storage.getSedeByNombre(row.PLANTA);
+          const sedeRemitente = await storage.getSedeByNombre(row.PLANTA);  // PLANTA = origen
+          const sedeDestinatario = await storage.getSedeByNombre(row.GRANJA); // GRANJA = destino
           
           if (!sedeRemitente) {
-            throw new Error(`Sede remitente "${row.GRANJA}" no encontrada`);
+            throw new Error(`Sede remitente "${row.PLANTA}" no encontrada`);
           }
           
           if (!sedeDestinatario) {
-            throw new Error(`Sede destinatario "${row.PLANTA}" no encontrada`);
+            throw new Error(`Sede destinatario "${row.GRANJA}" no encontrada`);
           }
 
           // Get vehicle info
@@ -210,13 +210,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Format dates
           const fechaCita = excelProcessor.formatDateForXML(row.FECHA_CITA);
           
-          // Generate XML - CORRECTED MAPPING according to original document
-          // GRANJA -> CODSEDEREMITENTE (origen)
-          // PLANTA -> CODSEDEDESTINATARIO (destino)
+          // Generate XML - CORRECTED MAPPING according to updated document
+          // PLANTA -> CODSEDEREMITENTE (origen)
+          // GRANJA -> CODSEDEDESTINATARIO (destino)
           const xmlData = {
             consecutivo,
-            codigoSedeRemitente: sedeRemitente.codigo_sede, // GRANJA
-            codigoSedeDestinatario: sedeDestinatario.codigo_sede, // PLANTA
+            codigoSedeRemitente: sedeRemitente.codigo_sede, // PLANTA
+            codigoSedeDestinatario: sedeDestinatario.codigo_sede, // GRANJA
             cantidadCargada: vehiculo.capacidad_carga,
             fechaCitaCargue: fechaCita,
             fechaCitaDescargue: fechaCita,
