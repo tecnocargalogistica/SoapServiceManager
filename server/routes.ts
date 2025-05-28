@@ -279,15 +279,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (mode !== "preview_only") {
             console.log("🚀 === ENVIANDO REMESA AL RNDC ===");
             console.log("📧 Usuario:", config.usuario);
-            console.log("🔑 Password:", config.password);
             console.log("🔢 Consecutivo:", consecutivo);
             console.log("🏢 NIT:", config.empresa_nit);
             console.log("📡 Endpoint:", config.endpoint_primary);
             console.log("🌿 Granja:", row.GRANJA);
             console.log("🚛 Placa:", row.PLACA);
-            console.log("📄 === XML ENVIADO (COMPLETO) ===");
-            console.log(xml);
-            console.log("📄 === FIN XML ===");
 
             soapResponse = await soapProxy.sendSOAPRequest(xml);
             
