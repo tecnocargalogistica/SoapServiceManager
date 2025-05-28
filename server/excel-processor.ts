@@ -79,6 +79,7 @@ export class ExcelProcessor {
       }
       
       const headers = jsonData[0] as string[];
+      console.log('Excel headers found:', headers);
       const rows: ExcelRow[] = [];
       
       for (let i = 1; i < jsonData.length; i++) {
@@ -90,16 +91,23 @@ export class ExcelProcessor {
           row[header] = rowData[index] || '';
         });
         
-        // Ensure required fields exist
-        if (row.GRANJA || row.PLANTA || row.PLACA) {
-          rows.push({
-            GRANJA: String(row.GRANJA || '').trim(),
-            PLANTA: String(row.PLANTA || '').trim(),
-            PLACA: String(row.PLACA || '').trim(),
-            FECHA_CITA: String(row.FECHA_CITA || '').trim(),
-            IDENTIFICACION: String(row.IDENTIFICACION || '').trim(),
-            TONELADAS: parseFloat(row.TONELADAS) || 0
-          });
+        console.log(`Raw row ${i}:`, row);
+        
+        // Map headers more flexibly - handle different column names
+        const mappedRow = {
+          GRANJA: String(row.GRANJA || row.Granja || row.granja || '').trim(),
+          PLANTA: String(row.PLANTA || row.Planta || row.planta || '').trim(),
+          PLACA: String(row.PLACA || row.Placa || row.placa || '').trim(),
+          FECHA_CITA: String(row.FECHA_CITA || row['Fecha Cita'] || row.fecha_cita || '').trim(),
+          IDENTIFICACION: String(row.IDENTIFICACION || row.Identificacion || row.identificacion || row.CEDULA || row.Cedula || row.cedula || '').trim(),
+          TONELADAS: parseFloat(row.TONELADAS || row.Toneladas || row.toneladas || 0)
+        };
+        
+        console.log(`Mapped row ${i}:`, mappedRow);
+        
+        // Ensure at least one field has data
+        if (mappedRow.GRANJA || mappedRow.PLANTA || mappedRow.PLACA) {
+          rows.push(mappedRow);
         }
       }
       
