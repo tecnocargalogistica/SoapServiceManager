@@ -110,7 +110,7 @@ export class MemStorage implements IStorage {
       password: "Alejandro_1971",
       empresa_nit: "9013690938",
       endpoint_primary: "http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices",
-      endpoint_backup: "http://rndcws.mintransporte.gov.co:8080/ws",
+      endpoint_backup: "http://rndcws.mintransporte.gov.co:8080/soap/IBPMServices",
       timeout: 30000,
       activo: true,
       created_at: new Date(),
