@@ -45,6 +45,7 @@ export class XMLGenerator {
 
   generateRemesaXML(data: RemesaXMLData): string {
     console.log(`🔧 XML Generator: Usando capacidad real del vehículo: ${data.cantidadCargada}`);
+    console.log(`🔧 XML Generator: Consecutivo recibido: "${data.consecutivo}"`);
     
     return `<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:BPMServicesIntf-IBPMServices">
   <ns0:Header/>

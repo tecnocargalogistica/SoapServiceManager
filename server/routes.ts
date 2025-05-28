@@ -224,6 +224,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           // Get next consecutive
           const consecutivo = await storage.getNextConsecutivo("remesa");
+          console.log(`🔢 Consecutivo generado: "${consecutivo}"`);
           
           // Format dates - handle DD/MM/YYYY format from CSV
           let fechaCita = row.FECHA_CITA;
