@@ -221,9 +221,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Get next consecutive
           const consecutivo = await storage.getNextConsecutivo("remesa");
           
-          // Format dates
-          const fechaCita = excelProcessor.formatDateForXML(row.FECHA_CITA);
-          console.log(`📅 Fecha original: "${row.FECHA_CITA}", formateada: "${fechaCita}"`);
+          // Format dates - handle DD/MM/YYYY format from CSV
+          let fechaCita = row.FECHA_CITA;
+          
+          // If it's already in DD/MM/YYYY format, use it directly
+          if (fechaCita && fechaCita.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+            // Keep the same format for XML
+            console.log(`📅 Fecha CSV directa: "${fechaCita}"`);
+          } else {
+            // Try the processor for other formats
+            fechaCita = excelProcessor.formatDateForXML(row.FECHA_CITA);
+            console.log(`📅 Fecha procesada: "${row.FECHA_CITA}" → "${fechaCita}"`);
+          }
           
           // Generate XML - CORRECTED MAPPING according to updated document
           // PLANTA -> CODSEDEREMITENTE (origen)
