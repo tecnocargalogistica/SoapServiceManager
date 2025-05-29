@@ -361,8 +361,9 @@ export class ManifiestoPDFHorizontalGenerator {
     qrContent += `MEC:${mecValue}\n`;
     
     // 2. Fecha: FECHAEXPEDICIONMANIFIESTO real convertida a formato yyyy/mm/dd
-    // La fecha real del manifiesto es 29/05/2025
-    qrContent += `Fecha:2025/05/29\n`;
+    const fecha = new Date(this.manifiesto.fecha_expedicion);
+    const fechaFormatted = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
+    qrContent += `Fecha:${fechaFormatted}\n`;
     
     // 3. Placa: NUMPLACA real del manifiesto (GIT990)
     qrContent += `Placa:${this.manifiesto.placa}\n`;
