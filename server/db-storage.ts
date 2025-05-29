@@ -291,6 +291,10 @@ export class DatabaseStorage implements IStorage {
               manifiestoCompleto.sede_origen_nombre = sedeOrigen[0].nombre;
               manifiestoCompleto.sede_origen_direccion = sedeOrigen[0].direccion;
               manifiestoCompleto.sede_origen_municipio = sedeOrigen[0].municipio_codigo;
+              manifiestoCompleto.sede_origen_nit = sedeOrigen[0].nit;
+              
+              // Información del remitente es la sede de origen
+              manifiestoCompleto.mercancia_informacion_remitente = `${sedeOrigen[0].nombre} con responsable ${sedeOrigen[0].responsable || 'AVICOLA LOS CAMBULOS S.A'} en el Municipio de ${manifiestoCompleto.municipio_origen_nombre || manifiesto.municipio_origen}, ${manifiestoCompleto.municipio_origen_departamento || 'CUNDINAMARCA'} Código: ${manifiesto.municipio_origen} con Direccion ${sedeOrigen[0].direccion}`;
             }
           }
 
@@ -306,6 +310,10 @@ export class DatabaseStorage implements IStorage {
               manifiestoCompleto.sede_destino_nombre = sedeDestino[0].nombre;
               manifiestoCompleto.sede_destino_direccion = sedeDestino[0].direccion;
               manifiestoCompleto.sede_destino_municipio = sedeDestino[0].municipio_codigo;
+              manifiestoCompleto.sede_destino_nit = sedeDestino[0].nit;
+              
+              // Información del destinatario es la sede de destino
+              manifiestoCompleto.mercancia_informacion_destinatario = `${sedeDestino[0].nombre} con responsable ${sedeDestino[0].responsable || 'AVICOLA LOS CAMBULOS S.A'} en el Municipio de ${manifiestoCompleto.municipio_destino_nombre || manifiesto.municipio_destino}, ${manifiestoCompleto.municipio_destino_departamento || 'CUNDINAMARCA'} Código: ${manifiesto.municipio_destino} con Direccion ${sedeDestino[0].direccion}`;
             }
           }
 
