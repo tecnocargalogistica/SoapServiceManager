@@ -333,8 +333,9 @@ const TestPDFPlantilla = () => {
                   <div>
                     <h4 className="font-semibold mb-2">Información de Carga</h4>
                     <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">Cantidad (Kg):</span> {manifiestoEjemplo.mercancia_cantidad || 'No disponible'}</p>
-                      <p><span className="font-medium">Unidad Medida:</span> {manifiestoEjemplo.mercancia_unidad_medida || 'No disponible'}</p>
+                      <p><span className="font-medium">Cantidad (Kg):</span> {manifiestoEjemplo.remesa_cantidad_cargada ? manifiestoEjemplo.remesa_cantidad_cargada.toLocaleString() : manifiestoEjemplo.mercancia_cantidad || 'No disponible'}</p>
+                      <p><span className="font-medium">Toneladas:</span> {manifiestoEjemplo.remesa_toneladas || 'No disponible'}</p>
+                      <p><span className="font-medium">Unidad Medida:</span> {manifiestoEjemplo.mercancia_unidad_medida || 'Kilogramos'}</p>
                       <p><span className="font-medium">Naturaleza Carga:</span> {manifiestoEjemplo.mercancia_naturaleza || 'No disponible'}</p>
                       <p><span className="font-medium">Producto:</span> {manifiestoEjemplo.mercancia_producto_transportado || 'No disponible'}</p>
                       <p><span className="font-medium">Empaque:</span> {manifiestoEjemplo.mercancia_empaque || 'No disponible'}</p>

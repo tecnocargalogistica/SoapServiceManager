@@ -193,6 +193,20 @@ export class DatabaseStorage implements IStorage {
             }
           }
 
+          // Obtener datos de la remesa asociada
+          if (manifiesto.consecutivo_remesa) {
+            const remesa = await db
+              .select()
+              .from(remesas)
+              .where(eq(remesas.consecutivo, manifiesto.consecutivo_remesa))
+              .limit(1);
+
+            if (remesa.length > 0) {
+              manifiestoCompleto.remesa_cantidad_cargada = remesa[0].cantidad_cargada;
+              manifiestoCompleto.remesa_toneladas = remesa[0].toneladas;
+            }
+          }
+
           // Obtener datos del conductor
           if (manifiesto.conductor_id) {
             const conductor = await db
