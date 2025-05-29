@@ -330,7 +330,7 @@ export class ManifiestoPDFHorizontalGenerator {
     // === INFORMACIÓN FINANCIERA ===
     
     // Valor total del viaje
-    const valorTotal = this.manifiesto.valor_flete_pactado_viaje ? `$${this.manifiesto.valor_flete_pactado_viaje.toLocaleString()}` : '';
+    const valorTotal = this.manifiesto.valor_flete ? `$${this.manifiesto.valor_flete.toLocaleString()}` : '';
     this.doc.text(valorTotal, this.pixelToMM(campos.valorTotalViaje.x), this.pixelToMM(campos.valorTotalViaje.y, false));
     
     // Valor neto del viaje
