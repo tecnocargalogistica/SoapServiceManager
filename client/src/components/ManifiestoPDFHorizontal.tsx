@@ -47,9 +47,31 @@ export class ManifiestoPDFHorizontalGenerator {
     console.log('PDF creado en modo horizontal:', this.doc.internal.pageSize.getWidth(), 'x', this.doc.internal.pageSize.getHeight());
   }
 
+  // Método para cargar coordenadas desde plantilla guardada
+  async loadPlantillaCoords(): Promise<void> {
+    try {
+      const response = await fetch('/api/plantillas-pdf/activa');
+      if (response.ok) {
+        const plantilla = await response.json();
+        if (plantilla && plantilla.coordenadas) {
+          this.campos = {
+            ...this.campos,
+            ...plantilla.coordenadas
+          };
+          console.log('Coordenadas cargadas desde plantilla:', plantilla.nombre);
+        }
+      }
+    } catch (error) {
+      console.log('No se pudo cargar plantilla guardada, usando coordenadas por defecto');
+    }
+  }
+
   async generate(): Promise<void> {
     try {
       console.log('Iniciando generación de PDF horizontal...');
+      
+      // Cargar coordenadas desde plantilla guardada si existe
+      await this.loadPlantillaCoords();
       
       // Cargar y agregar la imagen de fondo
       await this.addBackgroundImage();

@@ -328,4 +328,46 @@ export class DatabaseStorage implements IStorage {
       .set({ activo: false })
       .where(eq(vehiculos.id, id));
   }
+
+  // Plantillas PDF
+  async getPlantillasPdf(): Promise<PlantillaPdf[]> {
+    return await db.select().from(plantillasPdf).orderBy(desc(plantillasPdf.created_at));
+  }
+
+  async getPlantillaPdfActiva(): Promise<PlantillaPdf | undefined> {
+    const plantillas = await db.select().from(plantillasPdf).where(eq(plantillasPdf.activa, true));
+    return plantillas[0];
+  }
+
+  async getPlantillaPdfById(id: number): Promise<PlantillaPdf | undefined> {
+    const plantillas = await db.select().from(plantillasPdf).where(eq(plantillasPdf.id, id));
+    return plantillas[0];
+  }
+
+  async createPlantillaPdf(insertPlantilla: InsertPlantillaPdf): Promise<PlantillaPdf> {
+    // Si la nueva plantilla está marcada como activa, desactivar las otras
+    if (insertPlantilla.activa) {
+      await db.update(plantillasPdf).set({ activa: false });
+    }
+    
+    const [plantilla] = await db.insert(plantillasPdf).values(insertPlantilla).returning();
+    return plantilla;
+  }
+
+  async updatePlantillaPdf(id: number, updates: Partial<InsertPlantillaPdf>): Promise<PlantillaPdf> {
+    // Si se está activando esta plantilla, desactivar las otras
+    if (updates.activa) {
+      await db.update(plantillasPdf).set({ activa: false });
+    }
+    
+    const [plantilla] = await db.update(plantillasPdf)
+      .set({ ...updates, updated_at: sql`now()` })
+      .where(eq(plantillasPdf.id, id))
+      .returning();
+    return plantilla;
+  }
+
+  async deletePlantillaPdf(id: number): Promise<void> {
+    await db.delete(plantillasPdf).where(eq(plantillasPdf.id, id));
+  }
 }

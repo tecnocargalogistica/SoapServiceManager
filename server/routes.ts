@@ -1745,5 +1745,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  // ===== PLANTILLAS PDF ROUTES =====
+  
+  // Get all plantillas PDF
+  app.get("/api/plantillas-pdf", async (req, res) => {
+    try {
+      const plantillas = await storage.getPlantillasPdf();
+      res.json(plantillas);
+    } catch (error) {
+      console.error("Error getting plantillas PDF:", error);
+      res.status(500).json({ error: "Error al obtener plantillas PDF" });
+    }
+  });
+
+  // Get active plantilla PDF
+  app.get("/api/plantillas-pdf/activa", async (req, res) => {
+    try {
+      const plantilla = await storage.getPlantillaPdfActiva();
+      if (!plantilla) {
+        return res.status(404).json({ error: "No hay plantilla PDF activa" });
+      }
+      res.json(plantilla);
+    } catch (error) {
+      console.error("Error getting active plantilla PDF:", error);
+      res.status(500).json({ error: "Error al obtener plantilla PDF activa" });
+    }
+  });
+
+  // Create new plantilla PDF
+  app.post("/api/plantillas-pdf", async (req, res) => {
+    try {
+      const plantilla = await storage.createPlantillaPdf(req.body);
+      res.json(plantilla);
+    } catch (error) {
+      console.error("Error creating plantilla PDF:", error);
+      res.status(500).json({ error: "Error al crear plantilla PDF" });
+    }
+  });
+
+  // Update plantilla PDF
+  app.patch("/api/plantillas-pdf/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const plantilla = await storage.updatePlantillaPdf(id, req.body);
+      res.json(plantilla);
+    } catch (error) {
+      console.error("Error updating plantilla PDF:", error);
+      res.status(500).json({ error: "Error al actualizar plantilla PDF" });
+    }
+  });
+
+  // Delete plantilla PDF
+  app.delete("/api/plantillas-pdf/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deletePlantillaPdf(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting plantilla PDF:", error);
+      res.status(500).json({ error: "Error al eliminar plantilla PDF" });
+    }
+  });
+
   return httpServer;
 }
