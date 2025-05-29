@@ -623,21 +623,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Se requiere una lista de IDs de remesas" });
       }
 
-      // Redirect to the existing generate endpoint with proper format
-      const remesas = await storage.getRemesas();
-      const consecutivos = remesaIds.map(id => {
-        const remesa = remesas.find(r => r.id === id);
-        return remesa ? remesa.consecutivo : null;
-      }).filter(Boolean);
-
-      // Call the existing generate endpoint internally
-      const generateRequest = { body: { remesaIds: consecutivos } };
-      const generateResponse = {
-        json: (data: any) => res.json(data),
-        status: (code: number) => ({ json: (data: any) => res.status(code).json(data) })
-      };
-
-      // Use the existing generate logic but with proper response format
       const config = await storage.getConfiguracionActiva();
       if (!config) {
         return res.status(400).json({ error: "Configuración del sistema no encontrada" });
@@ -647,6 +632,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const results = [];
       let successCount = 0;
       let errorCount = 0;
+
+      // Get all remesas
+      const remesas = await storage.getRemesas();
 
       for (const remesaId of remesaIds) {
         try {

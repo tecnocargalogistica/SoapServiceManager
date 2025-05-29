@@ -44,7 +44,8 @@ export default function GenerarManifiestos() {
 
   const processManifiestosMutation = useMutation({
     mutationFn: async (remesaIds: number[]) => {
-      return apiRequest('POST', '/api/manifiestos/process', { remesaIds });
+      const response = await apiRequest('POST', '/api/manifiestos/process', { remesaIds });
+      return response.json();
     },
     onSuccess: (data) => {
       setProcessingResult(data);
