@@ -1,0 +1,45 @@
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+Inicializando base de datos...
+12:39:07 AM [express] serving on port 5000
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✅ Base de datos ya inicializada
+12:39:10 AM [express] ✅ Base de datos inicializada correctamente
+🚗 Obteniendo vehículos directamente de PostgreSQL...
+Intentando envío a endpoint: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+🎯 Usando endpoint personalizado: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+📡 Enviando SOAP a: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+12:39:11 AM [express] GET /api/manifiestos 304 in 202ms :: []
+✅ Vehículos obtenidos: 1
+12:39:11 AM [express] GET /api/vehiculos 304 in 239ms :: [{"id":10,"placa":"GIT990","tipo_vehiculo":n…
+12:39:11 AM [express] GET /api/terceros 304 in 255ms :: [{"id":4,"tipo_documento":"N","numero_documen…
+12:39:11 AM [express] GET /api/logs 304 in 258ms :: [{"id":149,"tipo":"info","modulo":"batch-processi…
+12:39:11 AM [express] GET /api/remesas 304 in 278ms :: [{"id":22,"consecutivo":"79824058","codigo_sed…
+Respuesta recibida de http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices: <?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:NS1="urn:BPMServicesIntf-IBPMServices"><NS1:AtenderMensajeRNDCResponse><return xsi:type="xsd:string">&lt;?xml version="1.0" encoding="ISO-8859-1" ?&gt;
+&lt;root&gt;
+&lt;ErrorMSG&gt;Error RNDC01: Falta información en el xml para el acceso.&lt;/ErrorMSG&gt;
+&lt;/root&gt;
+</return></NS1:AtenderMensajeRNDCResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>
+
+12:39:17 AM [express] GET /api/rndc/test 200 in 6324ms :: {"connected":true,"endpoint":"http://rndcws…
+12:39:18 AM [express] GET /api/remesas/exitosas 304 in 83ms :: [{"id":22,"consecutivo":"79824058","co…
+12:39:21 AM [express] GET /api/manifiestos/preview-xml/22 200 in 385ms :: {"success":true,"xml":"<ns0…
+12:39:25 AM [express] GET /api/manifiestos/preview-xml/22 200 in 315ms :: {"success":true,"xml":"<ns0…
+Intentando envío a endpoint: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+🎯 Usando endpoint personalizado: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+📡 Enviando SOAP a: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+12:39:28 AM [express] GET /api/remesas/exitosas 304 in 60ms :: [{"id":22,"consecutivo":"79824058","co…
+12:39:32 AM [express] GET /api/manifiestos/preview-xml/22 200 in 337ms :: {"success":true,"xml":"<ns0…
+12:39:33 AM [express] GET /api/manifiestos/preview-xml/22 200 in 311ms :: {"success":true,"xml":"<ns0…
+Respuesta recibida de http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices: <?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:NS1="urn:BPMServicesIntf-IBPMServices"><NS1:AtenderMensajeRNDCResponse><return xsi:type="xsd:string">&lt;?xml version="1.0" encoding="ISO-8859-1" ?&gt;
+&lt;root&gt;
+&lt;ErrorMSG&gt;Error RNDC01: Falta información en el xml para el acceso.&lt;/ErrorMSG&gt;
+&lt;/root&gt;
+</return></NS1:AtenderMensajeRNDCResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>
+
+12:39:35 AM [express] GET /api/rndc/test 200 in 6297ms :: {"connected":true,"endpoint":"http://rndcws…

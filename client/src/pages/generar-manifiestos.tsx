@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CheckCircle, FileText, Truck, Play, AlertTriangle, Download, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -417,6 +418,25 @@ export default function GenerarManifiestos() {
           </TabsContent>
         </Tabs>
       </Card>
+
+      {/* Modal para mostrar XML */}
+      <Dialog open={showXmlModal} onOpenChange={setShowXmlModal}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>XML del Manifiesto - Vista Previa</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <pre className="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto whitespace-pre-wrap">
+              {xmlContent}
+            </pre>
+          </div>
+          <div className="flex justify-end mt-4">
+            <Button onClick={() => setShowXmlModal(false)}>
+              Cerrar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
