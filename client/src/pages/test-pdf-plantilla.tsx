@@ -291,11 +291,17 @@ const TestPDFPlantilla = () => {
                   <div>
                     <h4 className="font-semibold mb-2">Titular del Manifiesto (Propietario)</h4>
                     <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">Nombre y Apellidos:</span> {manifiestoEjemplo.vehiculo_propietario_nombre || manifiestoEjemplo.propietario_tercero_nombre || 'No disponible'}</p>
+                      <p><span className="font-medium">Nombre y Apellidos:</span> {
+                        manifiestoEjemplo.propietario_tercero_nombre && manifiestoEjemplo.propietario_tercero_apellido 
+                          ? `${manifiestoEjemplo.propietario_tercero_nombre} ${manifiestoEjemplo.propietario_tercero_apellido}` 
+                          : manifiestoEjemplo.vehiculo_propietario_nombre || 'No disponible'
+                      }</p>
                       <p><span className="font-medium">Doc. Identificación:</span> {manifiestoEjemplo.vehiculo_propietario_numero_doc || 'No disponible'}</p>
+                      <p><span className="font-medium">Tipo Documento:</span> {manifiestoEjemplo.propietario_tercero_tipo_documento || manifiestoEjemplo.vehiculo_propietario_tipo_doc || 'No disponible'}</p>
                       <p><span className="font-medium">Dirección:</span> {manifiestoEjemplo.propietario_tercero_direccion || 'No disponible'}</p>
                       <p><span className="font-medium">Teléfono:</span> {manifiestoEjemplo.propietario_tercero_telefono || 'No disponible'}</p>
                       <p><span className="font-medium">Ciudad:</span> {manifiestoEjemplo.propietario_tercero_municipio || 'No disponible'}</p>
+                      <p><span className="font-medium">Vehículo:</span> {manifiestoEjemplo.placa || 'No disponible'}</p>
                     </div>
                   </div>
 

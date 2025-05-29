@@ -147,14 +147,109 @@ export class DatabaseStorage implements IStorage {
 
   async getManifiestosCompletos(): Promise<any[]> {
     try {
-      // Por ahora, simplemente devolvemos los manifiestos básicos
-      // hasta que podamos resolver los problemas del esquema
       const manifiestosList = await db
         .select()
         .from(manifiestos)
         .orderBy(desc(manifiestos.created_at));
 
-      return manifiestosList;
+      // Enriquecer cada manifiesto con datos relacionados
+      const manifestosCompletos = [];
+      
+      for (const manifiesto of manifiestosList) {
+        let manifiestoCompleto = { ...manifiesto };
+
+        try {
+          // Obtener datos del vehículo
+          const vehiculo = await db
+            .select()
+            .from(vehiculos)
+            .where(eq(vehiculos.placa, manifiesto.placa))
+            .limit(1);
+
+          if (vehiculo.length > 0) {
+            manifiestoCompleto.vehiculo_propietario_nombre = vehiculo[0].propietario_nombre;
+            manifiestoCompleto.vehiculo_propietario_numero_doc = vehiculo[0].propietario_numero_doc;
+            manifiestoCompleto.vehiculo_propietario_tipo_doc = vehiculo[0].propietario_tipo_doc;
+            manifiestoCompleto.vehiculo_tenedor_nombre = vehiculo[0].tenedor_nombre;
+            manifiestoCompleto.vehiculo_tenedor_numero_doc = vehiculo[0].tenedor_numero_doc;
+            manifiestoCompleto.vehiculo_tenedor_tipo_doc = vehiculo[0].tenedor_tipo_doc;
+
+            // Obtener datos completos del propietario desde la tabla terceros
+            if (vehiculo[0].propietario_numero_doc) {
+              const propietario = await db
+                .select()
+                .from(terceros)
+                .where(eq(terceros.numero_documento, vehiculo[0].propietario_numero_doc))
+                .limit(1);
+
+              if (propietario.length > 0) {
+                manifiestoCompleto.propietario_tercero_nombre = propietario[0].nombre;
+                manifiestoCompleto.propietario_tercero_apellido = propietario[0].apellido;
+                manifiestoCompleto.propietario_tercero_direccion = propietario[0].direccion;
+                manifiestoCompleto.propietario_tercero_telefono = propietario[0].telefono;
+                manifiestoCompleto.propietario_tercero_municipio = propietario[0].municipio_codigo;
+                manifiestoCompleto.propietario_tercero_tipo_documento = propietario[0].tipo_documento;
+              }
+            }
+          }
+
+          // Obtener datos del conductor
+          if (manifiesto.conductor_id) {
+            const conductor = await db
+              .select()
+              .from(terceros)
+              .where(eq(terceros.numero_documento, manifiesto.conductor_id))
+              .limit(1);
+
+            if (conductor.length > 0) {
+              manifiestoCompleto.conductor_nombre = conductor[0].nombre;
+              manifiestoCompleto.conductor_apellido = conductor[0].apellido;
+              manifiestoCompleto.conductor_direccion = conductor[0].direccion;
+              manifiestoCompleto.conductor_telefono = conductor[0].telefono;
+              manifiestoCompleto.conductor_numero_licencia = conductor[0].numero_licencia;
+              manifiestoCompleto.conductor_categoria_licencia = conductor[0].categoria_licencia;
+              manifiestoCompleto.conductor_municipio_codigo = conductor[0].municipio_codigo;
+            }
+          }
+
+          // Obtener sede origen
+          if (manifiesto.sede_origen) {
+            const sedeOrigen = await db
+              .select()
+              .from(sedes)
+              .where(eq(sedes.codigo_sede, manifiesto.sede_origen))
+              .limit(1);
+
+            if (sedeOrigen.length > 0) {
+              manifiestoCompleto.sede_origen_nombre = sedeOrigen[0].nombre;
+              manifiestoCompleto.sede_origen_direccion = sedeOrigen[0].direccion;
+              manifiestoCompleto.sede_origen_municipio = sedeOrigen[0].municipio_codigo;
+            }
+          }
+
+          // Obtener sede destino
+          if (manifiesto.sede_destino) {
+            const sedeDestino = await db
+              .select()
+              .from(sedes)
+              .where(eq(sedes.codigo_sede, manifiesto.sede_destino))
+              .limit(1);
+
+            if (sedeDestino.length > 0) {
+              manifiestoCompleto.sede_destino_nombre = sedeDestino[0].nombre;
+              manifiestoCompleto.sede_destino_direccion = sedeDestino[0].direccion;
+              manifiestoCompleto.sede_destino_municipio = sedeDestino[0].municipio_codigo;
+            }
+          }
+
+        } catch (subError) {
+          console.error("❌ Error al enriquecer manifiesto:", subError);
+        }
+
+        manifestosCompletos.push(manifiestoCompleto);
+      }
+
+      return manifestosCompletos;
     } catch (error) {
       console.error("❌ Error en getManifiestosCompletos:", error);
       return [];
