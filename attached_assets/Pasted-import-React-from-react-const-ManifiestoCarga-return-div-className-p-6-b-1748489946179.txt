@@ -1,0 +1,95 @@
+import React from "react";
+
+const ManifiestoCarga = () => {
+  return (
+    <div className="p-6 bg-white border border-gray-300 text-xs font-sans max-w-7xl mx-auto">
+      {/* Encabezado */}
+      <div className="flex justify-between items-center border-b pb-4">
+        <img src="/logo1.png" alt="Logo Gobierno" className="h-16" />
+        <div className="text-center">
+          <p className="font-bold text-sm">MANIFIESTO ELECTRÓNICO DE CARGA</p>
+          <p className="font-semibold text-sm">TRANSPETROMIRA S.A.S</p>
+          <p className="text-xs">NIT: 9013690938</p>
+          <p className="text-xs">Carrera 3 No 5-72 - RICAURTE NARIÑO</p>
+        </div>
+        <img src="/logo2.png" alt="Logo Supertransporte" className="h-16" />
+      </div>
+
+      {/* Datos de manifiesto */}
+      <div className="grid grid-cols-4 gap-2 mt-4 border-b py-2">
+        <div><strong>Fecha de expedición:</strong> ____________</div>
+        <div><strong>Radicación:</strong> ____________</div>
+        <div><strong>Tipo:</strong> ____________</div>
+        <div><strong>Origen:</strong> ____________</div>
+        <div><strong>Destino:</strong> ____________</div>
+      </div>
+
+      {/* Vehículo y conductores */}
+      <div className="mt-4 border-b py-2">
+        <h3 className="font-bold">INFORMACIÓN DEL VEHÍCULO Y CONDUCTORES</h3>
+        <div className="grid grid-cols-6 gap-2 mt-2">
+          <div><strong>Placa:</strong></div>
+          <div><strong>Marca:</strong></div>
+          <div><strong>Configuración:</strong></div>
+          <div><strong>Peso Vacío:</strong></div>
+          <div><strong>SOAT:</strong></div>
+          <div><strong>Póliza:</strong></div>
+        </div>
+        <div className="grid grid-cols-3 gap-2 mt-2">
+          <div><strong>Conductor:</strong></div>
+          <div><strong>Licencia:</strong></div>
+          <div><strong>Ciudad:</strong></div>
+        </div>
+      </div>
+
+      {/* Mercancía */}
+      <div className="mt-4 border-b py-2">
+        <h3 className="font-bold">INFORMACIÓN DE LA MERCANCÍA TRANSPORTADA</h3>
+        <div className="grid grid-cols-6 gap-2 mt-2">
+          <div><strong>Remesa:</strong> 002309</div>
+          <div><strong>Cantidad:</strong> C</div>
+          <div><strong>Producto:</strong> ALIMENTO PARA AVES DE CORRAL</div>
+          <div><strong>Empaque:</strong> Paquetes</div>
+          <div><strong>Remitente:</strong> ____________</div>
+          <div><strong>Destinatario:</strong> ____________</div>
+        </div>
+      </div>
+
+      {/* Valores */}
+      <div className="mt-4 grid grid-cols-2 gap-6 border-b py-4">
+        <div className="space-y-1">
+          <p><strong>Valor Total del Viaje:</strong> $775,680</p>
+          <p><strong>Retención en la Fuente:</strong> ____________</p>
+          <p><strong>Valor Anticipo:</strong> $0.00</p>
+        </div>
+        <div className="space-y-1">
+          <p><strong>Lugar de Pago:</strong> BOGOTÁ D.C.</p>
+          <p><strong>Fecha:</strong> ____________</p>
+          <p><strong>Cargue Pagado Por:</strong> DESTINATARIO</p>
+        </div>
+      </div>
+
+      {/* Observaciones */}
+      <div className="mt-4 border-b py-2">
+        <h3 className="font-bold">OBSERVACIONES</h3>
+        <div className="h-16 border border-gray-300 mt-2 p-2" />
+      </div>
+
+      {/* Firmas */}
+      <div className="mt-4 flex justify-between text-center text-xs">
+        <div>
+          <p className="border-t border-black inline-block mt-2 pt-1">
+            Firma y Huella TITULAR MANIFIESTO
+          </p>
+        </div>
+        <div>
+          <p className="border-t border-black inline-block mt-2 pt-1">
+            Firma y Huella del CONDUCTOR
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ManifiestoCarga;
