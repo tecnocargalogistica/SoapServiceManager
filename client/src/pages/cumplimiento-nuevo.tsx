@@ -50,6 +50,7 @@ export default function CumplimientoNuevo() {
   const [selectedManifiestos, setSelectedManifiestos] = useState<string[]>([]);
   const [showXmlModal, setShowXmlModal] = useState(false);
   const [showBatchModal, setShowBatchModal] = useState(false);
+  const [showBatchModalManifiestos, setShowBatchModalManifiestos] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0, processing: false });
   const [batchResults, setBatchResults] = useState<Array<{consecutivo: string, success: boolean, message: string}>>([]);
   const { toast } = useToast();
@@ -151,11 +152,6 @@ export default function CumplimientoNuevo() {
       });
     },
   });
-
-  const handlePreviewCumplimientoManifiesto = (numeroManifiesto: string) => {
-    setSelectedManifiesto(numeroManifiesto);
-    previewManifiestoMutation.mutate(numeroManifiesto);
-  };
 
   const handleEnviarCumplimiento = () => {
     if (xmlPreview) {
@@ -274,7 +270,26 @@ export default function CumplimientoNuevo() {
     }
   };
 
-  const remesasPendientes = remesasExitosas?.filter(r => r.estado === "exitoso") || [];
+  // Función para procesar lote de manifiestos
+  const handleProcesarLoteManifiestos = () => {
+    if (selectedManifiestos.length === 0) {
+      toast({
+        title: "Error",
+        description: "Selecciona al menos un manifiesto para procesar",
+        variant: "destructive",
+      });
+      return;
+    }
+    setShowBatchModalManifiestos(true);
+  };
+
+  // Función para previsualizar XML de cumplimiento de manifiesto
+  const handlePreviewCumplimientoManifiesto = (numeroManifiesto: string) => {
+    setSelectedManifiesto(numeroManifiesto);
+    previewManifiestoMutation.mutate(numeroManifiesto);
+  };
+
+  const remesasPendientes = remesasExitosas || [];
   const manifiestosPendientes = manifiestos?.filter(m => 
     m.estado === "exitoso" && m.ingreso_id
   ) || [];
@@ -339,6 +354,15 @@ export default function CumplimientoNuevo() {
                   <Play className="h-4 w-4 mr-2" />
                   Procesar {selectedRemesas.length} Remesas
                 </Button>
+
+                <Button 
+                  className="w-full bg-purple-600 hover:bg-purple-700"
+                  onClick={handleProcesarLoteManifiestos}
+                  disabled={selectedManifiestos.length === 0 || batchProgress.processing}
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  Procesar {selectedManifiestos.length} Manifiestos
+                </Button>
                 
                 {batchProgress.processing && (
                   <div className="text-sm text-center text-muted-foreground">
@@ -347,7 +371,7 @@ export default function CumplimientoNuevo() {
                 )}
                 
                 <p className="text-sm text-muted-foreground">
-                  Selecciona múltiples remesas para procesamiento automático con pausas de 2 segundos entre envíos
+                  Selecciona múltiples remesas o manifiestos para procesamiento automático con pausas de 2 segundos entre envíos
                 </p>
               </div>
             </CardContent>
