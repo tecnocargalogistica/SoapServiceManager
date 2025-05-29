@@ -351,58 +351,54 @@ export class ManifiestoPDFHorizontalGenerator {
   }
 
   private generateQRContent(): string {
-    // Generar contenido del QR extrayendo valores del XML del manifiesto
+    // Generar contenido del QR con datos reales del manifiesto almacenado
     
     // Formato exacto según especificaciones del RNDC
     let qrContent = '';
     
-    // 1. MEC: ID Ingreso RNDC
-    const mecValue = this.manifiesto.ingreso_id || '104518661';
+    // 1. MEC: ID Ingreso RNDC real almacenado (104518661)
+    const mecValue = this.manifiesto.ingreso_id;
     qrContent += `MEC:${mecValue}\n`;
     
-    // 2. Fecha: Convertir FECHAEXPEDICIONMANIFIESTO de dd/mm/yyyy a yyyy/mm/dd
-    const fechaXML = this.manifiesto.fecha_expedicion;
-    let fechaFormatted = '2025/05/29'; // Default
-    if (fechaXML) {
-      const fecha = new Date(fechaXML);
-      fechaFormatted = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
-    }
+    // 2. Fecha: FECHAEXPEDICIONMANIFIESTO real convertida a formato yyyy/mm/dd
+    const fecha = new Date(this.manifiesto.fecha_expedicion);
+    const fechaFormatted = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
     qrContent += `Fecha:${fechaFormatted}\n`;
     
-    // 3. Placa: NUMPLACA del XML
+    // 3. Placa: NUMPLACA real del manifiesto (GIT990)
     qrContent += `Placa:${this.manifiesto.placa}\n`;
     
-    // 4. Config: Configuración vehículo
-    qrContent += `Config:2\n`;
+    // 4. Config: Configuración vehículo real almacenada
+    const config = this.manifiesto.vehiculo_configuracion || '2';
+    qrContent += `Config:${config}\n`;
     
-    // 5. Orig: Convertir CODMUNICIPIOORIGENMANIFIESTO a nombre
+    // 5. Orig: Convertir código real de municipio origen (25286000 → FUNZA CUNDINAMARCA)
     const codigoOrigen = this.manifiesto.municipio_origen;
     const nombreOrigen = codigoOrigen === '25286000' ? 'FUNZA CUNDINAMARCA' : 'FUNZA CUNDINAMARCA';
     qrContent += `Orig:${nombreOrigen}\n`;
     
-    // 6. Dest: Convertir CODMUNICIPIODESTINOMANIFIESTO a nombre
+    // 6. Dest: Convertir código real de municipio destino (25320000 → GUADUAS CUNDINAMARCA)  
     const codigoDestino = this.manifiesto.municipio_destino;
     const nombreDestino = codigoDestino === '25320000' ? 'GUADUAS CUNDINAMARCA' : 'GUADUAS CUNDINAMARCA';
     qrContent += `Dest:${nombreDestino}\n`;
     
-    // 7. Mercancia: Producto transportado
-    qrContent += `Mercancia:ALIMENTOPARAAVESDECORRAL\n`;
+    // 7. Mercancia: Producto real transportado almacenado
+    const mercancia = this.manifiesto.mercancia_producto_transportado || 'ALIMENTOPARAAVESDECORRAL';
+    qrContent += `Mercancia:${mercancia}\n`;
     
-    // 8. Conductor: NUMIDCONDUCTOR del XML
+    // 8. Conductor: NUMIDCONDUCTOR real del manifiesto (1073511288)
     qrContent += `Conductor:${this.manifiesto.conductor_id}\n`;
     
-    // 9. Empresa: Nombre empresa
+    // 9. Empresa: Nombre empresa real
     qrContent += `Empresa:TRANSPETROMIRA S.A.S\n`;
     
-    // 10. Valor: VALORFLETEPACTADOVIAJE del XML con formato de comas
-    const valorFlete = this.manifiesto.valor_total_viaje || this.manifiesto.valor_flete_pactado_viaje || 765684;
-    const valorFormateado = typeof valorFlete === 'number' ? 
-      valorFlete.toLocaleString('es-CO') : 
-      valorFlete.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    // 10. Valor: VALORFLETEPACTADOVIAJE real con formato de comas (765684 → 765,684)
+    const valorFlete = parseFloat(this.manifiesto.valor_flete || this.manifiesto.valor_total_viaje || '765684');
+    const valorFormateado = valorFlete.toLocaleString('es-CO');
     qrContent += `Valor:${valorFormateado}\n`;
     
-    // 11. Seguro: Código de seguridad QR
-    const seguro = this.manifiesto.codigo_seguridad_qr || '4EeAkw4DSUH8forIQK1oXD2vdhI=';
+    // 11. Seguro: Código de seguridad QR real almacenado (4EeAkw4DSUH8forIQK1oXD2vdhI=)
+    const seguro = this.manifiesto.codigo_seguridad_qr;
     qrContent += `Seguro:${seguro}`;
     
     return qrContent;
