@@ -5,6 +5,7 @@ import { es } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { FileImage } from "lucide-react";
 import manifestoImagePath from "@assets/Manifiesto.jpg";
+import QRCode from 'qrcode';
 
 interface ManifiestoPDFHorizontalProps {
   manifiesto: Manifiesto;
@@ -132,6 +133,9 @@ export class ManifiestoPDFHorizontalGenerator {
       
       // Agregar los datos del manifiesto
       this.addManifiestoData();
+      
+      // Agregar código QR del RNDC
+      await this.addQRCode();
       
       console.log('PDF generado exitosamente');
     } catch (error) {
@@ -344,6 +348,102 @@ export class ManifiestoPDFHorizontalGenerator {
     // ID de Ingreso RNDC
     const ingresoId = this.manifiesto.ingreso_id ? `ID: ${this.manifiesto.ingreso_id}` : '';
     this.doc.text(ingresoId, this.pixelToMM(campos.ingresoId.x), this.pixelToMM(campos.ingresoId.y, false));
+  }
+
+  private generateQRContent(): string {
+    // Generar contenido del QR con formato exacto del RNDC
+    const fecha = new Date(this.manifiesto.fecha_expedicion);
+    const fechaFormatted = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
+    
+    // Formato exacto según especificaciones RNDC
+    let qrContent = '';
+    
+    // 1. MEC: Número de autorización del RNDC
+    qrContent += `MEC:${this.manifiesto.ingreso_id || '104518661'}\n`;
+    
+    // 2. Fecha: Formato AAAA/MM/DD
+    qrContent += `Fecha:${fechaFormatted}\n`;
+    
+    // 3. Placa: 6 caracteres
+    qrContent += `Placa:${this.manifiesto.placa}\n`;
+    
+    // 4. Config: Configuración del vehículo (3 o 4 caracteres)
+    qrContent += `Config:2\n`;
+    
+    // 5. Orig: Municipio y departamento origen (máximo 20 caracteres)
+    const origen = this.manifiesto.municipio_origen_nombre && this.manifiesto.municipio_origen_departamento 
+      ? `${this.manifiesto.municipio_origen_nombre} ${this.manifiesto.municipio_origen_departamento}`.substring(0, 20)
+      : 'FUNZA CUNDINAMARCA';
+    qrContent += `Orig:${origen}\n`;
+    
+    // 6. Dest: Municipio y departamento destino (máximo 20 caracteres)
+    const destino = this.manifiesto.municipio_destino_nombre && this.manifiesto.municipio_destino_departamento
+      ? `${this.manifiesto.municipio_destino_nombre} ${this.manifiesto.municipio_destino_departamento}`.substring(0, 20)
+      : 'GUADUAS CUNDINAMARCA';
+    qrContent += `Dest:${destino}\n`;
+    
+    // 7. Mercancia: Descripción sin tildes (máximo 30 caracteres)
+    const mercancia = (this.manifiesto.mercancia_producto_transportado || 'ALIMENTOPARAAVESDECORRAL')
+      .replace(/[áàäâ]/gi, 'a')
+      .replace(/[éèëê]/gi, 'e')
+      .replace(/[íìïî]/gi, 'i')
+      .replace(/[óòöô]/gi, 'o')
+      .replace(/[úùüû]/gi, 'u')
+      .replace(/[ñ]/gi, 'n')
+      .substring(0, 30);
+    qrContent += `Mercancia:${mercancia}\n`;
+    
+    // 8. Conductor: Cédula sin puntos ni comas
+    qrContent += `Conductor:${this.manifiesto.conductor_id}\n`;
+    
+    // 9. Empresa: Nombre de la empresa (máximo 30 caracteres)
+    qrContent += `Empresa:TRANSPETROMIRA S.A.S\n`;
+    
+    // 10. Valor: Sin puntos ni comas
+    const valor = this.manifiesto.valor_flete || '765684';
+    qrContent += `Valor:${valor}\n`;
+    
+    // 11. Seguro: 28 caracteres del código de seguridad
+    const seguro = this.manifiesto.codigo_seguridad_qr || '4EeAkw4DSUH8forIQK1oXD2vdhI=';
+    qrContent += `Seguro:${seguro}`;
+    
+    return qrContent;
+  }
+
+  private async addQRCode(): Promise<void> {
+    try {
+      const qrContent = this.generateQRContent();
+      console.log('Generando QR con contenido:', qrContent);
+      
+      // Generar QR como imagen base64
+      const qrImage = await QRCode.toDataURL(qrContent, {
+        errorCorrectionLevel: 'M',
+        type: 'image/png',
+        width: 300,
+        margin: 1,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+      
+      // Posición del QR (parte superior derecha según especificación RNDC)
+      // 3x3 cm = ~30mm x 30mm
+      const qrSize = 30; // 3 cm en mm
+      const rightMargin = 10; // 1 cm del margen derecho
+      const topMargin = 10; // 1 cm del margen superior
+      
+      const pageWidth = this.doc.internal.pageSize.getWidth();
+      const qrX = pageWidth - qrSize - rightMargin;
+      const qrY = topMargin;
+      
+      // Agregar QR al PDF
+      this.doc.addImage(qrImage, 'PNG', qrX, qrY, qrSize, qrSize);
+      
+      console.log('Código QR agregado exitosamente');
+    } catch (error) {
+      console.error('Error generando código QR:', error);
+    }
   }
 
   private generateFallbackPDF(): void {
