@@ -2,6 +2,7 @@ import jsPDF from 'jspdf';
 import type { Manifiesto } from "@/../../shared/schema";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import manifestoImagePath from "@assets/Manifiesto.jpg";
 
 interface ManifiestoPDFGeneratorProps {
   manifiesto: Manifiesto;
