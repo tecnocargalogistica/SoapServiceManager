@@ -66,6 +66,9 @@ const TestPDFPlantilla = () => {
   });
 
   const manifiestoEjemplo = manifiestos?.[0];
+  
+  // Para mostrar los datos del manifiesto seleccionado
+  const selectedManifiesto = manifiestoEjemplo;
 
   const handleCoordenadasChange = (campo: string, eje: 'x' | 'y', valor: number) => {
     setCoordenadas(prev => ({
@@ -281,29 +284,29 @@ const TestPDFPlantilla = () => {
             <CardTitle>Datos del Manifiesto de Prueba</CardTitle>
           </CardHeader>
           <CardContent>
-            {selectedManifiesto ? (
+            {manifiestoEjemplo ? (
               <div className="space-y-4">
                 {/* Información Básica */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h4 className="font-semibold mb-2">Información Básica</h4>
                     <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">Número Manifiesto:</span> {selectedManifiesto.numero_manifiesto}</p>
-                      <p><span className="font-medium">ID:</span> {selectedManifiesto.id}</p>
-                      <p><span className="font-medium">Consecutivo Remesa:</span> {selectedManifiesto.consecutivo_remesa}</p>
-                      <p><span className="font-medium">Fecha Expedición:</span> {new Date(selectedManifiesto.fecha_expedicion).toLocaleDateString()}</p>
-                      <p><span className="font-medium">Placa:</span> {selectedManifiesto.placa}</p>
-                      <p><span className="font-medium">Origen:</span> {selectedManifiesto.municipio_origen}</p>
-                      <p><span className="font-medium">Destino:</span> {selectedManifiesto.municipio_destino}</p>
+                      <p><span className="font-medium">Número Manifiesto:</span> {manifiestoEjemplo.numero_manifiesto}</p>
+                      <p><span className="font-medium">ID:</span> {manifiestoEjemplo.id}</p>
+                      <p><span className="font-medium">Consecutivo Remesa:</span> {manifiestoEjemplo.consecutivo_remesa}</p>
+                      <p><span className="font-medium">Fecha Expedición:</span> {new Date(manifiestoEjemplo.fecha_expedicion).toLocaleDateString()}</p>
+                      <p><span className="font-medium">Placa:</span> {manifiestoEjemplo.placa}</p>
+                      <p><span className="font-medium">Origen:</span> {manifiestoEjemplo.municipio_origen}</p>
+                      <p><span className="font-medium">Destino:</span> {manifiestoEjemplo.municipio_destino}</p>
                     </div>
                   </div>
 
                   <div>
                     <h4 className="font-semibold mb-2">Información del Propietario</h4>
                     <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">Nombre:</span> {selectedManifiesto.propietario_nombre || 'No disponible'}</p>
-                      <p><span className="font-medium">Documento:</span> {selectedManifiesto.propietario_numero_documento || 'No disponible'}</p>
-                      <p><span className="font-medium">Tipo Doc:</span> {selectedManifiesto.propietario_tipo_documento || 'No disponible'}</p>
+                      <p><span className="font-medium">Nombre:</span> {manifiestoEjemplo.propietario_nombre || 'No disponible'}</p>
+                      <p><span className="font-medium">Documento:</span> {manifiestoEjemplo.propietario_documento || 'No disponible'}</p>
+                      <p><span className="font-medium">Tipo Doc:</span> {manifiestoEjemplo.propietario_tipo_documento || 'No disponible'}</p>
                     </div>
                   </div>
                 </div>
@@ -313,22 +316,22 @@ const TestPDFPlantilla = () => {
                   <div>
                     <h4 className="font-semibold mb-2">Información del Conductor</h4>
                     <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">ID Conductor:</span> {selectedManifiesto.conductor_id || 'No disponible'}</p>
-                      <p><span className="font-medium">Nombre:</span> {selectedManifiesto.conductor_nombre || 'No disponible'}</p>
-                      <p><span className="font-medium">Apellido:</span> {selectedManifiesto.conductor_apellido || 'No disponible'}</p>
-                      <p><span className="font-medium">Dirección:</span> {selectedManifiesto.conductor_direccion || 'No disponible'}</p>
-                      <p><span className="font-medium">Licencia:</span> {selectedManifiesto.conductor_numero_licencia || 'No disponible'}</p>
-                      <p><span className="font-medium">Categoría Licencia:</span> {selectedManifiesto.conductor_categoria_licencia || 'No disponible'}</p>
-                      <p><span className="font-medium">Municipio:</span> {selectedManifiesto.conductor_municipio || 'No disponible'}</p>
+                      <p><span className="font-medium">ID Conductor:</span> {manifiestoEjemplo.conductor_id || 'No disponible'}</p>
+                      <p><span className="font-medium">Conductor2 Nombre:</span> {manifiestoEjemplo.conductor2_nombre || 'No disponible'}</p>
+                      <p><span className="font-medium">Conductor2 Documento:</span> {manifiestoEjemplo.conductor2_numero_documento || 'No disponible'}</p>
+                      <p><span className="font-medium">Conductor2 Licencia:</span> {manifiestoEjemplo.conductor2_licencia || 'No disponible'}</p>
                     </div>
                   </div>
 
                   <div>
-                    <h4 className="font-semibold mb-2">Información del Tenedor</h4>
+                    <h4 className="font-semibold mb-2">Información de Carga</h4>
                     <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">Nombre:</span> {selectedManifiesto.tenedor_nombre || selectedManifiesto.propietario_nombre || 'No disponible'}</p>
-                      <p><span className="font-medium">Documento:</span> {selectedManifiesto.tenedor_numero_documento || selectedManifiesto.propietario_numero_documento || 'No disponible'}</p>
-                      <p><span className="font-medium">Tipo Doc:</span> {selectedManifiesto.tenedor_tipo_documento || selectedManifiesto.propietario_tipo_documento || 'No disponible'}</p>
+                      <p><span className="font-medium">Naturaleza Carga:</span> {manifiestoEjemplo.naturaleza_carga || 'No disponible'}</p>
+                      <p><span className="font-medium">Producto:</span> {manifiestoEjemplo.producto || 'No disponible'}</p>
+                      <p><span className="font-medium">Empaque:</span> {manifiestoEjemplo.empaque || 'No disponible'}</p>
+                      <p><span className="font-medium">Cantidad:</span> {manifiestoEjemplo.cantidad || 'No disponible'}</p>
+                      <p><span className="font-medium">Unidad Medida:</span> {manifiestoEjemplo.unidad_medida || 'No disponible'}</p>
+                      <p><span className="font-medium">Peso Kg:</span> {manifiestoEjemplo.peso_kg || 'No disponible'}</p>
                     </div>
                   </div>
                 </div>
@@ -336,46 +339,18 @@ const TestPDFPlantilla = () => {
                 {/* Información de Sedes */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h4 className="font-semibold mb-2">Sede Origen (Remitente)</h4>
+                    <h4 className="font-semibold mb-2">Sede Origen</h4>
                     <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">NIT:</span> {selectedManifiesto.sede_origen_nit || 'No disponible'}</p>
-                      <p><span className="font-medium">Nombre:</span> {selectedManifiesto.sede_origen_nombre || 'No disponible'}</p>
-                      <p><span className="font-medium">Dirección:</span> {selectedManifiesto.sede_origen_direccion || 'No disponible'}</p>
-                      <p><span className="font-medium">Código:</span> {selectedManifiesto.sede_origen_codigo || 'No disponible'}</p>
+                      <p><span className="font-medium">Código:</span> {manifiestoEjemplo.codigo_sede_origen || 'No disponible'}</p>
+                      <p><span className="font-medium">Origen:</span> {manifiestoEjemplo.municipio_origen || 'No disponible'}</p>
                     </div>
                   </div>
 
                   <div>
-                    <h4 className="font-semibold mb-2">Sede Destino (Destinatario)</h4>
+                    <h4 className="font-semibold mb-2">Sede Destino</h4>
                     <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">NIT:</span> {selectedManifiesto.sede_destino_nit || 'No disponible'}</p>
-                      <p><span className="font-medium">Nombre:</span> {selectedManifiesto.sede_destino_nombre || 'No disponible'}</p>
-                      <p><span className="font-medium">Dirección:</span> {selectedManifiesto.sede_destino_direccion || 'No disponible'}</p>
-                      <p><span className="font-medium">Código:</span> {selectedManifiesto.sede_destino_codigo || 'No disponible'}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Información Financiera y de Carga */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">Información Financiera</h4>
-                    <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">Valor Flete Pactado:</span> {selectedManifiesto.valor_flete_pactado_viaje ? `$${selectedManifiesto.valor_flete_pactado_viaje.toLocaleString()}` : 'No disponible'}</p>
-                      <p><span className="font-medium">Unidad Negocio:</span> {selectedManifiesto.unidad_negocio || 'No disponible'}</p>
-                      <p><span className="font-medium">Estado:</span> {selectedManifiesto.estado || 'No disponible'}</p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Información de Mercancía</h4>
-                    <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">Naturaleza Carga:</span> {selectedManifiesto.naturaleza_carga || 'No disponible'}</p>
-                      <p><span className="font-medium">Producto:</span> {selectedManifiesto.producto || 'No disponible'}</p>
-                      <p><span className="font-medium">Empaque:</span> {selectedManifiesto.empaque || 'No disponible'}</p>
-                      <p><span className="font-medium">Cantidad:</span> {selectedManifiesto.cantidad || 'No disponible'}</p>
-                      <p><span className="font-medium">Unidad Medida:</span> {selectedManifiesto.unidad_medida || 'No disponible'}</p>
-                      <p><span className="font-medium">Peso Kg:</span> {selectedManifiesto.peso_kg || 'No disponible'}</p>
+                      <p><span className="font-medium">Código:</span> {manifiestoEjemplo.codigo_sede_destino || 'No disponible'}</p>
+                      <p><span className="font-medium">Destino:</span> {manifiestoEjemplo.municipio_destino || 'No disponible'}</p>
                     </div>
                   </div>
                 </div>
@@ -384,9 +359,9 @@ const TestPDFPlantilla = () => {
                 <div>
                   <h4 className="font-semibold mb-2">Estado y Observaciones</h4>
                   <div className="space-y-1 text-sm">
-                    <p><span className="font-medium">XML Enviado:</span> {selectedManifiesto.xml_enviado ? 'Sí' : 'No'}</p>
-                    <p><span className="font-medium">Respuesta RNDC:</span> {selectedManifiesto.respuesta_rndc ? 'Recibida' : 'No recibida'}</p>
-                    <p><span className="font-medium">Observaciones:</span> {selectedManifiesto.observaciones || 'Sin observaciones'}</p>
+                    <p><span className="font-medium">Estado:</span> {manifiestoEjemplo.estado || 'No disponible'}</p>
+                    <p><span className="font-medium">Observaciones:</span> {manifiestoEjemplo.observaciones || 'Sin observaciones'}</p>
+                    <p><span className="font-medium">Fecha Creación:</span> {manifiestoEjemplo.created_at ? new Date(manifiestoEjemplo.created_at).toLocaleDateString() : 'No disponible'}</p>
                   </div>
                 </div>
               </div>
