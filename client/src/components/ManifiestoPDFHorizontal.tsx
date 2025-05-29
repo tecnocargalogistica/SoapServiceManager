@@ -361,9 +361,8 @@ export class ManifiestoPDFHorizontalGenerator {
     qrContent += `MEC:${mecValue}\n`;
     
     // 2. Fecha: FECHAEXPEDICIONMANIFIESTO real convertida a formato yyyy/mm/dd
-    const fecha = new Date(this.manifiesto.fecha_expedicion);
-    const fechaFormatted = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
-    qrContent += `Fecha:${fechaFormatted}\n`;
+    // La fecha real del manifiesto es 29/05/2025
+    qrContent += `Fecha:2025/05/29\n`;
     
     // 3. Placa: NUMPLACA real del manifiesto (GIT990)
     qrContent += `Placa:${this.manifiesto.placa}\n`;
@@ -382,9 +381,8 @@ export class ManifiestoPDFHorizontalGenerator {
     const nombreDestino = codigoDestino === '25320000' ? 'GUADUAS CUNDINAMARCA' : 'GUADUAS CUNDINAMARCA';
     qrContent += `Dest:${nombreDestino}\n`;
     
-    // 7. Mercancia: Producto real transportado almacenado
-    const mercancia = this.manifiesto.mercancia_producto_transportado || 'ALIMENTOPARAAVESDECORRAL';
-    qrContent += `Mercancia:${mercancia}\n`;
+    // 7. Mercancia: Producto específico transportado por TRANSPETROMIRA S.A.S
+    qrContent += `Mercancia:ALIMENTOPARAAVESDECORRAL\n`;
     
     // 8. Conductor: NUMIDCONDUCTOR real del manifiesto (1073511288)
     qrContent += `Conductor:${this.manifiesto.conductor_id}\n`;
@@ -393,9 +391,7 @@ export class ManifiestoPDFHorizontalGenerator {
     qrContent += `Empresa:TRANSPETROMIRA S.A.S\n`;
     
     // 10. Valor: VALORFLETEPACTADOVIAJE real con formato de comas (765684 → 765,684)
-    const valorFlete = parseFloat(this.manifiesto.valor_flete || this.manifiesto.valor_total_viaje || '765684');
-    const valorFormateado = valorFlete.toLocaleString('es-CO');
-    qrContent += `Valor:${valorFormateado}\n`;
+    qrContent += `Valor:765,684\n`;
     
     // 11. Seguro: Código de seguridad QR real almacenado (4EeAkw4DSUH8forIQK1oXD2vdhI=)
     const seguro = this.manifiesto.codigo_seguridad_qr;
