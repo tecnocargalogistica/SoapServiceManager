@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle, FileText, Truck, Play, AlertTriangle, Download } from "lucide-react";
+import { CheckCircle, FileText, Truck, Play, AlertTriangle, Download, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 
@@ -30,6 +30,8 @@ export default function GenerarManifiestos() {
   const [selectedRemesas, setSelectedRemesas] = useState<number[]>([]);
   const [processingResult, setProcessingResult] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("remesas");
+  const [showXmlModal, setShowXmlModal] = useState(false);
+  const [xmlContent, setXmlContent] = useState("");
   const { toast } = useToast();
 
   // Fetch remesas exitosas
@@ -97,6 +99,22 @@ export default function GenerarManifiestos() {
     }
 
     processManifiestosMutation.mutate(selectedRemesas);
+  };
+
+  const handlePreviewXML = async (remesa: Remesa) => {
+    try {
+      const response = await fetch(`/api/manifiestos/preview-xml/${remesa.id}`);
+      if (!response.ok) throw new Error('Error al generar XML');
+      const data = await response.json();
+      setXmlContent(data.xml);
+      setShowXmlModal(true);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo generar el XML de previsualización",
+        variant: "destructive"
+      });
+    }
   };
 
   if (isLoading) {
@@ -248,6 +266,9 @@ export default function GenerarManifiestos() {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                           Estado
                         </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                          XML a Enviar
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -279,6 +300,17 @@ export default function GenerarManifiestos() {
                               <CheckCircle className="h-3 w-3 mr-1" />
                               {remesa.estado}
                             </Badge>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handlePreviewXML(remesa)}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              <Eye className="h-4 w-4 mr-1" />
+                              Ver XML
+                            </Button>
                           </td>
                         </tr>
                       ))}
