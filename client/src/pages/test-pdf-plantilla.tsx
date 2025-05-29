@@ -333,10 +333,11 @@ const TestPDFPlantilla = () => {
                   <div>
                     <h4 className="font-semibold mb-2">Información de Carga</h4>
                     <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">Cantidad (Kg):</span> {manifiestoEjemplo.cantidad || manifiestoEjemplo.peso_kg || 'No disponible'}</p>
-                      <p><span className="font-medium">Valor Total Viaje:</span> {manifiestoEjemplo.valor_flete ? `$${parseFloat(manifiestoEjemplo.valor_flete).toLocaleString()}` : 'No disponible'}</p>
-                      <p><span className="font-medium">Valor Neto Viaje:</span> {manifiestoEjemplo.valor_flete ? `$${parseFloat(manifiestoEjemplo.valor_flete).toLocaleString()}` : 'No disponible'}</p>
-                      <p><span className="font-medium">Saldo a Pagar:</span> {manifiestoEjemplo.valor_flete ? `$${parseFloat(manifiestoEjemplo.valor_flete).toLocaleString()}` : 'No disponible'}</p>
+                      <p><span className="font-medium">Cantidad (Kg):</span> {manifiestoEjemplo.mercancia_cantidad || 'No disponible'}</p>
+                      <p><span className="font-medium">Unidad Medida:</span> {manifiestoEjemplo.mercancia_unidad_medida || 'No disponible'}</p>
+                      <p><span className="font-medium">Naturaleza Carga:</span> {manifiestoEjemplo.mercancia_naturaleza || 'No disponible'}</p>
+                      <p><span className="font-medium">Producto:</span> {manifiestoEjemplo.mercancia_producto_transportado || 'No disponible'}</p>
+                      <p><span className="font-medium">Empaque:</span> {manifiestoEjemplo.mercancia_empaque || 'No disponible'}</p>
                     </div>
                   </div>
                 </div>
@@ -346,20 +347,39 @@ const TestPDFPlantilla = () => {
                   <div>
                     <h4 className="font-semibold mb-2">Información Remitente</h4>
                     <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">NIT:</span> {manifiestoEjemplo.sede_origen_nit || 'No disponible'}</p>
-                      <p><span className="font-medium">Nombre/Razón Social:</span> {manifiestoEjemplo.sede_origen_nombre || 'No disponible'}</p>
-                      <p><span className="font-medium">Dirección:</span> {manifiestoEjemplo.sede_origen_direccion || 'No disponible'}</p>
-                      <p><span className="font-medium">Municipio:</span> {manifiestoEjemplo.sede_origen_municipio || manifiestoEjemplo.municipio_origen || 'No disponible'}</p>
+                      <p><span className="font-medium">Información:</span> {manifiestoEjemplo.mercancia_informacion_remitente || 'No disponible'}</p>
+                      <p><span className="font-medium">Lugar Cargue:</span> {manifiestoEjemplo.mercancia_lugar_cargue || manifiestoEjemplo.municipio_origen || 'No disponible'}</p>
                     </div>
                   </div>
 
                   <div>
                     <h4 className="font-semibold mb-2">Información Destinatario</h4>
                     <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">NIT:</span> {manifiestoEjemplo.sede_destino_nit || 'No disponible'}</p>
-                      <p><span className="font-medium">Nombre/Razón Social:</span> {manifiestoEjemplo.sede_destino_nombre || 'No disponible'}</p>
-                      <p><span className="font-medium">Dirección:</span> {manifiestoEjemplo.sede_destino_direccion || 'No disponible'}</p>
-                      <p><span className="font-medium">Municipio:</span> {manifiestoEjemplo.sede_destino_municipio || manifiestoEjemplo.municipio_destino || 'No disponible'}</p>
+                      <p><span className="font-medium">Información:</span> {manifiestoEjemplo.mercancia_informacion_destinatario || 'No disponible'}</p>
+                      <p><span className="font-medium">Lugar Descargue:</span> {manifiestoEjemplo.mercancia_lugar_descargue || manifiestoEjemplo.municipio_destino || 'No disponible'}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Información Económica */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-semibold mb-2">Valores Económicos</h4>
+                    <div className="space-y-1 text-sm">
+                      <p><span className="font-medium">Valor Total Viaje:</span> {manifiestoEjemplo.valor_total_viaje ? `$${parseFloat(manifiestoEjemplo.valor_total_viaje).toLocaleString()}` : 'No disponible'}</p>
+                      <p><span className="font-medium">Valor Neto a Pagar:</span> {manifiestoEjemplo.valor_neto_pagar ? `$${parseFloat(manifiestoEjemplo.valor_neto_pagar).toLocaleString()}` : 'No disponible'}</p>
+                      <p><span className="font-medium">Saldo a Pagar:</span> {manifiestoEjemplo.saldo_pagar ? `$${parseFloat(manifiestoEjemplo.saldo_pagar).toLocaleString()}` : 'No disponible'}</p>
+                      <p><span className="font-medium">Valor Anticipo:</span> {manifiestoEjemplo.valor_anticipo ? `$${parseFloat(manifiestoEjemplo.valor_anticipo).toLocaleString()}` : '$0'}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold mb-2">Términos de Pago</h4>
+                    <div className="space-y-1 text-sm">
+                      <p><span className="font-medium">Lugar de Pago:</span> {manifiestoEjemplo.lugar_pago || 'No disponible'}</p>
+                      <p><span className="font-medium">Fecha de Pago:</span> {manifiestoEjemplo.fecha_pago ? new Date(manifiestoEjemplo.fecha_pago).toLocaleDateString() : 'No disponible'}</p>
+                      <p><span className="font-medium">Cargue pagado por:</span> {manifiestoEjemplo.cargue_pagado_por || 'DESTINATARIO'}</p>
+                      <p><span className="font-medium">Descargue pagado por:</span> {manifiestoEjemplo.descargue_pagado_por || 'DESTINATARIO'}</p>
                     </div>
                   </div>
                 </div>
