@@ -15,8 +15,14 @@ class ManifiestoPDFHorizontalGenerator {
   private manifiesto: Manifiesto;
 
   // Coordenadas ajustadas para el formato horizontal basadas en tu plantilla
+  // Conversión aproximada de píxeles a mm (asumiendo 72 DPI): pixel * 0.352778
   public campos = {
-    numeroManifiesto: { x: 220, y: 45 },
+    // CONSECUTIVO: X 1076, Y 170 (píxeles) -> X ~380, Y ~60 (mm)
+    numeroManifiesto: { x: 380, y: 60 },
+    
+    // ID (respuesta XML): X 1101, Y 213 (píxeles) -> X ~389, Y ~75 (mm)  
+    idRespuesta: { x: 389, y: 75 },
+    
     fechaExpedicion: { x: 50, y: 85 },
     origenViaje: { x: 130, y: 85 },
     destinoViaje: { x: 200, y: 85 },
@@ -106,10 +112,16 @@ class ManifiestoPDFHorizontalGenerator {
     // Configurar fuente
     this.doc.setFont('helvetica', 'normal');
 
-    // Número de manifiesto (campo principal)
+    // Número de manifiesto (CONSECUTIVO)
     this.doc.setFontSize(campos.fontSize.large);
     this.doc.setFont('helvetica', 'bold');
     this.doc.text(this.manifiesto.numero_manifiesto, campos.numeroManifiesto.x, campos.numeroManifiesto.y);
+
+    // ID de respuesta (simulando ID del XML de respuesta)
+    this.doc.setFontSize(campos.fontSize.normal);
+    this.doc.setFont('helvetica', 'normal');
+    const idRespuesta = this.manifiesto.id ? this.manifiesto.id.toString() : 'ID_XML_RESPONSE';
+    this.doc.text(idRespuesta, campos.idRespuesta.x, campos.idRespuesta.y);
 
     // Cambiar a fuente normal para el resto
     this.doc.setFont('helvetica', 'normal');

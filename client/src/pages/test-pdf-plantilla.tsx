@@ -11,13 +11,15 @@ import type { Manifiesto } from "@/../../shared/schema";
 
 const TestPDFPlantilla = () => {
   const [coordenadas, setCoordenadas] = useState({
-    numeroManifiesto: { x: 167, y: 83 },
-    fechaExpedicion: { x: 28, y: 138 },
-    origenViaje: { x: 287, y: 138 },
-    destinoViaje: { x: 410, y: 138 },
-    placa: { x: 45, y: 225 },
-    documentoConductor: { x: 308, y: 258 },
-    numeroRemesa: { x: 41, y: 384 }
+    // Coordenadas de prueba convertidas de píxeles a mm
+    numeroManifiesto: { x: 380, y: 60 }, // CONSECUTIVO: X 1076, Y 170 píxeles
+    idRespuesta: { x: 389, y: 75 }, // ID respuesta XML: X 1101, Y 213 píxeles
+    fechaExpedicion: { x: 50, y: 85 },
+    origenViaje: { x: 130, y: 85 },
+    destinoViaje: { x: 200, y: 85 },
+    placa: { x: 50, y: 125 },
+    documentoConductor: { x: 160, y: 140 },
+    numeroRemesa: { x: 50, y: 195 }
   });
 
   const { data: manifiestos } = useQuery<Manifiesto[]>({
