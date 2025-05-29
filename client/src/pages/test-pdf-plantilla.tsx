@@ -349,7 +349,11 @@ const TestPDFPlantilla = () => {
                     <h4 className="font-semibold mb-2">Información Remitente</h4>
                     <div className="space-y-1 text-sm">
                       <p><span className="font-medium">Información:</span> {manifiestoEjemplo.mercancia_informacion_remitente || 'No disponible'}</p>
-                      <p><span className="font-medium">Lugar Cargue:</span> {manifiestoEjemplo.mercancia_lugar_cargue || manifiestoEjemplo.municipio_origen || 'No disponible'}</p>
+                      <p><span className="font-medium">Lugar Cargue:</span> {
+                        manifiestoEjemplo.municipio_origen_nombre && manifiestoEjemplo.municipio_origen_departamento 
+                          ? `${manifiestoEjemplo.municipio_origen_nombre} - ${manifiestoEjemplo.municipio_origen_departamento}`
+                          : manifiestoEjemplo.mercancia_lugar_cargue || manifiestoEjemplo.municipio_origen || 'No disponible'
+                      }</p>
                     </div>
                   </div>
 
@@ -357,7 +361,11 @@ const TestPDFPlantilla = () => {
                     <h4 className="font-semibold mb-2">Información Destinatario</h4>
                     <div className="space-y-1 text-sm">
                       <p><span className="font-medium">Información:</span> {manifiestoEjemplo.mercancia_informacion_destinatario || 'No disponible'}</p>
-                      <p><span className="font-medium">Lugar Descargue:</span> {manifiestoEjemplo.mercancia_lugar_descargue || manifiestoEjemplo.municipio_destino || 'No disponible'}</p>
+                      <p><span className="font-medium">Lugar Descargue:</span> {
+                        manifiestoEjemplo.municipio_destino_nombre && manifiestoEjemplo.municipio_destino_departamento 
+                          ? `${manifiestoEjemplo.municipio_destino_nombre} - ${manifiestoEjemplo.municipio_destino_departamento}`
+                          : manifiestoEjemplo.mercancia_lugar_descargue || manifiestoEjemplo.municipio_destino || 'No disponible'
+                      }</p>
                     </div>
                   </div>
                 </div>

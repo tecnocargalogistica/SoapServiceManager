@@ -252,6 +252,33 @@ export class DatabaseStorage implements IStorage {
             }
           }
 
+          // Obtener información de municipios origen y destino
+          if (manifiesto.municipio_origen) {
+            const municipioOrigen = await db
+              .select()
+              .from(municipios)
+              .where(eq(municipios.codigo, manifiesto.municipio_origen))
+              .limit(1);
+
+            if (municipioOrigen.length > 0) {
+              manifiestoCompleto.municipio_origen_nombre = municipioOrigen[0].nombre;
+              manifiestoCompleto.municipio_origen_departamento = municipioOrigen[0].departamento;
+            }
+          }
+
+          if (manifiesto.municipio_destino) {
+            const municipioDestino = await db
+              .select()
+              .from(municipios)
+              .where(eq(municipios.codigo, manifiesto.municipio_destino))
+              .limit(1);
+
+            if (municipioDestino.length > 0) {
+              manifiestoCompleto.municipio_destino_nombre = municipioDestino[0].nombre;
+              manifiestoCompleto.municipio_destino_departamento = municipioDestino[0].departamento;
+            }
+          }
+
           // Obtener sede origen
           if (manifiesto.sede_origen) {
             const sedeOrigen = await db
