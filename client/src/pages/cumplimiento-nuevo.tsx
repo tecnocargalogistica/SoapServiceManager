@@ -225,7 +225,7 @@ export default function CumplimientoNuevo() {
     setShowBatchModal(false);
   };
 
-  const remesasPendientes = remesasExitosas?.filter(r => r.estado_rndc === "exitoso") || [];
+  const remesasPendientes = remesasExitosas?.filter(r => r.estado === "exitoso") || [];
   const manifiestosPendientes = manifiestos?.filter(m => 
     m.estado_rndc === "exitoso" && m.ingreso_id
   ) || [];
