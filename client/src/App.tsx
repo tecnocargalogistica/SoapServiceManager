@@ -8,6 +8,7 @@ import Dashboard from "@/pages/dashboard";
 import GenerarRemesas from "@/pages/generar-remesas";
 import GenerarManifiestos from "@/pages/generar-manifiestos";
 import CumplirRemesas from "@/pages/cumplir-remesas";
+import Cumplimiento from "@/pages/cumplimiento";
 import Configuracion from "@/pages/configuracion";
 import GestionDatos from "@/pages/gestion-datos";
 import SOAPCliente from "@/pages/soap-cliente";
@@ -28,6 +29,7 @@ function Router() {
             <Route path="/generar-remesas" component={GenerarRemesas} />
             <Route path="/generar-manifiestos" component={GenerarManifiestos} />
             <Route path="/cumplir-remesas" component={CumplirRemesas} />
+            <Route path="/cumplimiento" component={Cumplimiento} />
             <Route path="/gestion-datos" component={GestionDatos} />
             <Route path="/soap-cliente" component={SOAPCliente} />
             <Route path="/configuracion" component={Configuracion} />

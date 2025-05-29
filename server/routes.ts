@@ -1518,6 +1518,145 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== CUMPLIMIENTO ROUTES =====
+  
+  // Cumplir remesa
+  app.post("/api/cumplimiento/remesa", async (req, res) => {
+    try {
+      const { consecutivo, fecha } = req.body;
+      
+      if (!consecutivo || !fecha) {
+        return res.status(400).json({ error: "Consecutivo y fecha son requeridos" });
+      }
+
+      const config = await storage.getConfiguracionActiva();
+      if (!config) {
+        return res.status(400).json({ error: "Configuración del sistema no encontrada" });
+      }
+
+      const soapProxy = new SOAPProxy(config.endpoint_primary, config.endpoint_backup, config.timeout);
+
+      const cumplimientoData = {
+        consecutivoRemesa: consecutivo,
+        fechaCumplimiento: fecha,
+        config
+      };
+
+      const xml = xmlGenerator.generateCumplimientoXML(cumplimientoData);
+      
+      console.log(`📋 === XML CUMPLIMIENTO REMESA ${consecutivo} ===`);
+      console.log(xml);
+      console.log(`📋 === FIN XML CUMPLIMIENTO REMESA ${consecutivo} ===`);
+
+      const soapResponse = await soapProxy.sendSOAPRequest(xml);
+      const wasSuccessful = soapResponse && soapResponse.success && soapResponse.data?.ingresoId;
+
+      // Actualizar estado de la remesa
+      const remesa = await storage.getRemesaByConsecutivo(consecutivo);
+      if (remesa) {
+        await storage.updateRemesa(remesa.id, {
+          estado: wasSuccessful ? "cumplido" : "error_cumplimiento"
+        });
+      }
+
+      // Registrar en el log de actividades
+      await storage.createLogActividad({
+        tipo: wasSuccessful ? "success" : "error",
+        modulo: "cumplimiento-remesa",
+        mensaje: wasSuccessful ? 
+          `Remesa ${consecutivo} cumplida exitosamente` : 
+          `Error cumpliendo remesa ${consecutivo}: ${soapResponse?.mensaje || "Error en el RNDC"}`,
+        detalles: {
+          consecutivo,
+          fecha,
+          respuestaRNDC: soapResponse?.data?.rawResponse
+        }
+      });
+
+      res.json({
+        success: wasSuccessful,
+        consecutivo,
+        fecha,
+        mensaje: wasSuccessful ? "Remesa cumplida exitosamente" : (soapResponse?.mensaje || "Error en el RNDC"),
+        respuesta_xml: soapResponse?.data?.rawResponse
+      });
+
+    } catch (error) {
+      console.error("Error al cumplir remesa:", error);
+      res.status(500).json({ error: "Error al procesar cumplimiento de remesa" });
+    }
+  });
+
+  // Cumplir manifiesto
+  app.post("/api/cumplimiento/manifiesto", async (req, res) => {
+    try {
+      const { numeroManifiesto, fecha } = req.body;
+      
+      if (!numeroManifiesto || !fecha) {
+        return res.status(400).json({ error: "Número de manifiesto y fecha son requeridos" });
+      }
+
+      const config = await storage.getConfiguracionActiva();
+      if (!config) {
+        return res.status(400).json({ error: "Configuración del sistema no encontrada" });
+      }
+
+      const soapProxy = new SOAPProxy(config.endpoint_primary, config.endpoint_backup, config.timeout);
+
+      // Buscar el manifiesto
+      const manifiesto = await storage.getManifiestoByNumero(numeroManifiesto);
+      if (!manifiesto) {
+        return res.status(404).json({ error: "Manifiesto no encontrado" });
+      }
+
+      const cumplimientoData = {
+        consecutivoRemesa: manifiesto.consecutivo_remesa,
+        fechaCumplimiento: fecha,
+        config
+      };
+
+      const xml = xmlGenerator.generateCumplimientoXML(cumplimientoData);
+      
+      console.log(`📋 === XML CUMPLIMIENTO MANIFIESTO ${numeroManifiesto} ===`);
+      console.log(xml);
+      console.log(`📋 === FIN XML CUMPLIMIENTO MANIFIESTO ${numeroManifiesto} ===`);
+
+      const soapResponse = await soapProxy.sendSOAPRequest(xml);
+      const wasSuccessful = soapResponse && soapResponse.success && soapResponse.data?.ingresoId;
+
+      // Actualizar estado del manifiesto
+      await storage.updateManifiesto(manifiesto.id, {
+        estado: wasSuccessful ? "cumplido" : "error_cumplimiento"
+      });
+
+      // Registrar en el log de actividades
+      await storage.createLogActividad({
+        tipo: wasSuccessful ? "success" : "error",
+        modulo: "cumplimiento-manifiesto",
+        mensaje: wasSuccessful ? 
+          `Manifiesto ${numeroManifiesto} cumplido exitosamente` : 
+          `Error cumpliendo manifiesto ${numeroManifiesto}: ${soapResponse?.mensaje || "Error en el RNDC"}`,
+        detalles: {
+          numeroManifiesto,
+          fecha,
+          respuestaRNDC: soapResponse?.data?.rawResponse
+        }
+      });
+
+      res.json({
+        success: wasSuccessful,
+        numeroManifiesto,
+        fecha,
+        mensaje: wasSuccessful ? "Manifiesto cumplido exitosamente" : (soapResponse?.mensaje || "Error en el RNDC"),
+        respuesta_xml: soapResponse?.data?.rawResponse
+      });
+
+    } catch (error) {
+      console.error("Error al cumplir manifiesto:", error);
+      res.status(500).json({ error: "Error al procesar cumplimiento de manifiesto" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

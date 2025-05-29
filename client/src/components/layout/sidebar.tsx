@@ -24,7 +24,7 @@ const navigation = [
     items: [
       { name: "Generar Remesas", href: "/generar-remesas", icon: FileText },
       { name: "Generar Manifiestos", href: "/generar-manifiestos", icon: ClipboardList },
-      { name: "Cumplir Remesas", href: "/cumplir-remesas", icon: CheckCircle },
+      { name: "Cumplimiento RNDC", href: "/cumplimiento", icon: CheckCircle },
     ]
   },
   {
