@@ -276,7 +276,7 @@ export default function CumplimientoNuevo() {
 
   const remesasPendientes = remesasExitosas?.filter(r => r.estado === "exitoso") || [];
   const manifiestosPendientes = manifiestos?.filter(m => 
-    m.estado_rndc === "exitoso" && m.ingreso_id
+    m.estado === "exitoso" && m.ingreso_id
   ) || [];
 
   return (
