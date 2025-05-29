@@ -657,6 +657,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const municipioOrigen = municipios.find(m => m.codigo === sedeOrigen?.municipio_codigo);
           const municipioDestino = municipios.find(m => m.codigo === sedeDestino?.municipio_codigo);
 
+          // Calcular valor del flete: toneladas × valor_tonelada
+          const toneladas = parseFloat(remesa.toneladas?.toString() || "0");
+          const valorPorTonelada = parseFloat(sedeOrigen?.valor_tonelada?.toString() || "50000");
+          const valorFlete = Math.round(toneladas * valorPorTonelada);
+
+          console.log(`💰 Calculando flete para remesa ${remesa.consecutivo}: ${toneladas} ton × $${valorPorTonelada.toLocaleString()} = $${valorFlete.toLocaleString()}`);
+
           const manifestoData = {
             numeroManifiesto,
             consecutivoRemesa: remesa.consecutivo,
@@ -665,7 +672,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             municipioDestino: municipioDestino?.nombre || "GUADUAS",
             placa: remesa.placa,
             conductorId: remesa.conductor_id,
-            valorFlete: 50000,
+            valorFlete: valorFlete,
             fechaPagoSaldo: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0].split('-').reverse().join('/'),
             propietarioTipo: vehiculo.propietario_tipo_doc,
             propietarioNumero: vehiculo.propietario_numero_doc,
@@ -763,6 +770,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const municipioOrigen = municipios.find(m => m.codigo === sedeOrigen?.municipio_codigo);
       const municipioDestino = municipios.find(m => m.codigo === sedeDestino?.municipio_codigo);
 
+      // Calcular valor del flete: toneladas × valor_tonelada
+      const toneladas = parseFloat(remesa.toneladas?.toString() || "0");
+      const valorPorTonelada = parseFloat(sedeOrigen?.valor_tonelada?.toString() || "50000");
+      const valorFlete = Math.round(toneladas * valorPorTonelada);
+
+      console.log(`💰 Calculando flete: ${toneladas} ton × $${valorPorTonelada.toLocaleString()} = $${valorFlete.toLocaleString()}`);
+
       const manifestoData = {
         numeroManifiesto,
         consecutivoRemesa: remesa.consecutivo,
@@ -771,7 +785,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         municipioDestino: municipioDestino?.nombre || "GUADUAS",
         placa: remesa.placa,
         conductorId: remesa.conductor_id,
-        valorFlete: 50000,
+        valorFlete: valorFlete,
         fechaPagoSaldo: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0].split('-').reverse().join('/'),
         propietarioTipo: vehiculo.propietario_tipo_doc,
         propietarioNumero: vehiculo.propietario_numero_doc,
