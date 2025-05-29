@@ -1,4 +1,4 @@
-import { eq, and, desc, sql, alias } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { db } from "./db";
 import { 
   configuraciones, consecutivos, documentos, logActividades, 
@@ -147,89 +147,99 @@ export class DatabaseStorage implements IStorage {
 
   async getManifiestosCompletos(): Promise<any[]> {
     try {
-      const result = await db
-        .select({
-          // Datos del manifiesto
-          id: manifiestos.id,
-          numero_manifiesto: manifiestos.numero_manifiesto,
-          consecutivo_remesa: manifiestos.consecutivo_remesa,
-          fecha_expedicion: manifiestos.fecha_expedicion,
-          municipio_origen: manifiestos.municipio_origen,
-          municipio_destino: manifiestos.municipio_destino,
-          placa: manifiestos.placa,
-          conductor_id: manifiestos.conductor_id,
-          valor_flete: manifiestos.valor_flete,
-          estado: manifiestos.estado,
-          naturaleza_carga: manifiestos.naturaleza_carga,
-          producto: manifiestos.producto,
-          empaque: manifiestos.empaque,
-          cantidad: manifiestos.cantidad,
-          unidad_medida: manifiestos.unidad_medida,
-          peso_kg: manifiestos.peso_kg,
-          observaciones: manifiestos.observaciones,
-          created_at: manifiestos.created_at,
-          codigo_sede_origen: manifiestos.codigo_sede_origen,
-          codigo_sede_destino: manifiestos.codigo_sede_destino,
-          conductor2_nombre: manifiestos.conductor2_nombre,
-          conductor2_numero_documento: manifiestos.conductor2_numero_documento,
-          conductor2_licencia: manifiestos.conductor2_licencia,
-          propietario_nombre: manifiestos.propietario_nombre,
-          propietario_documento: manifiestos.propietario_documento,
-          
-          // Datos del vehículo (propietario y tenedor)
-          vehiculo_propietario_nombre: vehiculos.propietario_nombre,
-          vehiculo_propietario_numero_doc: vehiculos.propietario_numero_doc,
-          vehiculo_propietario_tipo_doc: vehiculos.propietario_tipo_doc,
-          vehiculo_tenedor_nombre: vehiculos.tenedor_nombre,
-          vehiculo_tenedor_numero_doc: vehiculos.tenedor_numero_doc,
-          vehiculo_tenedor_tipo_doc: vehiculos.tenedor_tipo_doc,
-          
-          // Datos del tercero conductor
-          conductor_nombre: terceros.nombre,
-          conductor_apellido: terceros.apellido,
-          conductor_direccion: terceros.direccion,
-          conductor_telefono: terceros.telefono,
-          conductor_numero_licencia: terceros.numero_licencia,
-          conductor_categoria_licencia: terceros.categoria_licencia,
-          conductor_municipio_codigo: terceros.municipio_codigo,
-          
-          // Datos del tercero propietario
-          propietario_tercero_nombre: sql`prop_tercero.nombre`,
-          propietario_tercero_apellido: sql`prop_tercero.apellido`,
-          propietario_tercero_direccion: sql`prop_tercero.direccion`,
-          propietario_tercero_telefono: sql`prop_tercero.telefono`,
-          propietario_tercero_municipio: sql`prop_tercero.municipio_codigo`,
-          
-          // Datos de sede origen
-          sede_origen_nit: sql`sede_origen.nit`,
-          sede_origen_nombre: sql`sede_origen.nombre`,
-          sede_origen_direccion: sql`sede_origen.direccion`,
-          sede_origen_municipio: sql`sede_origen.municipio_codigo`,
-          
-          // Datos de sede destino
-          sede_destino_nit: sql`sede_destino.nit`,
-          sede_destino_nombre: sql`sede_destino.nombre`,
-          sede_destino_direccion: sql`sede_destino.direccion`,
-          sede_destino_municipio: sql`sede_destino.municipio_codigo`,
-        })
+      // Obtener manifiestos básicos primero
+      const manifiestosList = await db
+        .select()
         .from(manifiestos)
-        .leftJoin(vehiculos, eq(manifiestos.placa, vehiculos.placa))
-        .leftJoin(terceros, eq(manifiestos.conductor_id, terceros.numero_documento))
-        .leftJoin(
-          alias(terceros, 'prop_tercero'),
-          eq(vehiculos.propietario_numero_doc, sql`prop_tercero.numero_documento`)
-        )
-        .leftJoin(
-          alias(sedes, 'sede_origen'),
-          eq(manifiestos.codigo_sede_origen, sql`sede_origen.codigo`)
-        )
-        .leftJoin(
-          alias(sedes, 'sede_destino'),
-          eq(manifiestos.codigo_sede_destino, sql`sede_destino.codigo`)
-        )
         .orderBy(desc(manifiestos.created_at));
 
-      return result;
+      // Enriquecer cada manifiesto con datos relacionados
+      const manifestosCompletos = [];
+      
+      for (const manifiesto of manifiestosList) {
+        // Obtener datos del vehículo
+        const vehiculo = await db
+          .select()
+          .from(vehiculos)
+          .where(eq(vehiculos.placa, manifiesto.placa))
+          .limit(1);
+
+        // Obtener datos del conductor
+        const conductor = await db
+          .select()
+          .from(terceros)
+          .where(eq(terceros.numero_documento, manifiesto.conductor_id))
+          .limit(1);
+
+        // Obtener sede origen
+        const sedeOrigen = await db
+          .select()
+          .from(sedes)
+          .where(eq(sedes.codigo, manifiesto.codigo_sede_origen || ''))
+          .limit(1);
+
+        // Obtener sede destino
+        const sedeDestino = await db
+          .select()
+          .from(sedes)
+          .where(eq(sedes.codigo, manifiesto.codigo_sede_destino || ''))
+          .limit(1);
+
+        // Obtener datos del propietario del vehículo
+        let propietarioTercero = null;
+        if (vehiculo[0]?.propietario_numero_doc) {
+          const propietario = await db
+            .select()
+            .from(terceros)
+            .where(eq(terceros.numero_documento, vehiculo[0].propietario_numero_doc))
+            .limit(1);
+          propietarioTercero = propietario[0] || null;
+        }
+
+        // Combinar todos los datos
+        const manifiestoCompleto = {
+          ...manifiesto,
+          // Datos del vehículo
+          vehiculo_propietario_nombre: vehiculo[0]?.propietario_nombre || null,
+          vehiculo_propietario_numero_doc: vehiculo[0]?.propietario_numero_doc || null,
+          vehiculo_propietario_tipo_doc: vehiculo[0]?.propietario_tipo_doc || null,
+          vehiculo_tenedor_nombre: vehiculo[0]?.tenedor_nombre || null,
+          vehiculo_tenedor_numero_doc: vehiculo[0]?.tenedor_numero_doc || null,
+          vehiculo_tenedor_tipo_doc: vehiculo[0]?.tenedor_tipo_doc || null,
+          
+          // Datos del conductor
+          conductor_nombre: conductor[0]?.nombre || null,
+          conductor_apellido: conductor[0]?.apellido || null,
+          conductor_direccion: conductor[0]?.direccion || null,
+          conductor_telefono: conductor[0]?.telefono || null,
+          conductor_numero_licencia: conductor[0]?.numero_licencia || null,
+          conductor_categoria_licencia: conductor[0]?.categoria_licencia || null,
+          conductor_municipio_codigo: conductor[0]?.municipio_codigo || null,
+          
+          // Datos del propietario
+          propietario_tercero_nombre: propietarioTercero?.nombre || null,
+          propietario_tercero_apellido: propietarioTercero?.apellido || null,
+          propietario_tercero_direccion: propietarioTercero?.direccion || null,
+          propietario_tercero_telefono: propietarioTercero?.telefono || null,
+          propietario_tercero_municipio: propietarioTercero?.municipio_codigo || null,
+          
+          // Datos de sede origen
+          sede_origen_nit: sedeOrigen[0]?.nit || null,
+          sede_origen_nombre: sedeOrigen[0]?.nombre || null,
+          sede_origen_direccion: sedeOrigen[0]?.direccion || null,
+          sede_origen_municipio: sedeOrigen[0]?.municipio_codigo || null,
+          
+          // Datos de sede destino
+          sede_destino_nit: sedeDestino[0]?.nit || null,
+          sede_destino_nombre: sedeDestino[0]?.nombre || null,
+          sede_destino_direccion: sedeDestino[0]?.direccion || null,
+          sede_destino_municipio: sedeDestino[0]?.municipio_codigo || null,
+        };
+
+        manifestosCompletos.push(manifiestoCompleto);
+      }
+
+      return manifestosCompletos;
     } catch (error) {
       console.error("❌ Error en getManifiestosCompletos:", error);
       return [];
