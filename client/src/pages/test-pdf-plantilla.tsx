@@ -408,6 +408,7 @@ const TestPDFPlantilla = () => {
                     <p><span className="font-medium">Fecha Expedición:</span> {new Date(manifiestoEjemplo.fecha_expedicion).toLocaleDateString()}</p>
                     <p><span className="font-medium">Estado:</span> {manifiestoEjemplo.estado || 'No disponible'}</p>
                     <p><span className="font-medium">ID:</span> {manifiestoEjemplo.id}</p>
+                    <p><span className="font-medium">ID Ingreso RNDC:</span> {manifiestoEjemplo.ingreso_id || 'No disponible'}</p>
                   </div>
                 </div>
               </div>
