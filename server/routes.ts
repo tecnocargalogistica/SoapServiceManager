@@ -694,12 +694,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
             numero_manifiesto: numeroManifiesto,
             consecutivo_remesa: remesa.consecutivo,
             fecha_expedicion: new Date(),
-            municipio_origen: municipioOrigen?.nombre || "BOGOTA",
-            municipio_destino: municipioDestino?.nombre || "GUADUAS",
+            municipio_origen: sedeOrigen?.municipio_codigo || "11001000",
+            municipio_destino: sedeDestino?.municipio_codigo || "25320000",
             placa: remesa.placa,
-            valor_flete: 50000,
-            fecha_pago_saldo: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-            estado: wasSuccessful ? "exitoso" : "error"
+            conductor_id: remesa.conductor_id,
+            valor_flete: valorFlete.toString(),
+            estado: wasSuccessful ? "exitoso" : "error",
+            xml_enviado: xml,
+            respuesta_rndc: soapResponse?.data?.rawResponse || null
+          });
+
+          // Registrar en el log de actividades
+          await storage.createLogActividad({
+            tipo: wasSuccessful ? "success" : "error",
+            modulo: "manifiesto-generation",
+            mensaje: wasSuccessful ? 
+              `Manifiesto ${numeroManifiesto} generado exitosamente` : 
+              `Error generando manifiesto ${numeroManifiesto}: ${soapResponse?.mensaje || "Error en el RNDC"}`,
+            detalles: {
+              numeroManifiesto,
+              consecutivoRemesa: remesa.consecutivo,
+              valorFlete,
+              respuestaRNDC: soapResponse?.data?.rawResponse
+            }
           });
 
           results.push({
