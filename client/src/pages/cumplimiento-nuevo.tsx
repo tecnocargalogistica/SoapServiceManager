@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle, Eye, Send, Clock, Truck } from "lucide-react";
+import { CheckCircle, Eye, Send, Clock, Truck, Square, CheckSquare, Play, Pause } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -45,7 +45,11 @@ interface Manifiesto {
 export default function CumplimientoNuevo() {
   const [xmlPreview, setXmlPreview] = useState("");
   const [selectedRemesa, setSelectedRemesa] = useState("");
+  const [selectedRemesas, setSelectedRemesas] = useState<string[]>([]);
   const [showXmlModal, setShowXmlModal] = useState(false);
+  const [showBatchModal, setShowBatchModal] = useState(false);
+  const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0, processing: false });
+  const [batchResults, setBatchResults] = useState<Array<{consecutivo: string, success: boolean, message: string}>>([]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -127,6 +131,100 @@ export default function CumplimientoNuevo() {
     }
   };
 
+  // Procesamiento en lotes
+  const procesarLoteMutation = useMutation({
+    mutationFn: async (consecutivos: string[]) => {
+      setBatchProgress({ current: 0, total: consecutivos.length, processing: true });
+      setBatchResults([]);
+      
+      const results = [];
+      
+      for (let i = 0; i < consecutivos.length; i++) {
+        const consecutivo = consecutivos[i];
+        setBatchProgress(prev => ({ ...prev, current: i + 1 }));
+        
+        try {
+          // Generar XML
+          const previewResponse = await fetch(`/api/cumplimiento/preview/${consecutivo}`);
+          const previewData = await previewResponse.json();
+          
+          if (!previewData.success) {
+            results.push({ consecutivo, success: false, message: previewData.error });
+            continue;
+          }
+          
+          // Enviar al RNDC
+          const sendResponse = await fetch("/api/rndc/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ xmlContent: previewData.xml }),
+          });
+          const sendData = await sendResponse.json();
+          
+          results.push({ 
+            consecutivo, 
+            success: sendData.success, 
+            message: sendData.success ? "Enviado exitosamente" : sendData.mensaje 
+          });
+          
+          // Pausa de 2 segundos entre envíos
+          if (i < consecutivos.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+          
+        } catch (error) {
+          results.push({ consecutivo, success: false, message: `Error: ${error}` });
+        }
+      }
+      
+      setBatchResults(results);
+      setBatchProgress(prev => ({ ...prev, processing: false }));
+      return results;
+    },
+    onSuccess: (results) => {
+      const exitosos = results.filter(r => r.success).length;
+      toast({
+        title: "Procesamiento Completado",
+        description: `${exitosos} de ${results.length} cumplimientos enviados exitosamente`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/remesas/exitosas"] });
+    },
+  });
+
+  // Manejo de selección múltiple
+  const toggleRemesaSelection = (consecutivo: string) => {
+    setSelectedRemesas(prev => 
+      prev.includes(consecutivo) 
+        ? prev.filter(r => r !== consecutivo)
+        : [...prev, consecutivo]
+    );
+  };
+
+  const selectAllRemesas = () => {
+    if (selectedRemesas.length === remesasPendientes.length) {
+      setSelectedRemesas([]);
+    } else {
+      setSelectedRemesas(remesasPendientes.map(r => r.consecutivo));
+    }
+  };
+
+  const handleProcesarLote = () => {
+    if (selectedRemesas.length === 0) {
+      toast({
+        title: "Sin selección",
+        description: "Selecciona al menos una remesa para procesar",
+        variant: "destructive",
+      });
+      return;
+    }
+    setShowBatchModal(true);
+  };
+
+  const confirmarProcesarLote = () => {
+    procesarLoteMutation.mutate(selectedRemesas);
+    setShowBatchModal(false);
+  };
+
   const remesasPendientes = remesasExitosas?.filter(r => r.estado_rndc === "exitoso") || [];
   const manifiestosPendientes = manifiestos?.filter(m => 
     m.estado_rndc === "exitoso" && m.ingreso_id
@@ -170,21 +268,37 @@ export default function CumplimientoNuevo() {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Clock className="h-5 w-5" />
-                Acciones Rápidas
+                Procesamiento Masivo
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Button 
                   className="w-full"
                   onClick={() => handlePreviewCumplimiento("79824058")}
                   disabled={previewMutation.isPending}
                 >
                   <Eye className="h-4 w-4 mr-2" />
-                  Cumplir Remesa 79824058
+                  Cumplir Individual
                 </Button>
+                
+                <Button 
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  onClick={handleProcesarLote}
+                  disabled={selectedRemesas.length === 0 || batchProgress.processing}
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  Procesar {selectedRemesas.length} Remesas
+                </Button>
+                
+                {batchProgress.processing && (
+                  <div className="text-sm text-center text-muted-foreground">
+                    Procesando {batchProgress.current} de {batchProgress.total}...
+                  </div>
+                )}
+                
                 <p className="text-sm text-muted-foreground">
-                  Cumple directamente la remesa más reciente
+                  Selecciona múltiples remesas para procesamiento automático con pausas de 2 segundos entre envíos
                 </p>
               </div>
             </CardContent>
@@ -204,10 +318,33 @@ export default function CumplimientoNuevo() {
           <TabsContent value="remesas" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Remesas Listas para Cumplimiento</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Estas remesas han sido enviadas exitosamente al RNDC y están listas para cumplir
-                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Remesas Listas para Cumplimiento</CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Estas remesas han sido enviadas exitosamente al RNDC y están listas para cumplir
+                    </p>
+                  </div>
+                  {remesasPendientes.length > 0 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={selectAllRemesas}
+                    >
+                      {selectedRemesas.length === remesasPendientes.length ? (
+                        <>
+                          <CheckSquare className="h-4 w-4 mr-2" />
+                          Deseleccionar Todas
+                        </>
+                      ) : (
+                        <>
+                          <Square className="h-4 w-4 mr-2" />
+                          Seleccionar Todas
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
               </CardHeader>
               <CardContent>
                 {loadingRemesas ? (
@@ -221,22 +358,32 @@ export default function CumplimientoNuevo() {
                     {remesasPendientes.map((remesa) => (
                       <div
                         key={remesa.id}
-                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50"
+                        className={`flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors ${
+                          selectedRemesas.includes(remesa.consecutivo) ? 'bg-blue-50 border-blue-200' : ''
+                        }`}
                       >
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-3">
-                            <span className="font-semibold">
-                              Remesa {remesa.consecutivo}
-                            </span>
-                            <Badge variant="secondary">{remesa.placa}</Badge>
-                            <Badge variant="outline">
-                              {remesa.cantidad_cargada} ton
-                            </Badge>
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            Conductor: {remesa.conductor_id} • 
-                            Cargue: {format(new Date(remesa.fecha_cita_cargue), "dd/MM/yyyy", { locale: es })} • 
-                            Descargue: {format(new Date(remesa.fecha_cita_descargue), "dd/MM/yyyy", { locale: es })}
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={selectedRemesas.includes(remesa.consecutivo)}
+                            onChange={() => toggleRemesaSelection(remesa.consecutivo)}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                          />
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-3">
+                              <span className="font-semibold">
+                                Remesa {remesa.consecutivo}
+                              </span>
+                              <Badge variant="secondary">{remesa.placa}</Badge>
+                              <Badge variant="outline">
+                                {remesa.cantidad_cargada} ton
+                              </Badge>
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              Conductor: {remesa.conductor_id} • 
+                              Cargue: {format(new Date(remesa.fecha_cita_cargue), "dd/MM/yyyy", { locale: es })} • 
+                              Descargue: {format(new Date(remesa.fecha_cita_descargue), "dd/MM/yyyy", { locale: es })}
+                            </div>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
