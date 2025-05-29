@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 import Dashboard from "@/pages/dashboard";
 import GenerarRemesas from "@/pages/generar-remesas";
+import GenerarManifiestos from "@/pages/generar-manifiestos";
 import CumplirRemesas from "@/pages/cumplir-remesas";
 import Configuracion from "@/pages/configuracion";
 import GestionDatos from "@/pages/gestion-datos";
@@ -25,6 +26,7 @@ function Router() {
           <Switch>
             <Route path="/" component={Dashboard} />
             <Route path="/generar-remesas" component={GenerarRemesas} />
+            <Route path="/generar-manifiestos" component={GenerarManifiestos} />
             <Route path="/cumplir-remesas" component={CumplirRemesas} />
             <Route path="/gestion-datos" component={GestionDatos} />
             <Route path="/soap-cliente" component={SOAPCliente} />
