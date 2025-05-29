@@ -688,7 +688,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`📄 === FIN XML MANIFIESTO ${numeroManifiesto} ===`);
 
           const soapResponse = await soapProxy.sendSOAPRequest(xml);
-          const wasSuccessful = soapResponse && soapResponse.success && soapResponse.data?.rawResponse?.includes('ingresoid');
+          const wasSuccessful = soapResponse && soapResponse.success && soapResponse.data?.ingresoId;
 
           const manifiesto = await storage.createManifiesto({
             numero_manifiesto: numeroManifiesto,
@@ -701,7 +701,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             valor_flete: valorFlete.toString(),
             estado: wasSuccessful ? "exitoso" : "error",
             xml_enviado: xml,
-            respuesta_rndc: soapResponse?.data?.rawResponse || null
+            respuesta_rndc: soapResponse?.data?.rawResponse || null,
+            ingreso_id: soapResponse?.data?.ingresoId || null,
+            codigo_seguridad_qr: soapResponse?.data?.seguridadQr || null
           });
 
           // Registrar en el log de actividades

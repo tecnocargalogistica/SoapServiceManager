@@ -66,6 +66,8 @@ export const manifiestos = pgTable("manifiestos", {
   estado: text("estado").notNull().default("generado"),
   xml_enviado: text("xml_enviado"),
   respuesta_rndc: text("respuesta_rndc"),
+  ingreso_id: text("ingreso_id"), // ID único del RNDC para el manifiesto
+  codigo_seguridad_qr: text("codigo_seguridad_qr"), // Código para generar QR
   created_at: timestamp("created_at").defaultNow()
 });
 

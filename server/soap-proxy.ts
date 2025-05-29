@@ -90,14 +90,20 @@ export class SOAPProxy {
       // Extract relevant information from the response
       const consecutivoMatch = responseXml.match(/<CONSECUTIVO[^>]*>([^<]+)</i);
       const mensajeMatch = responseXml.match(/<MENSAJE[^>]*>([^<]+)</i);
-      const ingresoIdMatch = responseXml.match(/<ingresoid[^>]*>([^<]+)</i);
-      const errorMatch = responseXml.match(/<ErrorMSG[^>]*>([^<]+)</i);
+      const ingresoIdMatch = responseXml.match(/&lt;ingresoid&gt;([^&]+)&lt;\/ingresoid&gt;|<ingresoid[^>]*>([^<]+)</i);
+      const seguridadQrMatch = responseXml.match(/&lt;seguridadqr&gt;([^&]+)&lt;\/seguridadqr&gt;|<seguridadqr[^>]*>([^<]+)</i);
+      const errorMatch = responseXml.match(/&lt;ErrorMSG&gt;([^&]+)&lt;\/ErrorMSG&gt;|<ErrorMSG[^>]*>([^<]+)</i);
+      
+      const ingresoId = ingresoIdMatch ? (ingresoIdMatch[1] || ingresoIdMatch[2]) : null;
+      const seguridadQr = seguridadQrMatch ? (seguridadQrMatch[1] || seguridadQrMatch[2]) : null;
+      const errorMsg = errorMatch ? (errorMatch[1] || errorMatch[2]) : null;
       
       return {
         success: isSuccess,
         consecutivo: consecutivoMatch ? consecutivoMatch[1] : null,
-        ingresoId: ingresoIdMatch ? ingresoIdMatch[1] : null,
-        mensaje: errorMatch ? errorMatch[1] : (mensajeMatch ? mensajeMatch[1] : 'Respuesta procesada'),
+        ingresoId: ingresoId,
+        seguridadQr: seguridadQr,
+        mensaje: errorMsg ? errorMsg : (mensajeMatch ? mensajeMatch[1] : 'Respuesta procesada'),
         rawResponse: responseXml
       };
     } catch (error) {
