@@ -12,6 +12,7 @@ import Cumplimiento from "@/pages/cumplimiento";
 import CumplimientoDirecto from "@/pages/cumplimiento-directo";
 import TestCumplimiento from "@/pages/test-cumplimiento";
 import CumplimientoNuevo from "@/pages/cumplimiento-nuevo";
+import ImpresionManifiestos from "@/pages/impresion-manifiestos";
 import Configuracion from "@/pages/configuracion";
 import GestionDatos from "@/pages/gestion-datos";
 import SOAPCliente from "@/pages/soap-cliente";
@@ -36,6 +37,7 @@ function Router() {
         <Route path="/cumplimiento-directo" component={CumplimientoDirecto} />
             <Route path="/cumplimiento-nuevo" component={CumplimientoNuevo} />
             <Route path="/test-cumplimiento" component={TestCumplimiento} />
+            <Route path="/impresion-manifiestos" component={ImpresionManifiestos} />
             <Route path="/gestion-datos" component={GestionDatos} />
             <Route path="/soap-cliente" component={SOAPCliente} />
             <Route path="/configuracion" component={Configuracion} />
