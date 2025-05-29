@@ -14,12 +14,51 @@ const TestPDFPlantilla = () => {
     // Coordenadas en píxeles según tu imagen (1635x1050)
     numeroManifiesto: { x: 1076, y: 170 }, // CONSECUTIVO
     idRespuesta: { x: 1101, y: 213 }, // ID respuesta XML
+    
+    // Campos básicos
     fechaExpedicion: { x: 200, y: 300 },
     origenViaje: { x: 500, y: 300 },
     destinoViaje: { x: 800, y: 300 },
     placa: { x: 200, y: 400 },
-    documentoConductor: { x: 600, y: 450 },
-    numeroRemesa: { x: 200, y: 600 }
+    numeroRemesa: { x: 200, y: 600 },
+    
+    // Información del propietario/titular del vehículo
+    titularManifiesto: { x: 100, y: 450 },
+    docIdentificacionTitular: { x: 100, y: 470 },
+    direccionTitular: { x: 100, y: 490 },
+    telefonoTitular: { x: 100, y: 510 },
+    ciudadTitular: { x: 100, y: 530 },
+    
+    // Información del tenedor (igual que titular por ahora)
+    tenedorVehiculo: { x: 400, y: 450 },
+    docIdentificacionTenedor: { x: 400, y: 470 },
+    direccionTenedor: { x: 400, y: 490 },
+    telefonoTenedor: { x: 400, y: 510 },
+    ciudadTenedor: { x: 400, y: 530 },
+    
+    // Información del conductor
+    conductor: { x: 700, y: 450 },
+    direccionConductor: { x: 700, y: 470 },
+    noLicencia: { x: 700, y: 490 },
+    claseLicencia: { x: 700, y: 510 },
+    ciudadConductor: { x: 700, y: 530 },
+    
+    // Información de carga
+    cantidad: { x: 1000, y: 450 },
+    cantidadCargada: { x: 1000, y: 470 },
+    
+    // Información de remitente
+    informacionRemitente: { x: 100, y: 650 },
+    informacionRemitente2: { x: 100, y: 670 },
+    
+    // Información de destinatario
+    informacionDestinatario: { x: 500, y: 650 },
+    informacionDestinatario2: { x: 500, y: 670 },
+    
+    // Información financiera
+    valorTotalViaje: { x: 1000, y: 650 },
+    valorNetoViaje: { x: 1000, y: 670 },
+    saldoPagar: { x: 1000, y: 690 }
   });
 
   const { data: manifiestos } = useQuery<Manifiesto[]>({

@@ -22,13 +22,51 @@ export class ManifiestoPDFHorizontalGenerator {
     // ID (respuesta XML): coordenadas en píxeles según tu imagen
     idRespuesta: { x: 1101, y: 213 },
     
-    // Otros campos (ajustar según tu imagen)
+    // Campos básicos
     fechaExpedicion: { x: 200, y: 300 },
     origenViaje: { x: 500, y: 300 },
     destinoViaje: { x: 800, y: 300 },
     placa: { x: 200, y: 400 },
-    documentoConductor: { x: 600, y: 450 },
     numeroRemesa: { x: 200, y: 600 },
+    
+    // Información del propietario/titular del vehículo
+    titularManifiesto: { x: 100, y: 450 },
+    docIdentificacionTitular: { x: 100, y: 470 },
+    direccionTitular: { x: 100, y: 490 },
+    telefonoTitular: { x: 100, y: 510 },
+    ciudadTitular: { x: 100, y: 530 },
+    
+    // Información del tenedor (igual que titular por ahora)
+    tenedorVehiculo: { x: 400, y: 450 },
+    docIdentificacionTenedor: { x: 400, y: 470 },
+    direccionTenedor: { x: 400, y: 490 },
+    telefonoTenedor: { x: 400, y: 510 },
+    ciudadTenedor: { x: 400, y: 530 },
+    
+    // Información del conductor
+    conductor: { x: 700, y: 450 },
+    direccionConductor: { x: 700, y: 470 },
+    noLicencia: { x: 700, y: 490 },
+    claseLicencia: { x: 700, y: 510 },
+    ciudadConductor: { x: 700, y: 530 },
+    
+    // Información de carga
+    cantidad: { x: 1000, y: 450 },
+    cantidadCargada: { x: 1000, y: 470 },
+    
+    // Información de remitente
+    informacionRemitente: { x: 100, y: 650 },
+    informacionRemitente2: { x: 100, y: 670 },
+    
+    // Información de destinatario
+    informacionDestinatario: { x: 500, y: 650 },
+    informacionDestinatario2: { x: 500, y: 670 },
+    
+    // Información financiera
+    valorTotalViaje: { x: 1000, y: 650 },
+    valorNetoViaje: { x: 1000, y: 670 },
+    saldoPagar: { x: 1000, y: 690 },
+    
     fontSize: {
       normal: 9,
       small: 8,
@@ -189,6 +227,8 @@ export class ManifiestoPDFHorizontalGenerator {
     this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(campos.fontSize.normal);
 
+    // === CAMPOS BÁSICOS ===
+    
     // Fecha de expedición
     const fechaFormateada = format(new Date(this.manifiesto.fecha_expedicion), 'dd/MM/yyyy', { locale: es });
     this.doc.text(fechaFormateada, this.pixelToMM(campos.fechaExpedicion.x), this.pixelToMM(campos.fechaExpedicion.y, false));
@@ -203,13 +243,101 @@ export class ManifiestoPDFHorizontalGenerator {
     this.doc.setFont('helvetica', 'bold');
     this.doc.text(this.manifiesto.placa || '', this.pixelToMM(campos.placa.x), this.pixelToMM(campos.placa.y, false));
 
-    // Documento del conductor
-    this.doc.setFont('helvetica', 'normal');
-    this.doc.text(this.manifiesto.conductor_id || '', this.pixelToMM(campos.documentoConductor.x), this.pixelToMM(campos.documentoConductor.y, false));
-
     // Número de remesa
     this.doc.setFont('helvetica', 'bold');
     this.doc.text(this.manifiesto.consecutivo_remesa || '', this.pixelToMM(campos.numeroRemesa.x), this.pixelToMM(campos.numeroRemesa.y, false));
+
+    // === INFORMACIÓN DEL PROPIETARIO/TITULAR ===
+    this.doc.setFont('helvetica', 'normal');
+    
+    // Titular del manifiesto (nombre propietario del vehículo)
+    this.doc.text(this.manifiesto.propietario_nombre || '', this.pixelToMM(campos.titularManifiesto.x), this.pixelToMM(campos.titularManifiesto.y, false));
+    
+    // Documento de identificación titular
+    this.doc.text(this.manifiesto.propietario_numero_documento || '', this.pixelToMM(campos.docIdentificacionTitular.x), this.pixelToMM(campos.docIdentificacionTitular.y, false));
+    
+    // Dirección titular (por ahora vacío - necesita obtener de terceros)
+    this.doc.text('', this.pixelToMM(campos.direccionTitular.x), this.pixelToMM(campos.direccionTitular.y, false));
+    
+    // Teléfono titular (por ahora vacío - necesita obtener de terceros)
+    this.doc.text('', this.pixelToMM(campos.telefonoTitular.x), this.pixelToMM(campos.telefonoTitular.y, false));
+    
+    // Ciudad titular (por ahora vacío - necesita obtener de terceros)
+    this.doc.text('', this.pixelToMM(campos.ciudadTitular.x), this.pixelToMM(campos.ciudadTitular.y, false));
+
+    // === INFORMACIÓN DEL TENEDOR ===
+    
+    // Tenedor del vehículo (si es diferente del propietario)
+    this.doc.text(this.manifiesto.tenedor_nombre || this.manifiesto.propietario_nombre || '', this.pixelToMM(campos.tenedorVehiculo.x), this.pixelToMM(campos.tenedorVehiculo.y, false));
+    
+    // Documento de identificación tenedor
+    this.doc.text(this.manifiesto.tenedor_numero_documento || this.manifiesto.propietario_numero_documento || '', this.pixelToMM(campos.docIdentificacionTenedor.x), this.pixelToMM(campos.docIdentificacionTenedor.y, false));
+    
+    // Dirección tenedor (por ahora vacío)
+    this.doc.text('', this.pixelToMM(campos.direccionTenedor.x), this.pixelToMM(campos.direccionTenedor.y, false));
+    
+    // Teléfono tenedor (por ahora vacío)
+    this.doc.text('', this.pixelToMM(campos.telefonoTenedor.x), this.pixelToMM(campos.telefonoTenedor.y, false));
+    
+    // Ciudad tenedor (por ahora vacío)
+    this.doc.text('', this.pixelToMM(campos.ciudadTenedor.x), this.pixelToMM(campos.ciudadTenedor.y, false));
+
+    // === INFORMACIÓN DEL CONDUCTOR ===
+    
+    // Conductor (nombre completo)
+    const conductorNombre = `${this.manifiesto.conductor_nombre || ''} ${this.manifiesto.conductor_apellido || ''}`.trim();
+    this.doc.text(conductorNombre, this.pixelToMM(campos.conductor.x), this.pixelToMM(campos.conductor.y, false));
+    
+    // Dirección conductor
+    this.doc.text(this.manifiesto.conductor_direccion || '', this.pixelToMM(campos.direccionConductor.x), this.pixelToMM(campos.direccionConductor.y, false));
+    
+    // Número de licencia
+    this.doc.text(this.manifiesto.conductor_numero_licencia || '', this.pixelToMM(campos.noLicencia.x), this.pixelToMM(campos.noLicencia.y, false));
+    
+    // Clase de licencia
+    this.doc.text(this.manifiesto.conductor_categoria_licencia || '', this.pixelToMM(campos.claseLicencia.x), this.pixelToMM(campos.claseLicencia.y, false));
+    
+    // Ciudad conductor
+    this.doc.text(this.manifiesto.conductor_municipio || '', this.pixelToMM(campos.ciudadConductor.x), this.pixelToMM(campos.ciudadConductor.y, false));
+
+    // === INFORMACIÓN DE CARGA ===
+    
+    // Cantidad (Kg)
+    const cantidad = this.manifiesto.valor_flete_pactado_viaje ? this.manifiesto.valor_flete_pactado_viaje.toString() + ' Kg' : '';
+    this.doc.text(cantidad, this.pixelToMM(campos.cantidad.x), this.pixelToMM(campos.cantidad.y, false));
+    
+    // Cantidad cargada (mismo valor)
+    this.doc.text(cantidad, this.pixelToMM(campos.cantidadCargada.x), this.pixelToMM(campos.cantidadCargada.y, false));
+
+    // === INFORMACIÓN DE REMITENTE Y DESTINATARIO ===
+    
+    // Información remitente (de sede origen)
+    const remitenteInfo = `${this.manifiesto.sede_origen_nit || ''} - ${this.manifiesto.sede_origen_nombre || ''}`;
+    this.doc.text(remitenteInfo, this.pixelToMM(campos.informacionRemitente.x), this.pixelToMM(campos.informacionRemitente.y, false));
+    
+    // Información remitente 2 (dirección sede origen)
+    const remitenteInfo2 = `${this.manifiesto.sede_origen_direccion || ''} - ${this.manifiesto.municipio_origen || ''}`;
+    this.doc.text(remitenteInfo2, this.pixelToMM(campos.informacionRemitente2.x), this.pixelToMM(campos.informacionRemitente2.y, false));
+    
+    // Información destinatario (de sede destino)
+    const destinatarioInfo = `${this.manifiesto.sede_destino_nit || ''} - ${this.manifiesto.sede_destino_nombre || ''}`;
+    this.doc.text(destinatarioInfo, this.pixelToMM(campos.informacionDestinatario.x), this.pixelToMM(campos.informacionDestinatario.y, false));
+    
+    // Información destinatario 2 (dirección sede destino)
+    const destinatarioInfo2 = `${this.manifiesto.sede_destino_direccion || ''} - ${this.manifiesto.municipio_destino || ''}`;
+    this.doc.text(destinatarioInfo2, this.pixelToMM(campos.informacionDestinatario2.x), this.pixelToMM(campos.informacionDestinatario2.y, false));
+
+    // === INFORMACIÓN FINANCIERA ===
+    
+    // Valor total del viaje
+    const valorTotal = this.manifiesto.valor_flete_pactado_viaje ? `$${this.manifiesto.valor_flete_pactado_viaje.toLocaleString()}` : '';
+    this.doc.text(valorTotal, this.pixelToMM(campos.valorTotalViaje.x), this.pixelToMM(campos.valorTotalViaje.y, false));
+    
+    // Valor neto del viaje
+    this.doc.text(valorTotal, this.pixelToMM(campos.valorNetoViaje.x), this.pixelToMM(campos.valorNetoViaje.y, false));
+    
+    // Saldo a pagar
+    this.doc.text(valorTotal, this.pixelToMM(campos.saldoPagar.x), this.pixelToMM(campos.saldoPagar.y, false));
   }
 
   private generateFallbackPDF(): void {
