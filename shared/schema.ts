@@ -194,6 +194,8 @@ export const sedes = pgTable("sedes", {
   direccion: text("direccion"),
   municipio_codigo: text("municipio_codigo").notNull(),
   telefono: text("telefono"),
+  nit: text("nit"),
+  responsable: text("responsable"),
   valor_tonelada: decimal("valor_tonelada", { precision: 8, scale: 2 }),
   tercero_responsable_id: integer("tercero_responsable_id").references(() => terceros.id),
   activo: boolean("activo").notNull().default(true),
