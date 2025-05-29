@@ -90,12 +90,13 @@ const TestPDFPlantilla = () => {
     qrContent += `MEC:${mecValue}\n`;
     
     // 2. Fecha: FECHAEXPEDICIONMANIFIESTO real convertida a formato yyyy/mm/dd
-    // Corregir problema de zona horaria para obtener fecha exacta: 2025-05-29
+    // Ajustar para zona horaria UTC-5 (Colombia)
     const fecha = new Date(manifiesto.fecha_expedicion);
-    // Usar UTC para evitar problemas de zona horaria
-    const year = fecha.getUTCFullYear();
-    const month = String(fecha.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(fecha.getUTCDate()).padStart(2, '0');
+    // Añadir 5 horas para compensar UTC-5
+    fecha.setHours(fecha.getHours() + 5);
+    const year = fecha.getFullYear();
+    const month = String(fecha.getMonth() + 1).padStart(2, '0');
+    const day = String(fecha.getDate()).padStart(2, '0');
     const fechaFormatted = `${year}/${month}/${day}`;
     qrContent += `Fecha:${fechaFormatted}\n`;
     
