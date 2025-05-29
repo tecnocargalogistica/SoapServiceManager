@@ -46,6 +46,12 @@ export interface CumplimientoXMLData {
   config: Configuracion;
 }
 
+export interface CumplimientoManifiestoXMLData {
+  numeroManifiesto: string;
+  fechaExpedicion: string;
+  config: Configuracion;
+}
+
 export class XMLGenerator {
 
   generateRemesaXML(data: RemesaXMLData): string {
@@ -193,6 +199,39 @@ export class XMLGenerator {
             <HORAENTRADADESCARGUECUMPLIDO>${horaDescargue}</HORAENTRADADESCARGUECUMPLIDO>
             <FECHASALIDADESCARGUE>${fechaDescargue}</FECHASALIDADESCARGUE>
             <HORASALIDADESCARGUECUMPLIDO>${horaSalidaDescargue}</HORASALIDADESCARGUECUMPLIDO>
+          </variables>
+        </root>
+      </Request>
+    </urn:AtenderMensajeRNDC>
+  </soapenv:Body>
+</soapenv:Envelope>`;
+  }
+
+  generateCumplimientoManifiestoXML(data: CumplimientoManifiestoXMLData): string {
+    // Fecha de expedición + 1 día
+    const fechaExpedicion = new Date(data.fechaExpedicion);
+    fechaExpedicion.setDate(fechaExpedicion.getDate() + 1);
+    const fechaEntregaDocumentos = this.formatDate(fechaExpedicion);
+
+    return `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:BPMServicesIntf-IBPMServices">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <urn:AtenderMensajeRNDC>
+      <Request>
+        <root>
+          <acceso>
+            <username>${data.config.usuario}</username>
+            <password>${data.config.password}</password>
+          </acceso>
+          <solicitud>
+            <tipo>1</tipo>
+            <procesoid>6</procesoid>
+          </solicitud>
+          <variables>
+            <NUMNITEMPRESATRANSPORTE>${data.config.empresa_nit}</NUMNITEMPRESATRANSPORTE>
+            <NUMMANIFIESTOCARGA>${data.numeroManifiesto}</NUMMANIFIESTOCARGA>
+            <TIPOCUMPLIDOMANIFIESTO>C</TIPOCUMPLIDOMANIFIESTO>
+            <FECHAENTREGADOCUMENTOS>${fechaEntregaDocumentos}</FECHAENTREGADOCUMENTOS>
           </variables>
         </root>
       </Request>

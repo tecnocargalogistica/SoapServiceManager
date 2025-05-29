@@ -46,6 +46,8 @@ export default function CumplimientoNuevo() {
   const [xmlPreview, setXmlPreview] = useState("");
   const [selectedRemesa, setSelectedRemesa] = useState("");
   const [selectedRemesas, setSelectedRemesas] = useState<string[]>([]);
+  const [selectedManifiesto, setSelectedManifiesto] = useState("");
+  const [selectedManifiestos, setSelectedManifiestos] = useState<string[]>([]);
   const [showXmlModal, setShowXmlModal] = useState(false);
   const [showBatchModal, setShowBatchModal] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0, processing: false });
@@ -123,6 +125,36 @@ export default function CumplimientoNuevo() {
   const handlePreviewCumplimiento = (consecutivo: string) => {
     setSelectedRemesa(consecutivo);
     previewMutation.mutate(consecutivo);
+  };
+
+  // Preview de cumplimiento de manifiesto
+  const previewManifiestoMutation = useMutation({
+    mutationFn: async (numeroManifiesto: string) => {
+      const response = await fetch(`/api/cumplimiento-manifiesto/preview/${numeroManifiesto}`);
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error);
+      }
+      
+      return data;
+    },
+    onSuccess: (data) => {
+      setXmlPreview(data.xml);
+      setShowXmlModal(true);
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: `Error al generar preview: ${error}`,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handlePreviewCumplimientoManifiesto = (numeroManifiesto: string) => {
+    setSelectedManifiesto(numeroManifiesto);
+    previewManifiestoMutation.mutate(numeroManifiesto);
   };
 
   const handleEnviarCumplimiento = () => {
@@ -223,6 +255,23 @@ export default function CumplimientoNuevo() {
   const confirmarProcesarLote = () => {
     procesarLoteMutation.mutate(selectedRemesas);
     setShowBatchModal(false);
+  };
+
+  // Manejo de selección múltiple para manifiestos
+  const toggleManifiestoSelection = (numeroManifiesto: string) => {
+    setSelectedManifiestos(prev => 
+      prev.includes(numeroManifiesto) 
+        ? prev.filter(m => m !== numeroManifiesto)
+        : [...prev, numeroManifiesto]
+    );
+  };
+
+  const selectAllManifiestos = () => {
+    if (selectedManifiestos.length === manifiestosPendientes.length) {
+      setSelectedManifiestos([]);
+    } else {
+      setSelectedManifiestos(manifiestosPendientes.map(m => m.numero_manifiesto));
+    }
   };
 
   const remesasPendientes = remesasExitosas?.filter(r => r.estado === "exitoso") || [];
@@ -427,22 +476,41 @@ export default function CumplimientoNuevo() {
                         key={manifiesto.id}
                         className="flex items-center justify-between p-4 border rounded-lg"
                       >
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-3">
-                            <span className="font-semibold">
-                              Manifiesto {manifiesto.numero_manifiesto}
-                            </span>
-                            <Badge variant="secondary">{manifiesto.placa}</Badge>
-                            <Badge variant="outline" className="text-green-600">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Exitoso
-                            </Badge>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={selectedManifiestos.includes(manifiesto.numero_manifiesto)}
+                            onChange={() => toggleManifiestoSelection(manifiesto.numero_manifiesto)}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                          />
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-3">
+                              <span className="font-semibold">
+                                Manifiesto {manifiesto.numero_manifiesto}
+                              </span>
+                              <Badge variant="secondary">{manifiesto.placa}</Badge>
+                              <Badge variant="outline" className="text-green-600">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Exitoso
+                              </Badge>
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {manifiesto.municipio_origen} → {manifiesto.municipio_destino} • 
+                              Valor: ${manifiesto.valor_flete.toLocaleString()} • 
+                              ID: {manifiesto.ingreso_id}
+                            </div>
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            {manifiesto.municipio_origen} → {manifiesto.municipio_destino} • 
-                            Valor: ${manifiesto.valor_flete.toLocaleString()} • 
-                            ID: {manifiesto.ingreso_id}
-                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handlePreviewCumplimientoManifiesto(manifiesto.numero_manifiesto)}
+                            disabled={previewManifiestoMutation.isPending}
+                          >
+                            <Eye className="h-4 w-4 mr-1" />
+                            Ver XML
+                          </Button>
                         </div>
                       </div>
                     ))}

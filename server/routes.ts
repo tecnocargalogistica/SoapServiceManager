@@ -543,6 +543,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Preview de cumplimiento de manifiesto
+  app.get('/api/cumplimiento-manifiesto/preview/:numeroManifiesto', async (req: Request, res: Response) => {
+    try {
+      const numeroManifiesto = req.params.numeroManifiesto;
+      
+      const config = await storage.getConfiguracionActiva();
+      if (!config) {
+        return res.status(400).json({ error: "No hay configuración activa" });
+      }
+
+      // Buscar el manifiesto
+      const manifiesto = await storage.getManifiestoByNumero(numeroManifiesto);
+      if (!manifiesto) {
+        return res.status(404).json({ error: `Manifiesto ${numeroManifiesto} no encontrado` });
+      }
+
+      const xmlData = {
+        numeroManifiesto: manifiesto.numero_manifiesto,
+        fechaExpedicion: manifiesto.fecha_expedicion,
+        config
+      };
+
+      const xml = xmlGenerator.generateCumplimientoManifiestoXML(xmlData);
+
+      console.log(`📋 === XML CUMPLIMIENTO MANIFIESTO PREVIEW ${numeroManifiesto} ===`);
+      console.log(xml);
+      console.log(`📋 === FIN XML CUMPLIMIENTO MANIFIESTO PREVIEW ${numeroManifiesto} ===`);
+
+      res.json({
+        success: true,
+        numeroManifiesto,
+        xml,
+        fechaExpedicion: manifiesto.fecha_expedicion
+      });
+
+    } catch (error) {
+      console.error('Error generating manifiesto cumplimiento preview:', error);
+      res.status(500).json({ error: "Error al generar preview del cumplimiento de manifiesto" });
+    }
+  });
+
   // Endpoint específico para el Cliente SOAP con XML personalizado
   app.post('/api/rndc/test-specific-xml', async (req: Request, res: Response) => {
     try {
