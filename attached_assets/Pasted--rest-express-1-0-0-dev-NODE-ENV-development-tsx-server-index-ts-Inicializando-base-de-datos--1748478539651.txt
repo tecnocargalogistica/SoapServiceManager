@@ -1,0 +1,209 @@
+ rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+Inicializando base de datos...
+12:27:39 AM [express] serving on port 5000
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✅ Base de datos ya inicializada
+12:27:43 AM [express] ✅ Base de datos inicializada correctamente
+🚗 Obteniendo vehículos directamente de PostgreSQL...
+Intentando envío a endpoint: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+🎯 Usando endpoint personalizado: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+📡 Enviando SOAP a: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+12:27:45 AM [express] GET /api/manifiestos 304 in 255ms :: []
+12:27:45 AM [express] GET /api/remesas 200 in 263ms :: [{"id":20,"consecutivo":"79824054","codigo_sed…
+12:27:45 AM [express] GET /api/terceros 304 in 263ms :: [{"id":4,"tipo_documento":"N","numero_documen…
+12:27:45 AM [express] GET /api/logs 200 in 287ms :: [{"id":141,"tipo":"info","modulo":"batch-processi…
+✅ Vehículos obtenidos: 1
+12:27:45 AM [express] GET /api/vehiculos 304 in 342ms :: [{"id":10,"placa":"GIT990","tipo_vehiculo":n…
+Respuesta recibida de http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices: <?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:NS1="urn:BPMServicesIntf-IBPMServices"><NS1:AtenderMensajeRNDCResponse><return xsi:type="xsd:string">&lt;?xml version="1.0" encoding="ISO-8859-1" ?&gt;
+&lt;root&gt;
+&lt;ErrorMSG&gt;Error RNDC01: Falta información en el xml para el acceso.&lt;/ErrorMSG&gt;
+&lt;/root&gt;
+</return></NS1:AtenderMensajeRNDCResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>
+
+12:27:51 AM [express] GET /api/rndc/test 200 in 6310ms :: {"connected":true,"endpoint":"http://rndcws…
+12:28:07 AM [express] GET /api/configuracion 304 in 55ms :: {"id":1,"usuario":"TRANSPORTES@739","pass…
+12:28:07 AM [express] GET /api/consecutivos/remesa 200 in 93ms :: {"consecutivo":"79824055"}
+📁 Archivo recibido: REMESAS_GENERAR_FECHA.csv, tamaño: 153 bytes
+📁 Tipo de archivo detectado: CSV
+📋 Contenido CSV preview: GRANJA;PLANTA;UBICACI�N;CONDUCTOR;PLACA;CEDULA;TONELADAS;FECHA_CITA
+PORVENIR (UVE)2;ALBATEQ-ALBATEQ;GUADUAS;JAROL DURAN;GIT990;1073511288;9;28/05/2025
+...
+📋 CSV separator detected: ";"
+📋 CSV headers: [
+  'GRANJA',
+  'PLANTA',
+  'UBICACI�N',
+  'CONDUCTOR',
+  'PLACA',
+  'CEDULA',
+  'TONELADAS',
+  'FECHA_CITA'
+]
+📊 Filas procesadas: 1
+📄 Primera fila de datos: {
+  "GRANJA": "PORVENIR (UVE)2",
+  "PLANTA": "ALBATEQ-ALBATEQ",
+  "PLACA": "GIT990",
+  "FECHA_CITA": "28/05/2025",
+  "IDENTIFICACION": "1073511288",
+  "TONELADAS": 9
+}
+12:28:10 AM [express] POST /api/remesas/upload 200 in 57ms :: {"filename":"REMESAS_GENERAR_FECHA.csv"…
+12:28:12 AM [express] GET /api/consecutivos 200 in 23ms :: [{"id":2,"tipo":"manifiesto","ultimo_numer…
+Intentando envío a endpoint: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+🎯 Usando endpoint personalizado: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+📡 Enviando SOAP a: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+🚛 Vehículo encontrado: GIT990, capacidad real de BD: 7000
+✅ Forzando capacidad real de BD: 7000
+🔢 Consecutivo generado: "79824056"
+🔍 Fecha original del archivo: "28/05/2025" (tipo: string)
+📅 Fecha CSV directa: "28/05/2025"
+📦 XML Data: capacidad=7000, fecha=28/05/2025
+🔧 XML Generator: Usando capacidad real del vehículo: 7000
+🔧 XML Generator: Consecutivo recibido: "79824056"
+📄 === XML GENERADO PARA REMESA 79824056 ===
+<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:BPMServicesIntf-IBPMServices">
+  <ns0:Header/>
+  <ns0:Body>
+    <ns1:AtenderMensajeRNDC>
+      <Request>
+        <root>
+          <acceso>
+            <username>TRANSPORTES@739</username>
+            <password>Alejandro_1971</password>
+          </acceso>
+          <solicitud>
+            <tipo>1</tipo>
+            <procesoid>3</procesoid>
+          </solicitud>
+          <variables>
+            <NUMNITEMPRESATRANSPORTE>9013690938</NUMNITEMPRESATRANSPORTE>
+            <CONSECUTIVOREMESA>79824056</CONSECUTIVOREMESA>
+            <CODOPERACIONTRANSPORTE>G</CODOPERACIONTRANSPORTE>
+            <CODNATURALEZACARGA>1</CODNATURALEZACARGA>
+            <CANTIDADCARGADA>7000</CANTIDADCARGADA>
+            <UNIDADMEDIDACAPACIDAD>1</UNIDADMEDIDACAPACIDAD>
+            <CODTIPOEMPAQUE>0</CODTIPOEMPAQUE>
+            <MERCANCIAREMESA>002309</MERCANCIAREMESA>
+            <DESCRIPCIONCORTAPRODUCTO>ALIMENTO PARA AVES DE CORRAL</DESCRIPCIONCORTAPRODUCTO>
+            <CODTIPOIDREMITENTE>N</CODTIPOIDREMITENTE>
+            <NUMIDREMITENTE>8600588314</NUMIDREMITENTE>
+            <CODSEDEREMITENTE>002</CODSEDEREMITENTE>
+            <CODTIPOIDDESTINATARIO>N</CODTIPOIDDESTINATARIO>
+            <NUMIDDESTINATARIO>8600588314</NUMIDDESTINATARIO>
+            <CODSEDEDESTINATARIO>009</CODSEDEDESTINATARIO>
+            <DUENOPOLIZA>N</DUENOPOLIZA>
+            <HORASPACTOCARGA>2</HORASPACTOCARGA>
+            <HORASPACTODESCARGUE>2</HORASPACTODESCARGUE>
+            <CODTIPOIDPROPIETARIO>N</CODTIPOIDPROPIETARIO>
+            <NUMIDPROPIETARIO>9013690938</NUMIDPROPIETARIO>
+            <CODSEDEPROPIETARIO>01</CODSEDEPROPIETARIO>
+            <FECHACITAPACTADACARGUE>28/05/2025</FECHACITAPACTADACARGUE>
+            <HORACITAPACTADACARGUE>08:00</HORACITAPACTADACARGUE>
+            <FECHACITAPACTADADESCARGUE>28/05/2025</FECHACITAPACTADADESCARGUE>
+            <HORACITAPACTADADESCARGUEREMESA>13:00</HORACITAPACTADADESCARGUEREMESA>
+          </variables>
+        </root>
+      </Request>
+    </ns1:AtenderMensajeRNDC>
+  </ns0:Body>
+</ns0:Envelope>
+📄 === FIN XML REMESA 79824056 ===
+🚀 === ENVIANDO REMESA AL RNDC ===
+📧 Usuario: TRANSPORTES@739
+🔢 Consecutivo: 79824056
+🏢 NIT: 9013690938
+📡 Endpoint: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+🌿 Granja: PORVENIR (UVE)2
+🚛 Placa: GIT990
+📄 === XML ENVIADO (COMPLETO) ===
+<ns0:Envelope xmlns:ns0="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:BPMServicesIntf-IBPMServices">
+  <ns0:Header/>
+  <ns0:Body>
+    <ns1:AtenderMensajeRNDC>
+      <Request>
+        <root>
+          <acceso>
+            <username>TRANSPORTES@739</username>
+            <password>Alejandro_1971</password>
+          </acceso>
+          <solicitud>
+            <tipo>1</tipo>
+            <procesoid>3</procesoid>
+          </solicitud>
+          <variables>
+            <NUMNITEMPRESATRANSPORTE>9013690938</NUMNITEMPRESATRANSPORTE>
+            <CONSECUTIVOREMESA>79824056</CONSECUTIVOREMESA>
+            <CODOPERACIONTRANSPORTE>G</CODOPERACIONTRANSPORTE>
+            <CODNATURALEZACARGA>1</CODNATURALEZACARGA>
+            <CANTIDADCARGADA>7000</CANTIDADCARGADA>
+            <UNIDADMEDIDACAPACIDAD>1</UNIDADMEDIDACAPACIDAD>
+            <CODTIPOEMPAQUE>0</CODTIPOEMPAQUE>
+            <MERCANCIAREMESA>002309</MERCANCIAREMESA>
+            <DESCRIPCIONCORTAPRODUCTO>ALIMENTO PARA AVES DE CORRAL</DESCRIPCIONCORTAPRODUCTO>
+            <CODTIPOIDREMITENTE>N</CODTIPOIDREMITENTE>
+            <NUMIDREMITENTE>8600588314</NUMIDREMITENTE>
+            <CODSEDEREMITENTE>002</CODSEDEREMITENTE>
+            <CODTIPOIDDESTINATARIO>N</CODTIPOIDDESTINATARIO>
+            <NUMIDDESTINATARIO>8600588314</NUMIDDESTINATARIO>
+            <CODSEDEDESTINATARIO>009</CODSEDEDESTINATARIO>
+            <DUENOPOLIZA>N</DUENOPOLIZA>
+            <HORASPACTOCARGA>2</HORASPACTOCARGA>
+            <HORASPACTODESCARGUE>2</HORASPACTODESCARGUE>
+            <CODTIPOIDPROPIETARIO>N</CODTIPOIDPROPIETARIO>
+            <NUMIDPROPIETARIO>9013690938</NUMIDPROPIETARIO>
+            <CODSEDEPROPIETARIO>01</CODSEDEPROPIETARIO>
+            <FECHACITAPACTADACARGUE>28/05/2025</FECHACITAPACTADACARGUE>
+            <HORACITAPACTADACARGUE>08:00</HORACITAPACTADACARGUE>
+            <FECHACITAPACTADADESCARGUE>28/05/2025</FECHACITAPACTADADESCARGUE>
+            <HORACITAPACTADADESCARGUEREMESA>13:00</HORACITAPACTADADESCARGUEREMESA>
+          </variables>
+        </root>
+      </Request>
+    </ns1:AtenderMensajeRNDC>
+  </ns0:Body>
+</ns0:Envelope>
+📄 === FIN XML ===
+Intentando envío a endpoint: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+🎯 Usando endpoint personalizado: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+📡 Enviando SOAP a: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+Respuesta recibida de http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices: <?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:NS1="urn:BPMServicesIntf-IBPMServices"><NS1:AtenderMensajeRNDCResponse><return xsi:type="xsd:string">&lt;?xml version="1.0" encoding="ISO-8859-1" ?&gt;
+&lt;root&gt;
+&lt;ingresoid&gt;142498732&lt;/ingresoid&gt;
+&lt;/root&gt;
+</return></NS1:AtenderMensajeRNDCResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>
+
+📥 === RESPUESTA COMPLETA DEL RNDC ===
+✅ Success: true
+📄 Data: {
+  "success": true,
+  "consecutivo": null,
+  "ingresoId": null,
+  "mensaje": "Respuesta procesada",
+  "rawResponse": "<?xml version=\"1.0\"?>\r\n<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\"><SOAP-ENV:Body SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:NS1=\"urn:BPMServicesIntf-IBPMServices\"><NS1:AtenderMensajeRNDCResponse><return xsi:type=\"xsd:string\">&lt;?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?&gt;\r\n&lt;root&gt;\r\n&lt;ingresoid&gt;142498732&lt;/ingresoid&gt;\r\n&lt;/root&gt;\r\n</return></NS1:AtenderMensajeRNDCResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>\r\n"
+}
+❌ Error: undefined
+💬 Mensaje: Solicitud procesada exitosamente
+🔍 Raw Response: <?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:NS1="urn:BPMServicesIntf-IBPMServices"><NS1:AtenderMensajeRNDCResponse><return xsi:type="xsd:string">&lt;?xml version="1.0" encoding="ISO-8859-1" ?&gt;
+&lt;root&gt;
+&lt;ingresoid&gt;142498732&lt;/ingresoid&gt;
+&lt;/root&gt;
+</return></NS1:AtenderMensajeRNDCResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>
+
+📅 Fecha para DB: 2025-05-28T00:00:00.000Z
+12:28:23 AM [express] POST /api/remesas/process 200 in 843ms :: {"success":true,"totalProcessed":1,"s…
+Respuesta recibida de http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices: <?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:NS1="urn:BPMServicesIntf-IBPMServices"><NS1:AtenderMensajeRNDCResponse><return xsi:type="xsd:string">&lt;?xml version="1.0" encoding="ISO-8859-1" ?&gt;
+&lt;root&gt;
+&lt;ErrorMSG&gt;Error RNDC01: Falta información en el xml para el acceso.&lt;/ErrorMSG&gt;
+&lt;/root&gt;
+</return></NS1:AtenderMensajeRNDCResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>
+
+12:28:27 AM [express] GET /api/rndc/test 200 in 6281ms :: {"connected":true,"endpoint":"http://rndcws…

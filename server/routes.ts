@@ -328,8 +328,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             fechaParaDB = new Date(); // Use current date as fallback
           }
 
-          // Store remesa
-          await storage.createRemesa({
+          // Determine if the processing was actually successful
+          const wasSuccessful = soapResponse && soapResponse.success && soapResponse.data?.rawResponse?.includes('ingresoid');
+          
+          // Store remesa with correct status
+          const remesa = await storage.createRemesa({
             consecutivo,
             codigo_sede_remitente: sedeRemitente.codigo_sede,
             codigo_sede_destinatario: sedeDestinatario.codigo_sede,
@@ -339,13 +342,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             fecha_cita_descargue: fechaParaDB,
             conductor_id: row.IDENTIFICACION,
             toneladas: row.TONELADAS.toString(),
-            estado: estado === "exitoso" ? "enviada" : "generada",
+            estado: wasSuccessful ? "exitoso" : "error",
             xml_enviado: xml,
             respuesta_rndc: soapResponse ? JSON.stringify(soapResponse) : null
           });
-
-          // Determine if the processing was actually successful
-          const wasSuccessful = soapResponse && soapResponse.success && soapResponse.data?.rawResponse?.includes('ingresoid');
           
           results.push({
             success: wasSuccessful,
@@ -360,22 +360,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
             estado: wasSuccessful ? "exitoso" : "error"
           });
 
-          // Update the remesa record with final status and RNDC response
-          if (remesa && remesa.id) {
-            await storage.updateRemesa(remesa.id, {
-              estado: wasSuccessful ? "exitoso" : "error",
-              respuesta_rndc: soapResponse ? JSON.stringify(soapResponse) : null
+          // Only increment success count if actually successful
+          if (wasSuccessful) {
+            successCount++;
+            await storage.createLogActividad({
+              tipo: "success",
+              modulo: "remesa-generation",
+              mensaje: `Remesa ${consecutivo} generada exitosamente`,
+              detalles: { consecutivo, granja: row.GRANJA, placa: row.PLACA }
+            });
+          } else {
+            errorCount++;
+            await storage.createLogActividad({
+              tipo: "error",
+              modulo: "remesa-generation",
+              mensaje: `Error en remesa ${consecutivo}: ${soapResponse?.mensaje || 'Error desconocido'}`,
+              detalles: { consecutivo, granja: row.GRANJA, placa: row.PLACA, error: soapResponse?.error }
             });
           }
-
-          successCount++;
-
-          await storage.createLogActividad({
-            tipo: "success",
-            modulo: "remesa-generation",
-            mensaje: `Remesa ${consecutivo} generada exitosamente`,
-            detalles: { consecutivo, granja: row.GRANJA, placa: row.PLACA }
-          });
 
         } catch (error) {
           results.push({
