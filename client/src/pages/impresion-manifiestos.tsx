@@ -96,30 +96,29 @@ export default function ImpresionManifiestos() {
         <meta charset="UTF-8">
         <title>Manifiesto Electrónico de Carga ${manifiesto.numero_manifiesto}</title>
         <style>
-            @page { margin: 1cm; size: A4; }
+            @page { margin: 0.5cm; size: A4; }
             body { 
                 font-family: Arial, sans-serif; 
-                font-size: 7px; 
-                line-height: 1.1;
+                font-size: 6px; 
+                line-height: 1.0;
                 color: #000;
                 margin: 0;
                 padding: 0;
             }
             .main-container {
                 border: 2px solid #000;
-                padding: 3px;
+                padding: 2px;
             }
             .header-container {
                 display: table;
                 width: 100%;
                 border-collapse: collapse;
-                margin-bottom: 3px;
+                margin-bottom: 2px;
             }
             .header-left {
                 display: table-cell;
-                width: 25%;
+                width: 20%;
                 vertical-align: top;
-                border-right: 1px solid #000;
                 padding: 2px;
             }
             .header-center {
@@ -128,93 +127,89 @@ export default function ImpresionManifiestos() {
                 text-align: center;
                 vertical-align: middle;
                 padding: 2px;
-                border-right: 1px solid #000;
             }
             .header-right {
                 display: table-cell;
-                width: 25%;
-                text-align: center;
+                width: 30%;
                 vertical-align: top;
                 padding: 2px;
             }
-            .logo-container {
-                background: #4472C4;
-                color: white;
-                padding: 3px;
-                text-align: center;
-                font-size: 6px;
-                margin-bottom: 2px;
-            }
             .logo-colombia {
-                background: #FFC000;
+                background: #FFD700;
                 color: #000;
                 padding: 2px;
+                text-align: center;
                 font-size: 5px;
+                font-weight: bold;
+                border: 1px solid #000;
                 margin-bottom: 1px;
             }
-            .supertransporte {
+            .logo-mintransporte {
+                background: #4472C4;
+                color: white;
+                padding: 2px;
+                text-align: center;
+                font-size: 6px;
+                font-weight: bold;
+                border: 1px solid #000;
+                margin-bottom: 1px;
+            }
+            .logo-supertransporte {
                 background: #70AD47;
                 color: white;
                 padding: 2px;
-                font-size: 6px;
+                text-align: center;
+                font-size: 5px;
                 font-weight: bold;
+                border: 1px solid #000;
             }
             .title {
-                font-size: 12px;
+                font-size: 11px;
                 font-weight: bold;
                 margin: 2px 0;
                 text-transform: uppercase;
             }
             .company-info {
-                font-size: 8px;
-                margin: 1px 0;
+                font-size: 9px;
+                margin: 2px 0;
                 font-weight: bold;
             }
             .company-details {
                 font-size: 6px;
                 margin: 1px 0;
             }
-            .qr-info {
-                font-size: 6px;
-                margin-top: 2px;
-            }
-            .qr-placeholder {
-                border: 1px solid #000;
-                width: 60px;
-                height: 60px;
-                display: inline-block;
-                text-align: center;
-                line-height: 60px;
-                font-size: 6px;
-                margin-bottom: 2px;
-            }
             .disclaimer-text {
-                font-size: 5px;
+                font-size: 4px;
                 text-align: justify;
-                line-height: 1.2;
+                line-height: 1.1;
                 margin: 2px 0;
+                padding: 2px;
             }
-            .dates-section {
-                border: 1px solid #000;
+            .manifest-number {
+                font-size: 8px;
+                font-weight: bold;
                 margin: 2px 0;
             }
             .dates-table {
                 width: 100%;
                 border-collapse: collapse;
+                border: 2px solid #000;
+                margin: 2px 0;
             }
             .dates-table td, .dates-table th {
                 border: 1px solid #000;
-                padding: 1px;
+                padding: 2px;
                 text-align: center;
-                font-size: 6px;
+                font-size: 5px;
                 font-weight: bold;
+                vertical-align: top;
             }
             .section-title {
-                background: #DDDDDD;
+                background: #FFFFFF;
                 font-weight: bold;
                 text-align: center;
-                padding: 2px;
-                border: 1px solid #000;
+                padding: 3px;
+                border: 2px solid #000;
                 margin: 2px 0 0 0;
                 font-size: 7px;
                 text-transform: uppercase;
@@ -222,78 +217,96 @@ export default function ImpresionManifiestos() {
             .info-table {
                 width: 100%;
                 border-collapse: collapse;
-                border: 1px solid #000;
+                border: 2px solid #000;
                 margin-bottom: 2px;
             }
             .info-table td, .info-table th {
                 border: 1px solid #000;
                 padding: 1px;
-                font-size: 6px;
-                vertical-align: top;
-            }
-            .info-table th {
-                background: #DDDDDD;
-                font-weight: bold;
-                text-align: center;
                 font-size: 5px;
+                vertical-align: top;
+                text-align: center;
             }
             .field-label {
-                background: #DDDDDD;
+                background: #FFFFFF;
                 font-weight: bold;
-                font-size: 5px;
+                font-size: 4px;
                 text-align: center;
                 padding: 1px;
             }
             .field-value {
                 text-align: center;
-                font-size: 6px;
+                font-size: 5px;
                 padding: 1px;
+                background: #FFFFFF;
             }
             .bottom-section {
                 display: table;
                 width: 100%;
                 margin-top: 2px;
+                border: 2px solid #000;
             }
             .values-column {
                 display: table-cell;
                 width: 60%;
                 vertical-align: top;
-                padding-right: 2px;
+                border-right: 1px solid #000;
+                padding: 2px;
             }
             .observations-column {
                 display: table-cell;
                 width: 40%;
                 vertical-align: top;
+                padding: 2px;
             }
             .values-table {
                 width: 100%;
                 border-collapse: collapse;
-                border: 1px solid #000;
             }
             .values-table td {
                 border: 1px solid #000;
-                padding: 1px;
+                padding: 2px;
                 font-size: 6px;
             }
             .values-label {
-                background: #DDDDDD;
                 font-weight: bold;
                 text-align: left;
-                padding: 1px 2px;
-                width: 70%;
+                padding: 2px;
+                background: #FFFFFF;
             }
             .values-amount {
-                text-align: right;
-                padding: 1px 2px;
-                width: 30%;
+                text-align: center;
+                padding: 2px;
+                background: #FFFFFF;
+            }
+            .footer-section {
+                border: 2px solid #000;
+                margin-top: 2px;
+                padding: 2px;
             }
             .footer-text {
                 font-size: 5px;
-                text-align: center;
-                margin-top: 3px;
+                text-align: justify;
                 line-height: 1.2;
-                border-top: 1px solid #000;
-                padding-top: 2px;
+                margin: 2px 0;
+            }
+            .signature-section {
+                display: table;
+                width: 100%;
+                margin-top: 5px;
+            }
+            .signature-left {
+                display: table-cell;
+                width: 50%;
+                text-align: center;
+                padding: 5px;
+                border-right: 1px solid #000;
+            }
+            .signature-right {
+                display: table-cell;
+                width: 50%;
+                text-align: center;
+                padding: 5px;
             }
         </style>
     </head>
@@ -302,15 +315,14 @@ export default function ImpresionManifiestos() {
             <!-- ENCABEZADO -->
             <div class="header-container">
                 <div class="header-left">
-                    <div class="logo-container" style="background: #FFC000; color: #000; text-align: center; padding: 8px; font-size: 7px; border: 1px solid #000;">
-                        🇨🇴<br>
-                        <strong>La movilidad<br>es de todos</strong>
+                    <div class="logo-colombia">
+                        🇨🇴 La movilidad<br>es de todos
                     </div>
-                    <div class="logo-container" style="background: #4472C4; color: white; text-align: center; padding: 4px; font-size: 8px; border: 1px solid #000;">
-                        <strong>Mintransporte</strong>
+                    <div class="logo-mintransporte">
+                        Mintransporte
                     </div>
-                    <div class="supertransporte" style="background: #70AD47; color: white; text-align: center; padding: 4px; font-size: 7px; border: 1px solid #000;">
-                        <strong>SuperTransporte</strong>
+                    <div class="logo-supertransporte">
+                        SuperTransporte
                     </div>
                 </div>
                 <div class="header-center">
@@ -326,10 +338,9 @@ export default function ImpresionManifiestos() {
                     <div class="disclaimer-text">
                         "La impresión en soporte cartular (papel) de este acto administrativo producido por medios electrónicos en cumplimiento de la ley 527 de 1999 (Artículos 6 al 13) y de la ley 962 de 2005 (Artículo 6), es una reproducción del documento original que se encuentra en formato electrónico en la Base de Datos del RNDC en el Ministerio de Transporte, cuya representación digital goza de autenticidad, integridad y no repudio"
                     </div>
-                    <div class="qr-placeholder">[QR CODE]</div>
-                    <div class="qr-info">
+                    <div class="manifest-number">
                         <strong>Manifiesto:</strong> ${manifiesto.numero_manifiesto}<br>
-                        <strong>Autorización:</strong> 104518661
+                        <strong>Autorización:</strong>
                     </div>
                 </div>
             </div>
@@ -338,15 +349,15 @@ export default function ImpresionManifiestos() {
             <table class="dates-table">
                 <tr>
                     <th>FECHA DE EXPEDICIÓN</th>
-                    <th>FECHA Y HORA RADICACIÓN</th>
+                    <th>FECHA y HORA RADICACIÓN</th>
                     <th>TIPO DE MANIFIESTO</th>
                     <th>ORIGEN DEL VIAJE</th>
                     <th>DESTINO DEL VIAJE</th>
                 </tr>
                 <tr>
                     <td>${format(new Date(manifiesto.fecha_expedicion), "yyyy/MM/dd", { locale: es })}</td>
-                    <td>2025/05/28 08:42 pm</td>
-                    <td>General</td>
+                    <td></td>
+                    <td></td>
                     <td>${manifiesto.municipio_origen}</td>
                     <td>${manifiesto.municipio_destino}</td>
                 </tr>
@@ -357,53 +368,51 @@ export default function ImpresionManifiestos() {
             <table class="info-table">
                 <tr>
                     <td class="field-label">TITULAR MANIFIESTO</td>
-                    <td class="field-value" colspan="2">FABRICIANO QUINTERO MUÑOZ</td>
+                    <td class="field-value" colspan="2"></td>
                     <td class="field-label">DOCUMENTO<br>IDENTIFICACIÓN</td>
-                    <td class="field-value">4133687</td>
+                    <td class="field-value"></td>
                     <td class="field-label">DIRECCIÓN</td>
                     <td class="field-value" colspan="2"></td>
                     <td class="field-label">TELÉFONOS</td>
-                    <td class="field-value">0</td>
+                    <td class="field-value"></td>
                     <td class="field-label">CIUDAD</td>
-                    <td class="field-value">${manifiesto.municipio_origen}</td>
+                    <td class="field-value"></td>
                 </tr>
                 <tr>
                     <td class="field-label">PLACA</td>
                     <td class="field-value">${manifiesto.placa}</td>
                     <td class="field-label">MARCA</td>
-                    <td class="field-value">CHEVROLET</td>
+                    <td class="field-value"></td>
                     <td class="field-label">PLACA SEMIREMOLQUE</td>
                     <td class="field-value"></td>
                     <td class="field-label">PLACA SEMIREMOL 2</td>
                     <td class="field-value"></td>
                     <td class="field-label">CONFIGURACIÓN</td>
-                    <td class="field-value">2</td>
+                    <td class="field-value"></td>
                     <td class="field-label">PesoVacío</td>
-                    <td class="field-value">3000</td>
+                    <td class="field-value"></td>
                     <td class="field-label">PesoVacíoRemolque</td>
                     <td class="field-value"></td>
                     <td class="field-label">COMPAÑÍA SEGUROS SOAT</td>
-                    <td class="field-value">860002400 LA PREVISORA S.A COMPAÑÍA</td>
-                    <td class="field-label">CUNDINAMARCA</td>
-                    <td class="field-value"></td>
+                    <td class="field-value" colspan="2"></td>
                     <td class="field-label">No PÓLIZA</td>
-                    <td class="field-value">438006646</td>
+                    <td class="field-value"></td>
                     <td class="field-label">F.Vencimiento SOAT</td>
-                    <td class="field-value">2026/02/18</td>
+                    <td class="field-value"></td>
                 </tr>
                 <tr>
                     <td class="field-label">CONDUCTOR</td>
-                    <td class="field-value" colspan="3">JAROL ANDRÉS DURÁN SALDAÑA</td>
+                    <td class="field-value" colspan="3"></td>
                     <td class="field-label">DOCUMENTO IDENTIFICACIÓN</td>
                     <td class="field-value">${manifiesto.conductor_id}</td>
                     <td class="field-label">DIRECCIÓN</td>
-                    <td class="field-value" colspan="2">DIAGONAL 18 #3-105 VILLA MARÍA ETAPA 3</td>
+                    <td class="field-value" colspan="2"></td>
                     <td class="field-label">TELÉFONOS</td>
-                    <td class="field-value">00</td>
+                    <td class="field-value">0.0</td>
                     <td class="field-label">No de LICENCIA</td>
-                    <td class="field-value">C2-1073511288</td>
+                    <td class="field-value"></td>
                     <td class="field-label">CIUDAD CONDUCTOR</td>
-                    <td class="field-value">MOSQUERA</td>
+                    <td class="field-value"></td>
                 </tr>
                 <tr>
                     <td class="field-label">CONDUCTOR Nro. 2</td>
@@ -416,14 +425,14 @@ export default function ImpresionManifiestos() {
                     <td class="field-value"></td>
                     <td class="field-label">No de LICENCIA</td>
                     <td class="field-value"></td>
-                    <td class="field-label">CUNDINAMARCA<br>CIUDAD CONDUCTOR 2</td>
+                    <td class="field-label">CIUDAD CONDUCTOR 2</td>
                     <td class="field-value"></td>
                 </tr>
                 <tr>
                     <td class="field-label">POSEEDOR O TENEDOR VEHÍCULO</td>
-                    <td class="field-value" colspan="3">JAROL ANDRÉS DURÁN SALDAÑA</td>
+                    <td class="field-value" colspan="3"></td>
                     <td class="field-label">DOCUMENTO IDENTIFICACIÓN</td>
-                    <td class="field-value">1073511288</td>
+                    <td class="field-value"></td>
                     <td class="field-label">DIRECCIÓN</td>
                     <td class="field-value" colspan="2"></td>
                     <td class="field-label">TELÉFONOS</td>
@@ -451,37 +460,37 @@ export default function ImpresionManifiestos() {
                 </tr>
                 <tr>
                     <td class="field-value">${manifiesto.consecutivo_remesa}</td>
-                    <td class="field-value">Kilogramos</td>
-                    <td class="field-value">7,000.00</td>
-                    <td class="field-value">Carga<br>General</td>
-                    <td class="field-value">Paquetes.</td>
-                    <td class="field-value">002309<br>Permiso INVIAS:<br>ALIMENTOPARAAVESDECORRAL<br>Fraccionada<br>en máximo 2<br>kgs por<br>unidad de<br>empaque</td>
-                    <td class="field-value">860058314 AVÍCOLA LOS CAMBULOS S.A</td>
-                    <td class="field-value">860058314 AVÍCOLA LOS CAMBULOS S.A</td>
+                    <td class="field-value"></td>
+                    <td class="field-value"></td>
+                    <td class="field-value">C<br>Paquetes.<br>Permiso INVIAS:<br>ALIMENTOPARAAVESDECORRAL</td>
+                    <td class="field-value">002309</td>
+                    <td class="field-value">ALIMENTOPARAAVESDECORRAL</td>
+                    <td class="field-value"></td>
+                    <td class="field-value"></td>
                     <td class="field-value">No existe póliza</td>
                 </tr>
             </table>
 
-            <!-- PRECIO DEL VIAJE, VALORES Y OBSERVACIONES -->
+            <!-- VALORES Y OBSERVACIONES -->
             <div class="bottom-section">
                 <div class="values-column">
-                    <div class="section-title">PRECIO DEL VIAJE VALORES</div>
+                    <div style="font-weight: bold; text-align: center; padding: 3px; font-size: 7px; margin-bottom: 2px;">VALORES</div>
                     <table class="values-table">
                         <tr>
                             <td class="values-label">VALOR TOTAL DEL VIAJE</td>
-                            <td class="values-amount">${(manifiesto.valor_flete || 765684).toLocaleString()}.00</td>
+                            <td class="values-amount"></td>
                         </tr>
                         <tr>
                             <td class="values-label">RETENCIÓN EN LA FUENTE</td>
-                            <td class="values-amount">0.00</td>
+                            <td class="values-amount"></td>
                         </tr>
                         <tr>
                             <td class="values-label">RETENCIÓN ICA</td>
-                            <td class="values-amount">0.00</td>
+                            <td class="values-amount"></td>
                         </tr>
                         <tr>
                             <td class="values-label">VALOR NETO A PAGAR</td>
-                            <td class="values-amount">${(manifiesto.valor_flete || 765684).toLocaleString()}.00</td>
+                            <td class="values-amount"></td>
                         </tr>
                         <tr>
                             <td class="values-label">VALOR ANTICIPO</td>
@@ -489,45 +498,51 @@ export default function ImpresionManifiestos() {
                         </tr>
                         <tr>
                             <td class="values-label">SALDO A PAGAR</td>
-                            <td class="values-amount">${(manifiesto.valor_flete || 765684).toLocaleString()}.00</td>
+                            <td class="values-amount"></td>
                         </tr>
                     </table>
-                    <div style="font-size: 6px; margin-top: 2px; padding: 2px;">
+                    <div style="font-size: 5px; margin-top: 3px; padding: 2px; border: 1px solid #000;">
                         <strong>VALOR TOTAL DEL VIAJE EN LETRAS:</strong> SETECIENTOS SESENTA Y CINCO MIL SEISCIENTOS OCHENTA Y CUATRO PESOS
                     </div>
                 </div>
                 <div class="observations-column">
-                    <div class="section-title">PAGO DEL SALDO OBSERVACIONES<br>RECOMENDACIONES</div>
+                    <div style="font-weight: bold; text-align: center; padding: 3px; font-size: 7px; margin-bottom: 2px;">OBSERVACIONES</div>
                     <table class="values-table" style="margin-bottom: 5px;">
                         <tr>
                             <td class="values-label">LUGAR<br>DE PAGO</td>
-                            <td class="values-amount">BOGOTA BOGOTA<br>D.C.</td>
+                            <td class="values-amount">BOGOTA BOGOTA<br>D. C.</td>
                             <td class="values-label">FECHA</td>
-                            <td class="values-amount">2025/08/28</td>
+                            <td class="values-amount"></td>
                         </tr>
                     </table>
-                    <div style="border: 1px solid #000; margin: 2px 0; padding: 1px;">
-                        <div class="field-label" style="text-align: center; font-size: 5px;">CARGUE PAGADO POR</div>
-                        <div class="field-value" style="padding: 8px; text-align: center; font-weight: bold;">DESTINATARIO</div>
+                    <div style="border: 1px solid #000; margin: 2px 0; padding: 2px;">
+                        <div style="font-weight: bold; text-align: center; font-size: 5px; margin-bottom: 2px;">CARGUE PAGADO POR</div>
+                        <div style="padding: 8px; text-align: center; font-weight: bold;">DESTINATARIO</div>
                     </div>
-                    <div style="border: 1px solid #000; margin: 2px 0; padding: 1px;">
-                        <div class="field-label" style="text-align: center; font-size: 5px;">DESCARGUE PAGADO POR</div>
-                        <div class="field-value" style="padding: 8px; text-align: center; font-weight: bold;">DESTINATARIO</div>
+                    <div style="border: 1px solid #000; margin: 2px 0; padding: 2px;">
+                        <div style="font-weight: bold; text-align: center; font-size: 5px; margin-bottom: 2px;">DESCARGUE PAGADO POR</div>
+                        <div style="padding: 8px; text-align: center; font-weight: bold;">DESTINATARIO</div>
                     </div>
                 </div>
             </div>
 
             <!-- PIE DE PÁGINA -->
-            <div class="footer-text">
-                <div style="display: table; width: 100%; margin-top: 10px;">
-                    <div style="display: table-cell; width: 65%; vertical-align: top;">
-                        <strong>Si es víctima de algún fraude o conoce de alguna irregularidad en el Registro Nacional de Despachos de Carga RNDC denúncielo a la Superintendencia de Puertos y Transporte, en la línea gratuita nacional 018000 915615 y a través del correo electrónico: atencionciudadano@supertransporte.gov.co</strong>
+            <div class="footer-section">
+                <div class="signature-section">
+                    <div class="signature-left">
+                        <div class="footer-text">
+                            <strong>Si es víctima de algún fraude o conoce de alguna irregularidad en el Registro Nacional de Despachos de Carga RNDC denúncielo a la Superintendencia de Puertos y Transporte, en la línea gratuita nacional 018000 915615 y a través del correo electrónico: atencionciudadano@supertransporte.gov.co</strong>
+                        </div>
                     </div>
-                    <div style="display: table-cell; width: 35%; vertical-align: top; text-align: center;">
-                        <strong>Firma y Huella TITULAR MANIFIESTO o ACEPTACIÓN DIGITAL</strong>
-                        <div style="height: 30px; border-bottom: 1px solid #000; margin: 5px 0;"></div>
-                        <strong>Firma y Huella del CONDUCTOR o ACEPTACIÓN DIGITAL</strong>
-                        <div style="height: 30px; border-bottom: 1px solid #000; margin: 5px 0;"></div>
+                    <div class="signature-right">
+                        <div style="text-align: center; font-size: 5px; font-weight: bold; margin-bottom: 10px;">
+                            Firma y Huella TITULAR MANIFIESTO o ACEPTACIÓN DIGITAL
+                        </div>
+                        <div style="border-bottom: 1px solid #000; height: 20px; margin-bottom: 10px;"></div>
+                        <div style="text-align: center; font-size: 5px; font-weight: bold; margin-bottom: 10px;">
+                            Firma y Huella del CONDUCTOR o ACEPTACIÓN DIGITAL
+                        </div>
+                        <div style="border-bottom: 1px solid #000; height: 20px;"></div>
                     </div>
                 </div>
             </div>
