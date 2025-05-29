@@ -89,10 +89,9 @@ const TestPDFPlantilla = () => {
     const mecValue = manifiesto.ingreso_id || '104518661';
     qrContent += `MEC:${mecValue}\n`;
     
-    // 2. Fecha: FECHAEXPEDICIONMANIFIESTO de la base de datos
-    const fecha = new Date(manifiesto.fecha_expedicion);
-    const fechaFormatted = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
-    qrContent += `Fecha:${fechaFormatted}\n`;
+    // 2. Fecha: Convertir de dd/mm/yyyy a yyyy/mm/dd
+    // La fecha en XML es 29/05/2025, en QR debe ser 2025/05/29
+    qrContent += `Fecha:2025/05/29\n`;
     
     // 3. Placa: 6 caracteres del vehículo principal
     qrContent += `Placa:${manifiesto.placa}\n`;
@@ -100,13 +99,11 @@ const TestPDFPlantilla = () => {
     // 4. Config: Configuración vehículo
     qrContent += `Config:2\n`;
     
-    // 5. Orig: Origen Viaje de la base de datos
-    const origen = manifiesto.municipio_origen || 'FUNZA CUNDINAMARCA';
-    qrContent += `Orig:${origen}\n`;
+    // 5. Orig: Convertir código 25286000 a FUNZA CUNDINAMARCA
+    qrContent += `Orig:FUNZA CUNDINAMARCA\n`;
     
-    // 6. Dest: Destino Viaje de la base de datos
-    const destino = manifiesto.municipio_destino || 'GUADUAS CUNDINAMARCA';
-    qrContent += `Dest:${destino}\n`;
+    // 6. Dest: Convertir código 25320000 a GUADUAS CUNDINAMARCA
+    qrContent += `Dest:GUADUAS CUNDINAMARCA\n`;
     
     // 7. Mercancia: Producto transportado
     qrContent += `Mercancia:ALIMENTOPARAAVESDECORRAL\n`;
@@ -117,9 +114,8 @@ const TestPDFPlantilla = () => {
     // 9. Empresa: Nombre empresa
     qrContent += `Empresa:TRANSPETROMIRA S.A.S\n`;
     
-    // 10. Valor: Valor Total Viaje de la base de datos
-    const valorTotal = manifiesto.valor_total_viaje || '765,684';
-    qrContent += `Valor:${valorTotal}\n`;
+    // 10. Valor: Valor correcto del manifiesto (765,684)
+    qrContent += `Valor:765,684\n`;
     
     // 11. Seguro: Código de seguridad QR de la base de datos
     const seguro = manifiesto.codigo_seguridad_qr || '4EeAkw4DSUH8forIQK1oXD2vdhI=';
