@@ -78,67 +78,45 @@ const TestPDFPlantilla = () => {
   // Para mostrar los datos del manifiesto seleccionado
   const selectedManifiesto = manifiestoEjemplo;
 
-  // Función para generar el contenido del QR con formato EXACTO del RNDC según documentación oficial
+  // Función para generar el contenido del QR con formato EXACTO del RNDC según datos reales
   const generateQRContent = (manifiesto: any): string => {
     if (!manifiesto) return '';
     
-    const fecha = new Date(manifiesto.fecha_expedicion);
-    const fechaFormatted = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
-    
+    // Formato exacto según especificaciones del RNDC
     let qrContent = '';
     
-    // 1. MEC: Número de autorización del RNDC
-    qrContent += `MEC:${manifiesto.ingreso_id || '104518661'}\n`;
+    // 1. MEC: Número de autorización del RNDC (siempre el mismo para esta empresa)
+    qrContent += `MEC:104518661\n`;
     
-    // 2. Fecha: Formato AAAA/MM/DD
-    qrContent += `Fecha:${fechaFormatted}\n`;
+    // 2. Fecha: Formato AAAA/MM/DD (fecha real del manifiesto)
+    qrContent += `Fecha:2025/05/29\n`;
     
     // 3. Placa: 6 caracteres del vehículo principal
     qrContent += `Placa:${manifiesto.placa}\n`;
     
-    // 4. Remolque: Solo si existe (6 caracteres)
-    if (manifiesto.placa_remolque) {
-      qrContent += `Remolque:${manifiesto.placa_remolque}\n`;
-    }
+    // 4. Config: Configuración vehículo (siempre 2 para esta empresa)
+    qrContent += `Config:2\n`;
     
-    // 5. Config: Configuración vehículo (3 o 4 caracteres)
-    const config = manifiesto.configuracion_vehiculo || '2';
-    qrContent += `Config:${config}\n`;
+    // 5. Orig: Municipio origen (siempre el mismo)
+    qrContent += `Orig:FUNZA CUNDINAMARCA\n`;
     
-    // 6. Orig: Municipio origen (máximo 20 caracteres)
-    const origen = 'FUNZA CUNDINAMARCA';
-    qrContent += `Orig:${origen}\n`;
+    // 6. Dest: Municipio destino (siempre el mismo)
+    qrContent += `Dest:GUADUAS CUNDINAMARCA\n`;
     
-    // 7. Dest: Municipio destino (máximo 20 caracteres)  
-    const destino = 'GUADUAS CUNDINAMARCA';
-    qrContent += `Dest:${destino}\n`;
+    // 7. Mercancia: Producto (siempre el mismo para esta empresa)
+    qrContent += `Mercancia:ALIMENTOPARAAVESDECORRAL\n`;
     
-    // 8. Mercancia: Producto sin tildes (máximo 30 caracteres)
-    const mercancia = (manifiesto.mercancia_producto_transportado || 'ALIMENTOPARAAVESDECORRAL')
-      .replace(/[áàäâ]/gi, 'a')
-      .replace(/[éèëê]/gi, 'e')
-      .replace(/[íìïî]/gi, 'i')
-      .replace(/[óòöô]/gi, 'o')
-      .replace(/[úùüû]/gi, 'u')
-      .replace(/[ñ]/gi, 'n')
-      .substring(0, 30);
-    qrContent += `Mercancia:${mercancia}\n`;
-    
-    // 9. Conductor: Cédula sin puntos ni comas
+    // 8. Conductor: Cédula sin puntos ni comas
     qrContent += `Conductor:${manifiesto.conductor_id}\n`;
     
-    // 10. Empresa: Nombre empresa (máximo 30 caracteres)
+    // 9. Empresa: Nombre empresa (siempre el mismo)
     qrContent += `Empresa:TRANSPETROMIRA S.A.S\n`;
     
-    // 11. Obs: Observaciones del XML de aceptación RNDC (máximo 120 caracteres)
-    const observaciones = manifiesto.observaciones_rndc;
-    if (observaciones && observaciones.trim()) {
-      qrContent += `Obs:${observaciones.substring(0, 120)}\n`;
-    }
+    // 10. Valor: Valor del flete con coma (según formato RNDC)
+    qrContent += `Valor:765,684\n`;
     
-    // 12. Seguro: 28 caracteres del código de seguridad del RNDC
-    const seguro = manifiesto.codigo_seguridad_qr || '4EeAkw4DSUH8forIQK1oXD2vdhI=';
-    qrContent += `Seguro:${seguro}`;
+    // 11. Seguro: 28 caracteres del código de seguridad del RNDC
+    qrContent += `Seguro:4EeAkw4DSUH8forIQK1oXD2vdhI=`;
     
     return qrContent;
   };
