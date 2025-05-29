@@ -1520,6 +1520,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // ===== CUMPLIMIENTO ROUTES =====
   
+  // Vista previa del XML de cumplimiento
+  app.get("/api/cumplimiento/preview/:consecutivo", async (req, res) => {
+    try {
+      const consecutivo = req.params.consecutivo;
+      
+      const config = await storage.getConfiguracionActiva();
+      if (!config) {
+        return res.status(400).json({ error: "Configuración del sistema no encontrada" });
+      }
+
+      // Buscar la remesa
+      const remesa = await storage.getRemesaByConsecutivo(consecutivo);
+      if (!remesa) {
+        return res.status(404).json({ error: "Remesa no encontrada" });
+      }
+
+      const cumplimientoData = {
+        consecutivoRemesa: consecutivo,
+        fechaCumplimiento: new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
+        cantidadCargada: parseFloat(remesa.toneladas?.toString() || "0"),
+        fechaCitaCargue: remesa.fecha_cita_cargue || new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
+        fechaCitaDescargue: remesa.fecha_cita_descargue || new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
+        horaCitaCargue: remesa.hora_cita_cargue || "08:00",
+        horaCitaDescargue: remesa.hora_cita_descargue || "13:00",
+        config
+      };
+
+      const xml = xmlGenerator.generateCumplimientoXML(cumplimientoData);
+      
+      console.log(`📋 === XML CUMPLIMIENTO PREVIEW ${consecutivo} ===`);
+      console.log(xml);
+      console.log(`📋 === FIN XML CUMPLIMIENTO PREVIEW ${consecutivo} ===`);
+
+      res.json({
+        success: true,
+        consecutivo,
+        xml,
+        data: cumplimientoData
+      });
+
+    } catch (error) {
+      console.error("Error al generar preview XML cumplimiento:", error);
+      res.status(500).json({ error: "Error al generar vista previa del XML" });
+    }
+  });
+  
   // Cumplir remesa
   app.post("/api/cumplimiento/remesa", async (req, res) => {
     try {

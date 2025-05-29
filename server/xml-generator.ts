@@ -38,6 +38,11 @@ export interface ManifiestoXMLData {
 export interface CumplimientoXMLData {
   consecutivoRemesa: string;
   fechaCumplimiento: string;
+  cantidadCargada: number;
+  fechaCitaCargue?: string;
+  fechaCitaDescargue?: string;
+  horaCitaCargue?: string;
+  horaCitaDescargue?: string;
   config: Configuracion;
 }
 
@@ -145,6 +150,16 @@ export class XMLGenerator {
   }
 
   generateCumplimientoXML(data: CumplimientoXMLData): string {
+    // Calcular horarios automáticamente
+    const fechaCargue = data.fechaCitaCargue || data.fechaCumplimiento;
+    const fechaDescargue = data.fechaCitaDescargue || data.fechaCumplimiento;
+    const horaCargue = data.horaCitaCargue || "08:00";
+    const horaDescargue = data.horaCitaDescargue || "13:00";
+    
+    // Calcular hora de salida (hora inicial + 2 horas)
+    const horaSalidaCargue = this.addHoursToTime(horaCargue, 2);
+    const horaSalidaDescargue = this.addHoursToTime(horaDescargue, 2);
+
     return `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:BPMServicesIntf-IBPMServices">
   <soapenv:Header/>
   <soapenv:Body>
@@ -162,9 +177,22 @@ export class XMLGenerator {
           <variables>
             <NUMNITEMPRESATRANSPORTE>${data.config.empresa_nit}</NUMNITEMPRESATRANSPORTE>
             <CONSECUTIVOREMESA>${data.consecutivoRemesa}</CONSECUTIVOREMESA>
-            <FECHACUMPLIMIENTO>${data.fechaCumplimiento}</FECHACUMPLIMIENTO>
-            <HORACUMPLIMIENTO>12:00</HORACUMPLIMIENTO>
-            <CODMUNICIPIOREMESACUMPLIDA>11001000</CODMUNICIPIOREMESACUMPLIDA>
+            <TIPOCUMPLIDOREMESA>C</TIPOCUMPLIDOREMESA>
+            <CANTIDADCARGADA>${data.cantidadCargada}</CANTIDADCARGADA>
+            <CANTIDADENTREGADA>${data.cantidadCargada}</CANTIDADENTREGADA>
+            <UNIDADMEDIDACAPACIDAD>1</UNIDADMEDIDACAPACIDAD>
+            <FECHALLEGADACARGUE>${fechaCargue}</FECHALLEGADACARGUE>
+            <HORALLEGADACARGUEREMESA>${horaCargue}</HORALLEGADACARGUEREMESA>
+            <FECHAENTRADACARGUE>${fechaCargue}</FECHAENTRADACARGUE>
+            <HORAENTRADACARGUEREMESA>${horaCargue}</HORAENTRADACARGUEREMESA>
+            <FECHASALIDACARGUE>${fechaCargue}</FECHASALIDACARGUE>
+            <HORASALIDACARGUEREMESA>${horaSalidaCargue}</HORASALIDACARGUEREMESA>
+            <FECHALLEGADADESCARGUE>${fechaDescargue}</FECHALLEGADADESCARGUE>
+            <HORALLEGADADESCARGUECUMPLIDO>${horaDescargue}</HORALLEGADADESCARGUECUMPLIDO>
+            <FECHAENTRADADESCARGUE>${fechaDescargue}</FECHAENTRADADESCARGUE>
+            <HORAENTRADADESCARGUECUMPLIDO>${horaDescargue}</HORAENTRADADESCARGUECUMPLIDO>
+            <FECHASALIDADESCARGUE>${fechaDescargue}</FECHASALIDADESCARGUE>
+            <HORASALIDADESCARGUECUMPLIDO>${horaSalidaDescargue}</HORASALIDADESCARGUECUMPLIDO>
           </variables>
         </root>
       </Request>
@@ -185,6 +213,16 @@ export class XMLGenerator {
     const d = new Date(date);
     d.setDate(d.getDate() + days);
     return this.formatDate(d);
+  }
+
+  // Método auxiliar para sumar horas a un tiempo en formato HH:MM
+  addHoursToTime(timeString: string, hours: number): string {
+    const [hourStr, minuteStr] = timeString.split(':');
+    const hour = parseInt(hourStr, 10);
+    const minute = parseInt(minuteStr, 10);
+    
+    const newHour = (hour + hours) % 24;
+    return `${newHour.toString().padStart(2, '0')}:${minuteStr}`;
   }
 }
 
