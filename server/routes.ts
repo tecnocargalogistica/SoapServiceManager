@@ -733,6 +733,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Preview XML for manifiesto without sending to RNDC
+  app.get('/api/manifiestos/preview-xml/:remesaId', async (req: Request, res: Response) => {
+    try {
+      const remesaId = parseInt(req.params.remesaId);
+      const remesas = await storage.getRemesas();
+      const remesa = remesas.find(r => r.id === remesaId);
+      
+      if (!remesa) {
+        return res.status(404).json({ error: "Remesa no encontrada" });
+      }
+
+      const config = await storage.getConfiguracionActiva();
+      if (!config) {
+        return res.status(400).json({ error: "Configuración del sistema no encontrada" });
+      }
+
+      const vehiculo = await storage.getVehiculoByPlaca(remesa.placa);
+      if (!vehiculo) {
+        return res.status(404).json({ error: `Vehículo con placa "${remesa.placa}" no encontrado` });
+      }
+
+      const numeroManifiesto = await storage.getNextConsecutivo("manifiesto");
+      const sedes = await storage.getSedes();
+      const sedeOrigen = sedes.find(s => s.codigo_sede === remesa.codigo_sede_remitente);
+      const sedeDestino = sedes.find(s => s.codigo_sede === remesa.codigo_sede_destinatario);
+
+      const municipios = await storage.getMunicipios();
+      const municipioOrigen = municipios.find(m => m.codigo === sedeOrigen?.municipio_codigo);
+      const municipioDestino = municipios.find(m => m.codigo === sedeDestino?.municipio_codigo);
+
+      const manifestoData = {
+        numeroManifiesto,
+        consecutivoRemesa: remesa.consecutivo,
+        fechaExpedicion: new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
+        municipioOrigen: municipioOrigen?.nombre || "BOGOTA",
+        municipioDestino: municipioDestino?.nombre || "GUADUAS",
+        placa: remesa.placa,
+        conductorId: remesa.conductor_id,
+        valorFlete: 50000,
+        fechaPagoSaldo: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0].split('-').reverse().join('/'),
+        propietarioTipo: vehiculo.propietario_tipo_doc,
+        propietarioNumero: vehiculo.propietario_numero_doc,
+        config
+      };
+
+      const xml = xmlGenerator.generateManifiestoXML(manifestoData);
+
+      res.json({
+        success: true,
+        xml,
+        numeroManifiesto,
+        consecutivoRemesa: remesa.consecutivo
+      });
+
+    } catch (error: any) {
+      console.error('Error generating preview XML:', error);
+      res.status(500).json({ error: error.message || 'Error al generar XML de previsualización' });
+    }
+  });
+
   // Generate manifiestos for completed remesas
   app.post("/api/manifiestos/generate", async (req, res) => {
     try {
