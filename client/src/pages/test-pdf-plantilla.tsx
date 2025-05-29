@@ -58,7 +58,10 @@ const TestPDFPlantilla = () => {
     // Información financiera
     valorTotalViaje: { x: 1000, y: 650 },
     valorNetoViaje: { x: 1000, y: 670 },
-    saldoPagar: { x: 1000, y: 690 }
+    saldoPagar: { x: 1000, y: 690 },
+    
+    // ID de confirmación RNDC
+    ingresoId: { x: 200, y: 200 }
   });
 
   const { data: manifiestos } = useQuery<any[]>({

@@ -338,6 +338,12 @@ export class ManifiestoPDFHorizontalGenerator {
     
     // Saldo a pagar
     this.doc.text(valorTotal, this.pixelToMM(campos.saldoPagar.x), this.pixelToMM(campos.saldoPagar.y, false));
+    
+    // === ID DE CONFIRMACIÓN RNDC ===
+    
+    // ID de Ingreso RNDC
+    const ingresoId = this.manifiesto.ingreso_id ? `ID: ${this.manifiesto.ingreso_id}` : '';
+    this.doc.text(ingresoId, this.pixelToMM(campos.ingresoId.x), this.pixelToMM(campos.ingresoId.y, false));
   }
 
   private generateFallbackPDF(): void {
