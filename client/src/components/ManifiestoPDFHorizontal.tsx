@@ -39,7 +39,12 @@ class ManifiestoPDFHorizontalGenerator {
   constructor(manifiesto: Manifiesto) {
     this.manifiesto = manifiesto;
     // PDF horizontal (landscape) para coincidir con tu plantilla
-    this.doc = new jsPDF('landscape', 'mm', 'a4');
+    this.doc = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4'
+    });
+    console.log('PDF creado en modo horizontal:', this.doc.internal.pageSize.getWidth(), 'x', this.doc.internal.pageSize.getHeight());
   }
 
   async generate(): Promise<void> {
@@ -62,11 +67,16 @@ class ManifiestoPDFHorizontalGenerator {
 
   private async addBackgroundImage(): Promise<void> {
     try {
+      console.log('Cargando imagen desde:', manifestoImagePath);
       const imageData = await this.loadImage(manifestoImagePath);
       
-      // Agregar la imagen como fondo ocupando toda la página
-      // A4 horizontal: 297mm x 210mm
-      this.doc.addImage(imageData, 'JPEG', 0, 0, 297, 210);
+      // Verificar que el documento esté en modo horizontal
+      const pageWidth = this.doc.internal.pageSize.getWidth();
+      const pageHeight = this.doc.internal.pageSize.getHeight();
+      console.log(`Dimensiones de página: ${pageWidth}mm x ${pageHeight}mm`);
+      
+      // Agregar la imagen como fondo ocupando toda la página horizontal
+      this.doc.addImage(imageData, 'JPEG', 0, 0, pageWidth, pageHeight);
       
       console.log('Imagen de fondo agregada correctamente');
     } catch (error) {
@@ -78,10 +88,10 @@ class ManifiestoPDFHorizontalGenerator {
   private async loadImage(src: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      img.crossOrigin = 'anonymous';
       
       img.onload = () => {
         try {
+          console.log('Imagen cargada exitosamente:', img.width, 'x', img.height);
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
           
@@ -94,14 +104,22 @@ class ManifiestoPDFHorizontalGenerator {
           canvas.height = img.height;
           ctx.drawImage(img, 0, 0);
           
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+          console.log('Imagen convertida a base64 exitosamente');
           resolve(dataUrl);
         } catch (error) {
+          console.error('Error procesando imagen:', error);
           reject(error);
         }
       };
       
-      img.onerror = () => reject(new Error('Error cargando la imagen: ' + src));
+      img.onerror = (error) => {
+        console.error('Error cargando imagen desde:', src, error);
+        reject(new Error('No se pudo cargar la imagen de plantilla'));
+      };
+      
+      // Intentar cargar la imagen
+      console.log('Intentando cargar imagen desde:', src);
       img.src = src;
     });
   }
@@ -153,21 +171,43 @@ class ManifiestoPDFHorizontalGenerator {
   private generateFallbackPDF(): void {
     console.log('Generando PDF básico sin imagen de fondo...');
     
-    // Limpiar el documento y empezar de nuevo
-    this.doc = new jsPDF('landscape', 'mm', 'a4');
+    // Limpiar el documento y empezar de nuevo en horizontal
+    this.doc = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4'
+    });
     
     // Título
     this.doc.setFontSize(16);
     this.doc.setFont('helvetica', 'bold');
     this.doc.text('MANIFIESTO ELECTRÓNICO DE CARGA', 148.5, 30, { align: 'center' });
     
-    // Información básica
+    // Subtítulo
     this.doc.setFontSize(12);
-    this.doc.setFont('helvetica', 'normal');
-    let y = 50;
+    this.doc.text('TRANSPORTEMIRA S.A.S', 148.5, 45, { align: 'center' });
     
-    this.doc.text(`Número de Manifiesto: ${this.manifiesto.numero_manifiesto}`, 20, y);
-    y += 10;
+    // Información básica
+    this.doc.setFontSize(10);
+    this.doc.setFont('helvetica', 'normal');
+    let y = 70;
+    
+    // CONSECUTIVO en posición de prueba
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.setFontSize(12);
+    this.doc.text('CONSECUTIVO:', 20, y);
+    this.doc.text(this.manifiesto.numero_manifiesto, 80, y);
+    y += 15;
+    
+    // ID en posición de prueba
+    this.doc.text('ID RESPUESTA:', 20, y);
+    const idRespuesta = this.manifiesto.id ? this.manifiesto.id.toString() : 'ID_XML_RESPONSE';
+    this.doc.text(idRespuesta, 80, y);
+    y += 15;
+    
+    // Resto de información
+    this.doc.setFont('helvetica', 'normal');
+    this.doc.setFontSize(10);
     
     const fecha = format(new Date(this.manifiesto.fecha_expedicion), 'dd/MM/yyyy', { locale: es });
     this.doc.text(`Fecha de Expedición: ${fecha}`, 20, y);
