@@ -78,45 +78,52 @@ const TestPDFPlantilla = () => {
   // Para mostrar los datos del manifiesto seleccionado
   const selectedManifiesto = manifiestoEjemplo;
 
-  // Función para generar el contenido del QR con formato EXACTO del RNDC según datos reales
+  // Función para generar el contenido del QR con datos reales de la base de datos
   const generateQRContent = (manifiesto: any): string => {
     if (!manifiesto) return '';
     
     // Formato exacto según especificaciones del RNDC
     let qrContent = '';
     
-    // 1. MEC: Número de autorización del RNDC (siempre el mismo para esta empresa)
-    qrContent += `MEC:104518661\n`;
+    // 1. MEC: ID Ingreso RNDC de la base de datos
+    const mecValue = manifiesto.ingreso_id || '104518661';
+    qrContent += `MEC:${mecValue}\n`;
     
-    // 2. Fecha: Formato AAAA/MM/DD (fecha real del manifiesto)
-    qrContent += `Fecha:2025/05/29\n`;
+    // 2. Fecha: FECHAEXPEDICIONMANIFIESTO de la base de datos
+    const fecha = new Date(manifiesto.fecha_expedicion);
+    const fechaFormatted = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
+    qrContent += `Fecha:${fechaFormatted}\n`;
     
     // 3. Placa: 6 caracteres del vehículo principal
     qrContent += `Placa:${manifiesto.placa}\n`;
     
-    // 4. Config: Configuración vehículo (siempre 2 para esta empresa)
+    // 4. Config: Configuración vehículo
     qrContent += `Config:2\n`;
     
-    // 5. Orig: Municipio origen (siempre el mismo)
-    qrContent += `Orig:FUNZA CUNDINAMARCA\n`;
+    // 5. Orig: Origen Viaje de la base de datos
+    const origen = manifiesto.municipio_origen || 'FUNZA CUNDINAMARCA';
+    qrContent += `Orig:${origen}\n`;
     
-    // 6. Dest: Municipio destino (siempre el mismo)
-    qrContent += `Dest:GUADUAS CUNDINAMARCA\n`;
+    // 6. Dest: Destino Viaje de la base de datos
+    const destino = manifiesto.municipio_destino || 'GUADUAS CUNDINAMARCA';
+    qrContent += `Dest:${destino}\n`;
     
-    // 7. Mercancia: Producto (siempre el mismo para esta empresa)
+    // 7. Mercancia: Producto transportado
     qrContent += `Mercancia:ALIMENTOPARAAVESDECORRAL\n`;
     
     // 8. Conductor: Cédula sin puntos ni comas
     qrContent += `Conductor:${manifiesto.conductor_id}\n`;
     
-    // 9. Empresa: Nombre empresa (siempre el mismo)
+    // 9. Empresa: Nombre empresa
     qrContent += `Empresa:TRANSPETROMIRA S.A.S\n`;
     
-    // 10. Valor: Valor del flete con coma (según formato RNDC)
-    qrContent += `Valor:765,684\n`;
+    // 10. Valor: Valor Total Viaje de la base de datos
+    const valorTotal = manifiesto.valor_total_viaje || '765,684';
+    qrContent += `Valor:${valorTotal}\n`;
     
-    // 11. Seguro: 28 caracteres del código de seguridad del RNDC
-    qrContent += `Seguro:4EeAkw4DSUH8forIQK1oXD2vdhI=`;
+    // 11. Seguro: Código de seguridad QR de la base de datos
+    const seguro = manifiesto.codigo_seguridad_qr || '4EeAkw4DSUH8forIQK1oXD2vdhI=';
+    qrContent += `Seguro:${seguro}`;
     
     return qrContent;
   };
