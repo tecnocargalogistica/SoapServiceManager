@@ -344,8 +344,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             respuesta_rndc: soapResponse ? JSON.stringify(soapResponse) : null
           });
 
+          // Determine if the processing was actually successful
+          const wasSuccessful = soapResponse && soapResponse.success && soapResponse.data?.rawResponse?.includes('ingresoid');
+          
           results.push({
-            success: soapResponse ? soapResponse.success : true,
+            success: wasSuccessful,
             consecutivo,
             granja: row.GRANJA,
             placa: row.PLACA,
@@ -353,8 +356,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
             xml,
             respuesta_xml: soapResponse ? soapResponse.data?.rawResponse : null,
             mensaje_rndc: soapResponse ? soapResponse.mensaje : null,
-            ingreso_id: soapResponse ? soapResponse.data?.ingresoId : null
+            ingreso_id: soapResponse ? soapResponse.data?.ingresoId : null,
+            estado: wasSuccessful ? "exitoso" : "error"
           });
+
+          // Update the remesa record with final status and RNDC response
+          if (remesa && remesa.id) {
+            await storage.updateRemesa(remesa.id, {
+              estado: wasSuccessful ? "exitoso" : "error",
+              respuesta_rndc: soapResponse ? JSON.stringify(soapResponse) : null
+            });
+          }
 
           successCount++;
 
@@ -585,6 +597,149 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.send(`=== RESPUESTA EXACTA DEL RNDC ===\n\n${result.data?.rawResponse || 'Sin respuesta del RNDC'}\n\n=== FIN RESPUESTA ===`);
     } catch (error) {
       res.status(500).send(`Error: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    }
+  });
+
+  // Get only successful remesas for manifest generation
+  app.get('/api/remesas/exitosas', async (req: Request, res: Response) => {
+    try {
+      const remesas = await storage.getRemesas();
+      const remesasExitosas = remesas.filter(r => r.estado === 'exitoso');
+      res.json(remesasExitosas);
+    } catch (error) {
+      console.error('Error getting successful remesas:', error);
+      res.status(500).json({ error: 'Error al obtener remesas exitosas' });
+    }
+  });
+
+  // Process manifiestos from selected remesas (new endpoint for the new UI)
+  app.post('/api/manifiestos/process', async (req: Request, res: Response) => {
+    try {
+      const { remesaIds } = req.body;
+      
+      if (!remesaIds || !Array.isArray(remesaIds) || remesaIds.length === 0) {
+        return res.status(400).json({ error: "Se requiere una lista de IDs de remesas" });
+      }
+
+      // Redirect to the existing generate endpoint with proper format
+      const remesas = await storage.getRemesas();
+      const consecutivos = remesaIds.map(id => {
+        const remesa = remesas.find(r => r.id === id);
+        return remesa ? remesa.consecutivo : null;
+      }).filter(Boolean);
+
+      // Call the existing generate endpoint internally
+      const generateRequest = { body: { remesaIds: consecutivos } };
+      const generateResponse = {
+        json: (data: any) => res.json(data),
+        status: (code: number) => ({ json: (data: any) => res.status(code).json(data) })
+      };
+
+      // Use the existing generate logic but with proper response format
+      const config = await storage.getConfiguracionActiva();
+      if (!config) {
+        return res.status(400).json({ error: "Configuración del sistema no encontrada" });
+      }
+
+      const soapProxy = new SOAPProxy(config.endpoint_primary, config.endpoint_backup, config.timeout);
+      const results = [];
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const remesaId of remesaIds) {
+        try {
+          const remesa = remesas.find(r => r.id === remesaId);
+          if (!remesa) {
+            throw new Error(`Remesa con ID ${remesaId} no encontrada`);
+          }
+
+          const vehiculo = await storage.getVehiculoByPlaca(remesa.placa);
+          if (!vehiculo) {
+            throw new Error(`Vehículo con placa "${remesa.placa}" no encontrado`);
+          }
+
+          const numeroManifiesto = await storage.getNextConsecutivo("manifiesto");
+          const sedes = await storage.getSedes();
+          const sedeOrigen = sedes.find(s => s.codigo_sede === remesa.codigo_sede_remitente);
+          const sedeDestino = sedes.find(s => s.codigo_sede === remesa.codigo_sede_destinatario);
+
+          const municipios = await storage.getMunicipios();
+          const municipioOrigen = municipios.find(m => m.codigo === sedeOrigen?.municipio_codigo);
+          const municipioDestino = municipios.find(m => m.codigo === sedeDestino?.municipio_codigo);
+
+          const manifestoData = {
+            numeroManifiesto,
+            consecutivoRemesa: remesa.consecutivo,
+            fechaExpedicion: new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
+            municipioOrigen: municipioOrigen?.nombre || "BOGOTA",
+            municipioDestino: municipioDestino?.nombre || "GUADUAS",
+            placa: remesa.placa,
+            conductorId: remesa.conductor_id,
+            valorFlete: 50000,
+            fechaPagoSaldo: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0].split('-').reverse().join('/'),
+            propietarioTipo: vehiculo.propietario_tipo_doc,
+            propietarioNumero: vehiculo.propietario_numero_doc,
+            config
+          };
+
+          const xml = xmlGenerator.generateManifiestoXML(manifestoData);
+
+          console.log(`📄 === XML GENERADO PARA MANIFIESTO ${numeroManifiesto} ===`);
+          console.log(xml);
+          console.log(`📄 === FIN XML MANIFIESTO ${numeroManifiesto} ===`);
+
+          const soapResponse = await soapProxy.sendSOAPRequest(xml);
+          const wasSuccessful = soapResponse && soapResponse.success && soapResponse.data?.rawResponse?.includes('ingresoid');
+
+          const manifiesto = await storage.createManifiesto({
+            numero_manifiesto: numeroManifiesto,
+            consecutivo_remesa: remesa.consecutivo,
+            fecha_expedicion: new Date(),
+            municipio_origen: municipioOrigen?.nombre || "BOGOTA",
+            municipio_destino: municipioDestino?.nombre || "GUADUAS",
+            placa: remesa.placa,
+            valor_flete: 50000,
+            fecha_pago_saldo: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            estado: wasSuccessful ? "exitoso" : "error"
+          });
+
+          results.push({
+            success: wasSuccessful,
+            numeroManifiesto,
+            consecutivoRemesa: remesa.consecutivo,
+            mensaje: wasSuccessful ? "Manifiesto generado exitosamente" : (soapResponse?.mensaje || "Error en el RNDC"),
+            respuesta_xml: soapResponse?.data?.rawResponse
+          });
+
+          if (wasSuccessful) {
+            successCount++;
+          } else {
+            errorCount++;
+          }
+
+        } catch (error: any) {
+          errorCount++;
+          results.push({
+            success: false,
+            numeroManifiesto: null,
+            consecutivoRemesa: null,
+            mensaje: error.message,
+            respuesta_xml: null
+          });
+        }
+      }
+
+      res.json({
+        success: true,
+        totalProcessed: remesaIds.length,
+        successCount,
+        errorCount,
+        results
+      });
+
+    } catch (error: any) {
+      console.error('Error processing manifiestos:', error);
+      res.status(500).json({ error: error.message || 'Error al procesar manifiestos' });
     }
   });
 
