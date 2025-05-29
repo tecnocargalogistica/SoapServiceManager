@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 import { ManifiestoPDFHorizontalGenerator } from "@/components/ManifiestoPDFHorizontal";
 import type { Manifiesto } from "@/../../shared/schema";
+import QRCode from 'qrcode';
 
 const TestPDFPlantilla = () => {
   const [coordenadas, setCoordenadas] = useState({
@@ -70,8 +71,93 @@ const TestPDFPlantilla = () => {
 
   const manifiestoEjemplo = manifiestos?.[0];
   
+  // Estados para el QR
+  const [qrContent, setQrContent] = useState<string>('');
+  const [qrImage, setQrImage] = useState<string>('');
+  
   // Para mostrar los datos del manifiesto seleccionado
   const selectedManifiesto = manifiestoEjemplo;
+
+  // Función para generar el contenido del QR con el formato exacto del RNDC
+  const generateQRContent = (manifiesto: any): string => {
+    if (!manifiesto) return '';
+    
+    const fecha = new Date(manifiesto.fecha_expedicion);
+    const fechaFormatted = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
+    
+    let qrContent = '';
+    
+    // 1. MEC: Número de autorización del RNDC
+    qrContent += `MEC:${manifiesto.ingreso_id || '104518661'}\n`;
+    
+    // 2. Fecha: Formato AAAA/MM/DD
+    qrContent += `Fecha:${fechaFormatted}\n`;
+    
+    // 3. Placa: 6 caracteres
+    qrContent += `Placa:${manifiesto.placa}\n`;
+    
+    // 4. Config: Configuración del vehículo
+    qrContent += `Config:2\n`;
+    
+    // 5. Orig: Municipio origen (máximo 20 caracteres)
+    const origen = 'FUNZA CUNDINAMARCA';
+    qrContent += `Orig:${origen}\n`;
+    
+    // 6. Dest: Municipio destino (máximo 20 caracteres)
+    const destino = 'GUADUAS CUNDINAMARCA';
+    qrContent += `Dest:${destino}\n`;
+    
+    // 7. Mercancia: Descripción sin tildes (máximo 30 caracteres)
+    const mercancia = (manifiesto.mercancia_producto_transportado || 'ALIMENTOPARAAVESDECORRAL')
+      .replace(/[áàäâ]/gi, 'a')
+      .replace(/[éèëê]/gi, 'e')
+      .replace(/[íìïî]/gi, 'i')
+      .replace(/[óòöô]/gi, 'o')
+      .replace(/[úùüû]/gi, 'u')
+      .replace(/[ñ]/gi, 'n')
+      .substring(0, 30);
+    qrContent += `Mercancia:${mercancia}\n`;
+    
+    // 8. Conductor: Cédula sin puntos ni comas
+    qrContent += `Conductor:${manifiesto.conductor_id}\n`;
+    
+    // 9. Empresa: Nombre de la empresa (máximo 30 caracteres)
+    qrContent += `Empresa:TRANSPETROMIRA S.A.S\n`;
+    
+    // 10. Valor: Sin puntos ni comas
+    const valor = manifiesto.valor_flete || '765684';
+    qrContent += `Valor:${valor}\n`;
+    
+    // 11. Seguro: 28 caracteres del código de seguridad
+    const seguro = manifiesto.codigo_seguridad_qr || '4EeAkw4DSUH8forIQK1oXD2vdhI=';
+    qrContent += `Seguro:${seguro}`;
+    
+    return qrContent;
+  };
+
+  // Generar QR cuando cambie el manifiesto
+  useEffect(() => {
+    if (selectedManifiesto) {
+      const content = generateQRContent(selectedManifiesto);
+      setQrContent(content);
+      
+      // Generar imagen del QR
+      QRCode.toDataURL(content, {
+        errorCorrectionLevel: 'M',
+        type: 'image/png',
+        width: 300,
+        margin: 1,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      }).then(url => {
+        setQrImage(url);
+      }).catch(err => {
+        console.error('Error generando QR:', err);
+      });
+    }
+  }, [selectedManifiesto]);
 
   const handleCoordenadasChange = (campo: string, eje: 'x' | 'y', valor: number) => {
     setCoordenadas(prev => ({
@@ -155,7 +241,54 @@ const TestPDFPlantilla = () => {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Panel de Código QR RNDC */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Código QR RNDC</CardTitle>
+            <p className="text-sm text-gray-600">
+              Visualización del código QR oficial del RNDC con los 12 datos obligatorios
+            </p>
+          </CardHeader>
+          <CardContent>
+            {qrImage && (
+              <div className="mb-4 text-center">
+                <img 
+                  src={qrImage} 
+                  alt="Código QR RNDC" 
+                  className="mx-auto border border-gray-300 rounded"
+                  style={{ width: '200px', height: '200px' }}
+                />
+                <p className="text-xs text-gray-500 mt-2">3x3 cm - Posición superior derecha</p>
+              </div>
+            )}
+            
+            {qrContent && (
+              <div className="mt-4">
+                <Label className="text-sm font-medium">Contenido del QR:</Label>
+                <div className="mt-2 p-3 bg-gray-50 rounded text-xs font-mono whitespace-pre-wrap border max-h-64 overflow-y-auto">
+                  {qrContent}
+                </div>
+                <div className="mt-2 text-xs text-gray-600">
+                  <div className="grid grid-cols-2 gap-1">
+                    <span>✓ MEC: ID Autorización</span>
+                    <span>✓ Fecha: AAAA/MM/DD</span>
+                    <span>✓ Placa: 6 caracteres</span>
+                    <span>✓ Config: Vehículo</span>
+                    <span>✓ Orig: Municipio origen</span>
+                    <span>✓ Dest: Municipio destino</span>
+                    <span>✓ Mercancia: 30 chars max</span>
+                    <span>✓ Conductor: Cédula</span>
+                    <span>✓ Empresa: 30 chars max</span>
+                    <span>✓ Valor: Sin puntos</span>
+                    <span>✓ Seguro: 28 caracteres</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Panel de Control de Coordenadas */}
         <Card>
           <CardHeader>
