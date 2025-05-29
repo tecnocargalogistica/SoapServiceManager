@@ -302,28 +302,29 @@ export default function ImpresionManifiestos() {
             <!-- ENCABEZADO -->
             <div class="header-container">
                 <div class="header-left">
-                    <div class="logo-container">
-                        🇨🇴 La movilidad<br>es de todos
+                    <div class="logo-container" style="background: #FFC000; color: #000; text-align: center; padding: 8px; font-size: 7px; border: 1px solid #000;">
+                        🇨🇴<br>
+                        <strong>La movilidad<br>es de todos</strong>
                     </div>
-                    <div class="logo-container" style="background: #4472C4;">
-                        Mintransporte
+                    <div class="logo-container" style="background: #4472C4; color: white; text-align: center; padding: 4px; font-size: 8px; border: 1px solid #000;">
+                        <strong>Mintransporte</strong>
                     </div>
-                    <div class="supertransporte">
-                        SuperTransporte
+                    <div class="supertransporte" style="background: #70AD47; color: white; text-align: center; padding: 4px; font-size: 7px; border: 1px solid #000;">
+                        <strong>SuperTransporte</strong>
                     </div>
                 </div>
                 <div class="header-center">
                     <h1 class="title">MANIFIESTO ELECTRÓNICO DE CARGA</h1>
                     <div class="company-info">TRANSPETROMIRA S.A.S</div>
                     <div class="company-details">
-                        <strong>Nit:</strong> 901369038<br>
+                        <strong>Nit: 9013690938</strong><br>
                         <strong>CARRERA 3 No 5 72 barrio el Comercio</strong><br>
-                        <strong>Tel:</strong> 3505172184 - 3212313576 RICAURTE MARINO
+                        <strong>Tel: 3183118181 - 3184000500 RICAURTE NARIÑO</strong>
                     </div>
                 </div>
                 <div class="header-right">
                     <div class="disclaimer-text">
-                        "La impresión de este formato conlleva el objetivo de este acto administrativo producido por medios electrónicos en cumplimiento de la ley 527 de 1999 (Artículos 1 al 13) y a la ley 962 de 2005 (Artículo 26), es una reproducción del documento original que se encuentra en formato electrónico en la base del RNDC en el Ministerio de Transporte, cuya representación digital goza de autenticidad, integridad y no repudio."
+                        "La impresión en soporte cartular (papel) de este acto administrativo producido por medios electrónicos en cumplimiento de la ley 527 de 1999 (Artículos 6 al 13) y de la ley 962 de 2005 (Artículo 6), es una reproducción del documento original que se encuentra en formato electrónico en la Base de Datos del RNDC en el Ministerio de Transporte, cuya representación digital goza de autenticidad, integridad y no repudio"
                     </div>
                     <div class="qr-placeholder">[QR CODE]</div>
                     <div class="qr-info">
@@ -356,11 +357,11 @@ export default function ImpresionManifiestos() {
             <table class="info-table">
                 <tr>
                     <td class="field-label">TITULAR MANIFIESTO</td>
-                    <td class="field-value">FABRICIANO QUINTERO MUÑOZ</td>
-                    <td class="field-label">DOCUMENTO IDENTIFICACIÓN</td>
+                    <td class="field-value" colspan="2">FABRICIANO QUINTERO MUÑOZ</td>
+                    <td class="field-label">DOCUMENTO<br>IDENTIFICACIÓN</td>
                     <td class="field-value">4133687</td>
-                    <td class="field-label">ORIGEN</td>
-                    <td class="field-value">${manifiesto.municipio_origen}</td>
+                    <td class="field-label">DIRECCIÓN</td>
+                    <td class="field-value" colspan="2"></td>
                     <td class="field-label">TELÉFONOS</td>
                     <td class="field-value">0</td>
                     <td class="field-label">CIUDAD</td>
@@ -371,55 +372,63 @@ export default function ImpresionManifiestos() {
                     <td class="field-value">${manifiesto.placa}</td>
                     <td class="field-label">MARCA</td>
                     <td class="field-value">CHEVROLET</td>
+                    <td class="field-label">PLACA SEMIREMOLQUE</td>
+                    <td class="field-value"></td>
+                    <td class="field-label">PLACA SEMIREMOL 2</td>
+                    <td class="field-value"></td>
                     <td class="field-label">CONFIGURACIÓN</td>
                     <td class="field-value">2</td>
-                    <td class="field-label">PESO VACÍO</td>
+                    <td class="field-label">PesoVacío</td>
                     <td class="field-value">3000</td>
-                    <td class="field-label">PESO CARGADO</td>
-                    <td class="field-value">0</td>
-                    <td class="field-label">CÓDIGO SEGURIDAD SOAT</td>
+                    <td class="field-label">PesoVacíoRemolque</td>
+                    <td class="field-value"></td>
+                    <td class="field-label">COMPAÑÍA SEGUROS SOAT</td>
                     <td class="field-value">860002400 LA PREVISORA S.A COMPAÑÍA</td>
+                    <td class="field-label">CUNDINAMARCA</td>
+                    <td class="field-value"></td>
                     <td class="field-label">No PÓLIZA</td>
                     <td class="field-value">438006646</td>
-                    <td class="field-label">F. vencimiento SOAT</td>
+                    <td class="field-label">F.Vencimiento SOAT</td>
                     <td class="field-value">2026/02/18</td>
                 </tr>
                 <tr>
                     <td class="field-label">CONDUCTOR</td>
-                    <td class="field-value">JAROL ANDRÉS DURÁN SALDAÑA</td>
+                    <td class="field-value" colspan="3">JAROL ANDRÉS DURÁN SALDAÑA</td>
                     <td class="field-label">DOCUMENTO IDENTIFICACIÓN</td>
                     <td class="field-value">${manifiesto.conductor_id}</td>
-                    <td class="field-label">DIRECCIÓN CONDUCTOR 1</td>
-                    <td class="field-value">DIAGONAL 18 #3-105 VILLA MARÍA ETAPA 3</td>
+                    <td class="field-label">DIRECCIÓN</td>
+                    <td class="field-value" colspan="2">DIAGONAL 18 #3-105 VILLA MARÍA ETAPA 3</td>
                     <td class="field-label">TELÉFONOS</td>
-                    <td class="field-value">0.0</td>
+                    <td class="field-value">00</td>
                     <td class="field-label">No de LICENCIA</td>
                     <td class="field-value">C2-1073511288</td>
                     <td class="field-label">CIUDAD CONDUCTOR</td>
                     <td class="field-value">MOSQUERA</td>
                 </tr>
                 <tr>
-                    <td class="field-label">CONDUCTOR No. 2</td>
-                    <td class="field-value"></td>
+                    <td class="field-label">CONDUCTOR Nro. 2</td>
+                    <td class="field-value" colspan="3"></td>
                     <td class="field-label">DOCUMENTO IDENTIFICACIÓN</td>
                     <td class="field-value"></td>
                     <td class="field-label">DIRECCIÓN CONDUCTOR 2</td>
-                    <td class="field-value"></td>
+                    <td class="field-value" colspan="2"></td>
                     <td class="field-label">TELÉFONOS</td>
                     <td class="field-value"></td>
                     <td class="field-label">No de LICENCIA</td>
                     <td class="field-value"></td>
-                    <td class="field-label">CIUDAD CONDUCTOR 2</td>
+                    <td class="field-label">CUNDINAMARCA<br>CIUDAD CONDUCTOR 2</td>
                     <td class="field-value"></td>
                 </tr>
                 <tr>
                     <td class="field-label">POSEEDOR O TENEDOR VEHÍCULO</td>
-                    <td class="field-value">JAROL ANDRÉS DURÁN SALDAÑA</td>
+                    <td class="field-value" colspan="3">JAROL ANDRÉS DURÁN SALDAÑA</td>
                     <td class="field-label">DOCUMENTO IDENTIFICACIÓN</td>
                     <td class="field-value">1073511288</td>
                     <td class="field-label">DIRECCIÓN</td>
-                    <td class="field-value"></td>
+                    <td class="field-value" colspan="2"></td>
                     <td class="field-label">TELÉFONOS</td>
+                    <td class="field-value"></td>
+                    <td class="field-label"></td>
                     <td class="field-value"></td>
                     <td class="field-label">CIUDAD</td>
                     <td class="field-value"></td>
@@ -439,40 +448,32 @@ export default function ImpresionManifiestos() {
                     <th>Información Remitente / Lugar Cargue</th>
                     <th>Información Destinatario / Lugar Descargue</th>
                     <th>Dueño Póliza</th>
-                    <th>No existe póliza</th>
                 </tr>
                 <tr>
                     <td class="field-value">${manifiesto.consecutivo_remesa}</td>
                     <td class="field-value">Kilogramos</td>
                     <td class="field-value">7,000.00</td>
-                    <td class="field-value">Carga Normal</td>
-                    <td class="field-value">Paquetes</td>
-                    <td class="field-value">ALIMENTOPARAAVESECTORRIAL</td>
+                    <td class="field-value">Carga<br>General</td>
+                    <td class="field-value">Paquetes.</td>
+                    <td class="field-value">002309<br>Permiso INVIAS:<br>ALIMENTOPARAAVESDECORRAL<br>Fraccionada<br>en máximo 2<br>kgs por<br>unidad de<br>empaque</td>
                     <td class="field-value">860058314 AVÍCOLA LOS CAMBULOS S.A</td>
                     <td class="field-value">860058314 AVÍCOLA LOS CAMBULOS S.A</td>
-                    <td class="field-value"></td>
                     <td class="field-value">No existe póliza</td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="field-value">Remesa INVMAS</td>
-                    <td colspan="2" class="field-value">ALIMENTOPARAAVESECTORRIAL</td>
-                    <td colspan="3" class="field-value">KM2 VIA FUNZA SIBERIA<br>${manifiesto.municipio_origen}</td>
-                    <td colspan="3" class="field-value">GUADUAS CUNDINAMARCA<br>${manifiesto.municipio_destino}</td>
                 </tr>
             </table>
 
-            <!-- VALORES Y OBSERVACIONES -->
+            <!-- PRECIO DEL VIAJE, VALORES Y OBSERVACIONES -->
             <div class="bottom-section">
                 <div class="values-column">
-                    <div class="section-title">VALORES</div>
+                    <div class="section-title">PRECIO DEL VIAJE VALORES</div>
                     <table class="values-table">
                         <tr>
                             <td class="values-label">VALOR TOTAL DEL VIAJE</td>
-                            <td class="values-amount">758,624.00</td>
+                            <td class="values-amount">${(manifiesto.valor_flete || 765684).toLocaleString()}.00</td>
                         </tr>
                         <tr>
                             <td class="values-label">RETENCIÓN EN LA FUENTE</td>
-                            <td class="values-amount">7,567.00</td>
+                            <td class="values-amount">0.00</td>
                         </tr>
                         <tr>
                             <td class="values-label">RETENCIÓN ICA</td>
@@ -480,7 +481,7 @@ export default function ImpresionManifiestos() {
                         </tr>
                         <tr>
                             <td class="values-label">VALOR NETO A PAGAR</td>
-                            <td class="values-amount">758,027.00</td>
+                            <td class="values-amount">${(manifiesto.valor_flete || 765684).toLocaleString()}.00</td>
                         </tr>
                         <tr>
                             <td class="values-label">VALOR ANTICIPO</td>
@@ -488,16 +489,16 @@ export default function ImpresionManifiestos() {
                         </tr>
                         <tr>
                             <td class="values-label">SALDO A PAGAR</td>
-                            <td class="values-amount">758,027.00</td>
+                            <td class="values-amount">${(manifiesto.valor_flete || 765684).toLocaleString()}.00</td>
                         </tr>
                     </table>
-                    <div style="font-size: 5px; margin-top: 2px; border: 1px solid #000; padding: 2px;">
-                        <strong>VALOR TOTAL DEL VIAJE EN LETRAS:</strong> SETECIENTOS CINCUENTA Y OCHO MIL SEISCIENTOS OCHENTA Y CUATRO PESOS
+                    <div style="font-size: 6px; margin-top: 2px; padding: 2px;">
+                        <strong>VALOR TOTAL DEL VIAJE EN LETRAS:</strong> SETECIENTOS SESENTA Y CINCO MIL SEISCIENTOS OCHENTA Y CUATRO PESOS
                     </div>
                 </div>
                 <div class="observations-column">
-                    <div class="section-title">OBSERVACIONES</div>
-                    <table class="values-table">
+                    <div class="section-title">PAGO DEL SALDO OBSERVACIONES<br>RECOMENDACIONES</div>
+                    <table class="values-table" style="margin-bottom: 5px;">
                         <tr>
                             <td class="values-label">LUGAR<br>DE PAGO</td>
                             <td class="values-amount">BOGOTA BOGOTA<br>D.C.</td>
@@ -505,23 +506,30 @@ export default function ImpresionManifiestos() {
                             <td class="values-amount">2025/08/28</td>
                         </tr>
                     </table>
-                    <div style="border: 1px solid #000; margin: 2px 0;">
-                        <div class="field-label">CARGUE PAGADO POR</div>
-                        <div class="field-value" style="padding: 3px;">DESTINATARIO</div>
+                    <div style="border: 1px solid #000; margin: 2px 0; padding: 1px;">
+                        <div class="field-label" style="text-align: center; font-size: 5px;">CARGUE PAGADO POR</div>
+                        <div class="field-value" style="padding: 8px; text-align: center; font-weight: bold;">DESTINATARIO</div>
                     </div>
-                    <div style="border: 1px solid #000; margin: 2px 0;">
-                        <div class="field-label">DESCARGUE PAGADO POR</div>
-                        <div class="field-value" style="padding: 3px;">DESTINATARIO</div>
+                    <div style="border: 1px solid #000; margin: 2px 0; padding: 1px;">
+                        <div class="field-label" style="text-align: center; font-size: 5px;">DESCARGUE PAGADO POR</div>
+                        <div class="field-value" style="padding: 8px; text-align: center; font-weight: bold;">DESTINATARIO</div>
                     </div>
                 </div>
             </div>
 
             <!-- PIE DE PÁGINA -->
             <div class="footer-text">
-                Se ha víctima de algún fraude o conoce de alguna irregularidad en el Registro Nacional de Despachos de<br>
-                Carga RNDC denunciarlo a la Superintendencia de Puertos y Transporte, en la línea gratuita nacional<br>
-                01 8000 910915 o a través del correo electrónico: sirecordnotfound@supertransporte.gov.co<br><br>
-                <strong>Firma y Huella TITULAR MANIFIESTO o ACEPTACIÓN DIGITAL | Firma y Huella del CONDUCTOR o ACEPTACIÓN DIGITAL</strong>
+                <div style="display: table; width: 100%; margin-top: 10px;">
+                    <div style="display: table-cell; width: 65%; vertical-align: top;">
+                        <strong>Si es víctima de algún fraude o conoce de alguna irregularidad en el Registro Nacional de Despachos de Carga RNDC denúncielo a la Superintendencia de Puertos y Transporte, en la línea gratuita nacional 018000 915615 y a través del correo electrónico: atencionciudadano@supertransporte.gov.co</strong>
+                    </div>
+                    <div style="display: table-cell; width: 35%; vertical-align: top; text-align: center;">
+                        <strong>Firma y Huella TITULAR MANIFIESTO o ACEPTACIÓN DIGITAL</strong>
+                        <div style="height: 30px; border-bottom: 1px solid #000; margin: 5px 0;"></div>
+                        <strong>Firma y Huella del CONDUCTOR o ACEPTACIÓN DIGITAL</strong>
+                        <div style="height: 30px; border-bottom: 1px solid #000; margin: 5px 0;"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
