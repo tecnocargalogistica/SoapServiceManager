@@ -147,99 +147,14 @@ export class DatabaseStorage implements IStorage {
 
   async getManifiestosCompletos(): Promise<any[]> {
     try {
-      // Obtener manifiestos básicos primero
+      // Por ahora, simplemente devolvemos los manifiestos básicos
+      // hasta que podamos resolver los problemas del esquema
       const manifiestosList = await db
         .select()
         .from(manifiestos)
         .orderBy(desc(manifiestos.created_at));
 
-      // Enriquecer cada manifiesto con datos relacionados
-      const manifestosCompletos = [];
-      
-      for (const manifiesto of manifiestosList) {
-        // Obtener datos del vehículo
-        const vehiculo = await db
-          .select()
-          .from(vehiculos)
-          .where(eq(vehiculos.placa, manifiesto.placa))
-          .limit(1);
-
-        // Obtener datos del conductor
-        const conductor = await db
-          .select()
-          .from(terceros)
-          .where(eq(terceros.numero_documento, manifiesto.conductor_id))
-          .limit(1);
-
-        // Obtener sede origen
-        const sedeOrigen = await db
-          .select()
-          .from(sedes)
-          .where(eq(sedes.codigo, manifiesto.codigo_sede_origen || ''))
-          .limit(1);
-
-        // Obtener sede destino
-        const sedeDestino = await db
-          .select()
-          .from(sedes)
-          .where(eq(sedes.codigo, manifiesto.codigo_sede_destino || ''))
-          .limit(1);
-
-        // Obtener datos del propietario del vehículo
-        let propietarioTercero = null;
-        if (vehiculo[0]?.propietario_numero_doc) {
-          const propietario = await db
-            .select()
-            .from(terceros)
-            .where(eq(terceros.numero_documento, vehiculo[0].propietario_numero_doc))
-            .limit(1);
-          propietarioTercero = propietario[0] || null;
-        }
-
-        // Combinar todos los datos
-        const manifiestoCompleto = {
-          ...manifiesto,
-          // Datos del vehículo
-          vehiculo_propietario_nombre: vehiculo[0]?.propietario_nombre || null,
-          vehiculo_propietario_numero_doc: vehiculo[0]?.propietario_numero_doc || null,
-          vehiculo_propietario_tipo_doc: vehiculo[0]?.propietario_tipo_doc || null,
-          vehiculo_tenedor_nombre: vehiculo[0]?.tenedor_nombre || null,
-          vehiculo_tenedor_numero_doc: vehiculo[0]?.tenedor_numero_doc || null,
-          vehiculo_tenedor_tipo_doc: vehiculo[0]?.tenedor_tipo_doc || null,
-          
-          // Datos del conductor
-          conductor_nombre: conductor[0]?.nombre || null,
-          conductor_apellido: conductor[0]?.apellido || null,
-          conductor_direccion: conductor[0]?.direccion || null,
-          conductor_telefono: conductor[0]?.telefono || null,
-          conductor_numero_licencia: conductor[0]?.numero_licencia || null,
-          conductor_categoria_licencia: conductor[0]?.categoria_licencia || null,
-          conductor_municipio_codigo: conductor[0]?.municipio_codigo || null,
-          
-          // Datos del propietario
-          propietario_tercero_nombre: propietarioTercero?.nombre || null,
-          propietario_tercero_apellido: propietarioTercero?.apellido || null,
-          propietario_tercero_direccion: propietarioTercero?.direccion || null,
-          propietario_tercero_telefono: propietarioTercero?.telefono || null,
-          propietario_tercero_municipio: propietarioTercero?.municipio_codigo || null,
-          
-          // Datos de sede origen
-          sede_origen_nit: sedeOrigen[0]?.nit || null,
-          sede_origen_nombre: sedeOrigen[0]?.nombre || null,
-          sede_origen_direccion: sedeOrigen[0]?.direccion || null,
-          sede_origen_municipio: sedeOrigen[0]?.municipio_codigo || null,
-          
-          // Datos de sede destino
-          sede_destino_nit: sedeDestino[0]?.nit || null,
-          sede_destino_nombre: sedeDestino[0]?.nombre || null,
-          sede_destino_direccion: sedeDestino[0]?.direccion || null,
-          sede_destino_municipio: sedeDestino[0]?.municipio_codigo || null,
-        };
-
-        manifestosCompletos.push(manifiestoCompleto);
-      }
-
-      return manifestosCompletos;
+      return manifiestosList;
     } catch (error) {
       console.error("❌ Error en getManifiestosCompletos:", error);
       return [];
