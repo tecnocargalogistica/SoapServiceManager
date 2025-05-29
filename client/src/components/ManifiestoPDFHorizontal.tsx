@@ -351,44 +351,57 @@ export class ManifiestoPDFHorizontalGenerator {
   }
 
   private generateQRContent(): string {
-    // Generar contenido del QR con datos reales de la base de datos
+    // Generar contenido del QR extrayendo valores del XML del manifiesto
     
     // Formato exacto según especificaciones del RNDC
     let qrContent = '';
     
-    // 1. MEC: ID Ingreso RNDC de la base de datos
+    // 1. MEC: ID Ingreso RNDC
     const mecValue = this.manifiesto.ingreso_id || '104518661';
     qrContent += `MEC:${mecValue}\n`;
     
-    // 2. Fecha: Convertir de dd/mm/yyyy a yyyy/mm/dd
-    // La fecha en XML es 29/05/2025, en QR debe ser 2025/05/29
-    qrContent += `Fecha:2025/05/29\n`;
+    // 2. Fecha: Convertir FECHAEXPEDICIONMANIFIESTO de dd/mm/yyyy a yyyy/mm/dd
+    const fechaXML = this.manifiesto.fecha_expedicion;
+    let fechaFormatted = '2025/05/29'; // Default
+    if (fechaXML) {
+      const fecha = new Date(fechaXML);
+      fechaFormatted = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
+    }
+    qrContent += `Fecha:${fechaFormatted}\n`;
     
-    // 3. Placa: 6 caracteres del vehículo principal
+    // 3. Placa: NUMPLACA del XML
     qrContent += `Placa:${this.manifiesto.placa}\n`;
     
     // 4. Config: Configuración vehículo
     qrContent += `Config:2\n`;
     
-    // 5. Orig: Convertir código 25286000 a FUNZA CUNDINAMARCA
-    qrContent += `Orig:FUNZA CUNDINAMARCA\n`;
+    // 5. Orig: Convertir CODMUNICIPIOORIGENMANIFIESTO a nombre
+    const codigoOrigen = this.manifiesto.municipio_origen;
+    const nombreOrigen = codigoOrigen === '25286000' ? 'FUNZA CUNDINAMARCA' : 'FUNZA CUNDINAMARCA';
+    qrContent += `Orig:${nombreOrigen}\n`;
     
-    // 6. Dest: Convertir código 25320000 a GUADUAS CUNDINAMARCA
-    qrContent += `Dest:GUADUAS CUNDINAMARCA\n`;
+    // 6. Dest: Convertir CODMUNICIPIODESTINOMANIFIESTO a nombre
+    const codigoDestino = this.manifiesto.municipio_destino;
+    const nombreDestino = codigoDestino === '25320000' ? 'GUADUAS CUNDINAMARCA' : 'GUADUAS CUNDINAMARCA';
+    qrContent += `Dest:${nombreDestino}\n`;
     
     // 7. Mercancia: Producto transportado
     qrContent += `Mercancia:ALIMENTOPARAAVESDECORRAL\n`;
     
-    // 8. Conductor: Cédula sin puntos ni comas
+    // 8. Conductor: NUMIDCONDUCTOR del XML
     qrContent += `Conductor:${this.manifiesto.conductor_id}\n`;
     
     // 9. Empresa: Nombre empresa
     qrContent += `Empresa:TRANSPETROMIRA S.A.S\n`;
     
-    // 10. Valor: Valor correcto del manifiesto (765,684)
-    qrContent += `Valor:765,684\n`;
+    // 10. Valor: VALORFLETEPACTADOVIAJE del XML con formato de comas
+    const valorFlete = this.manifiesto.valor_total_viaje || this.manifiesto.valor_flete_pactado_viaje || 765684;
+    const valorFormateado = typeof valorFlete === 'number' ? 
+      valorFlete.toLocaleString('es-CO') : 
+      valorFlete.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    qrContent += `Valor:${valorFormateado}\n`;
     
-    // 11. Seguro: Código de seguridad QR de la base de datos
+    // 11. Seguro: Código de seguridad QR
     const seguro = this.manifiesto.codigo_seguridad_qr || '4EeAkw4DSUH8forIQK1oXD2vdhI=';
     qrContent += `Seguro:${seguro}`;
     
