@@ -657,12 +657,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const municipioOrigen = municipios.find(m => m.codigo === sedeOrigen?.municipio_codigo);
           const municipioDestino = municipios.find(m => m.codigo === sedeDestino?.municipio_codigo);
 
-          // Calcular valor del flete: toneladas × valor_tonelada
+          // Calcular valor del flete: toneladas × valor_tonelada (de la sede DESTINO)
           const toneladas = parseFloat(remesa.toneladas?.toString() || "0");
-          const valorPorTonelada = parseFloat(sedeOrigen?.valor_tonelada?.toString() || "50000");
+          const valorPorTonelada = parseFloat(sedeDestino?.valor_tonelada?.toString() || "50000");
           const valorFlete = Math.round(toneladas * valorPorTonelada);
 
-          console.log(`💰 Calculando flete para remesa ${remesa.consecutivo}: ${toneladas} ton × $${valorPorTonelada.toLocaleString()} = $${valorFlete.toLocaleString()}`);
+          console.log(`💰 Calculando flete para remesa ${remesa.consecutivo}: ${toneladas} ton × $${valorPorTonelada.toLocaleString()} (granja destino) = $${valorFlete.toLocaleString()}`);
 
           const manifestoData = {
             numeroManifiesto,
@@ -770,12 +770,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const municipioOrigen = municipios.find(m => m.codigo === sedeOrigen?.municipio_codigo);
       const municipioDestino = municipios.find(m => m.codigo === sedeDestino?.municipio_codigo);
 
-      // Calcular valor del flete: toneladas × valor_tonelada
+      // Calcular valor del flete: toneladas × valor_tonelada (de la sede DESTINO)
       const toneladas = parseFloat(remesa.toneladas?.toString() || "0");
-      const valorPorTonelada = parseFloat(sedeOrigen?.valor_tonelada?.toString() || "50000");
+      const valorPorTonelada = parseFloat(sedeDestino?.valor_tonelada?.toString() || "50000");
       const valorFlete = Math.round(toneladas * valorPorTonelada);
 
-      console.log(`💰 Calculando flete: ${toneladas} ton × $${valorPorTonelada.toLocaleString()} = $${valorFlete.toLocaleString()}`);
+      console.log(`💰 Calculando flete: ${toneladas} ton × $${valorPorTonelada.toLocaleString()} (granja destino) = $${valorFlete.toLocaleString()}`);
 
       const manifestoData = {
         numeroManifiesto,
