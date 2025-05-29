@@ -648,7 +648,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             throw new Error(`Vehículo con placa "${remesa.placa}" no encontrado`);
           }
 
-          const numeroManifiesto = await storage.getNextConsecutivo("manifiesto");
+          // Usar el mismo número de la remesa como número del manifiesto
+          const numeroManifiesto = remesa.consecutivo;
           const sedes = await storage.getSedes();
           const sedeOrigen = sedes.find(s => s.codigo_sede === remesa.codigo_sede_remitente);
           const sedeDestino = sedes.find(s => s.codigo_sede === remesa.codigo_sede_destinatario);
@@ -663,6 +664,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const valorFlete = Math.round(toneladas * valorPorTonelada);
 
           console.log(`💰 Calculando flete para remesa ${remesa.consecutivo}: ${toneladas} ton × $${valorPorTonelada.toLocaleString()} (granja destino) = $${valorFlete.toLocaleString()}`);
+          console.log(`📋 Número de manifiesto = número de remesa: ${numeroManifiesto}`);
 
           const manifestoData = {
             numeroManifiesto,
@@ -761,7 +763,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: `Vehículo con placa "${remesa.placa}" no encontrado` });
       }
 
-      const numeroManifiesto = await storage.getNextConsecutivo("manifiesto");
+      // Usar el mismo número de la remesa como número del manifiesto
+      const numeroManifiesto = remesa.consecutivo;
       const sedes = await storage.getSedes();
       const sedeOrigen = sedes.find(s => s.codigo_sede === remesa.codigo_sede_remitente);
       const sedeDestino = sedes.find(s => s.codigo_sede === remesa.codigo_sede_destinatario);
@@ -776,6 +779,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const valorFlete = Math.round(toneladas * valorPorTonelada);
 
       console.log(`💰 Calculando flete: ${toneladas} ton × $${valorPorTonelada.toLocaleString()} (granja destino) = $${valorFlete.toLocaleString()}`);
+      console.log(`📋 Número de manifiesto = número de remesa: ${numeroManifiesto}`);
 
       const manifestoData = {
         numeroManifiesto,
