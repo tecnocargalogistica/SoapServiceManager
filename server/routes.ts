@@ -1539,11 +1539,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const cumplimientoData = {
         consecutivoRemesa: consecutivo,
         fechaCumplimiento: new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
-        cantidadCargada: parseFloat(remesa.toneladas?.toString() || "0"),
-        fechaCitaCargue: remesa.fecha_cita_cargue || new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
-        fechaCitaDescargue: remesa.fecha_cita_descargue || new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
-        horaCitaCargue: remesa.hora_cita_cargue || "08:00",
-        horaCitaDescargue: remesa.hora_cita_descargue || "13:00",
+        cantidadCargada: parseFloat(remesa.cantidad_cargada?.toString() || "0"),
+        fechaCitaCargue: remesa.fecha_cita_cargue ? new Date(remesa.fecha_cita_cargue).toISOString().split('T')[0].split('-').reverse().join('/') : new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
+        fechaCitaDescargue: remesa.fecha_cita_descargue ? new Date(remesa.fecha_cita_descargue).toISOString().split('T')[0].split('-').reverse().join('/') : new Date().toISOString().split('T')[0].split('-').reverse().join('/'),
+        horaCitaCargue: "08:00",
+        horaCitaDescargue: "13:00",
         config
       };
 
