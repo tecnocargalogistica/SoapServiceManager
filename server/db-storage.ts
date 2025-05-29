@@ -189,6 +189,19 @@ export class DatabaseStorage implements IStorage {
                 manifiestoCompleto.propietario_tercero_telefono = propietario[0].telefono;
                 manifiestoCompleto.propietario_tercero_municipio = propietario[0].municipio_codigo;
                 manifiestoCompleto.propietario_tercero_tipo_documento = propietario[0].tipo_documento;
+                
+                // Obtener nombre del municipio del propietario
+                if (propietario[0].municipio_codigo) {
+                  const municipioPropietario = await db
+                    .select()
+                    .from(municipios)
+                    .where(eq(municipios.codigo, propietario[0].municipio_codigo))
+                    .limit(1);
+                  
+                  if (municipioPropietario.length > 0) {
+                    manifiestoCompleto.propietario_tercero_municipio_nombre = municipioPropietario[0].nombre;
+                  }
+                }
               }
             }
           }
@@ -223,6 +236,19 @@ export class DatabaseStorage implements IStorage {
               manifiestoCompleto.conductor_numero_licencia = conductor[0].numero_licencia;
               manifiestoCompleto.conductor_categoria_licencia = conductor[0].categoria_licencia;
               manifiestoCompleto.conductor_municipio_codigo = conductor[0].municipio_codigo;
+              
+              // Obtener nombre del municipio del conductor
+              if (conductor[0].municipio_codigo) {
+                const municipioConductor = await db
+                  .select()
+                  .from(municipios)
+                  .where(eq(municipios.codigo, conductor[0].municipio_codigo))
+                  .limit(1);
+                
+                if (municipioConductor.length > 0) {
+                  manifiestoCompleto.conductor_municipio_nombre = municipioConductor[0].nombre;
+                }
+              }
             }
           }
 

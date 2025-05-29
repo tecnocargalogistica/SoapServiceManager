@@ -300,7 +300,7 @@ const TestPDFPlantilla = () => {
                       <p><span className="font-medium">Tipo Documento:</span> {manifiestoEjemplo.propietario_tercero_tipo_documento || manifiestoEjemplo.vehiculo_propietario_tipo_doc || 'No disponible'}</p>
                       <p><span className="font-medium">Dirección:</span> {manifiestoEjemplo.propietario_tercero_direccion || 'No disponible'}</p>
                       <p><span className="font-medium">Teléfono:</span> {manifiestoEjemplo.propietario_tercero_telefono || 'No disponible'}</p>
-                      <p><span className="font-medium">Ciudad:</span> {manifiestoEjemplo.propietario_tercero_municipio || 'No disponible'}</p>
+                      <p><span className="font-medium">Ciudad:</span> {manifiestoEjemplo.propietario_tercero_municipio_nombre || manifiestoEjemplo.propietario_tercero_municipio || 'No disponible'}</p>
                       <p><span className="font-medium">Vehículo:</span> {manifiestoEjemplo.placa || 'No disponible'}</p>
                     </div>
                   </div>
@@ -326,7 +326,7 @@ const TestPDFPlantilla = () => {
                       <p><span className="font-medium">Dirección:</span> {manifiestoEjemplo.conductor_direccion || 'No disponible'}</p>
                       <p><span className="font-medium">No. Licencia:</span> {manifiestoEjemplo.conductor_numero_licencia || 'No disponible'}</p>
                       <p><span className="font-medium">Clase Licencia:</span> {manifiestoEjemplo.conductor_categoria_licencia || 'No disponible'}</p>
-                      <p><span className="font-medium">Ciudad:</span> {manifiestoEjemplo.conductor_municipio_codigo || 'No disponible'}</p>
+                      <p><span className="font-medium">Ciudad:</span> {manifiestoEjemplo.conductor_municipio_nombre || manifiestoEjemplo.conductor_municipio_codigo || 'No disponible'}</p>
                     </div>
                   </div>
 
