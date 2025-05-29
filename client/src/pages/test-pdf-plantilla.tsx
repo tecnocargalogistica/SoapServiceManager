@@ -377,9 +377,9 @@ const TestPDFPlantilla = () => {
                   <div>
                     <h4 className="font-semibold mb-2">Valores Económicos</h4>
                     <div className="space-y-1 text-sm">
-                      <p><span className="font-medium">Valor Total Viaje:</span> {manifiestoEjemplo.valor_total_viaje ? `$${parseFloat(manifiestoEjemplo.valor_total_viaje).toLocaleString()}` : 'No disponible'}</p>
-                      <p><span className="font-medium">Valor Neto a Pagar:</span> {manifiestoEjemplo.valor_neto_pagar ? `$${parseFloat(manifiestoEjemplo.valor_neto_pagar).toLocaleString()}` : 'No disponible'}</p>
-                      <p><span className="font-medium">Saldo a Pagar:</span> {manifiestoEjemplo.saldo_pagar ? `$${parseFloat(manifiestoEjemplo.saldo_pagar).toLocaleString()}` : 'No disponible'}</p>
+                      <p><span className="font-medium">Valor Total Viaje:</span> {manifiestoEjemplo.valor_flete ? `$${parseFloat(manifiestoEjemplo.valor_flete).toLocaleString()}` : 'No disponible'}</p>
+                      <p><span className="font-medium">Valor Neto a Pagar:</span> {manifiestoEjemplo.valor_flete ? `$${parseFloat(manifiestoEjemplo.valor_flete).toLocaleString()}` : 'No disponible'}</p>
+                      <p><span className="font-medium">Saldo a Pagar:</span> {manifiestoEjemplo.valor_flete ? `$${parseFloat(manifiestoEjemplo.valor_flete).toLocaleString()}` : 'No disponible'}</p>
                       <p><span className="font-medium">Valor Anticipo:</span> {manifiestoEjemplo.valor_anticipo ? `$${parseFloat(manifiestoEjemplo.valor_anticipo).toLocaleString()}` : '$0'}</p>
                     </div>
                   </div>
