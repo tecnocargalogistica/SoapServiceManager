@@ -78,7 +78,7 @@ const TestPDFPlantilla = () => {
   // Para mostrar los datos del manifiesto seleccionado
   const selectedManifiesto = manifiestoEjemplo;
 
-  // Función para generar el contenido del QR con el formato exacto del RNDC
+  // Función para generar el contenido del QR con formato EXACTO del RNDC según documentación oficial
   const generateQRContent = (manifiesto: any): string => {
     if (!manifiesto) return '';
     
@@ -93,21 +93,27 @@ const TestPDFPlantilla = () => {
     // 2. Fecha: Formato AAAA/MM/DD
     qrContent += `Fecha:${fechaFormatted}\n`;
     
-    // 3. Placa: 6 caracteres
+    // 3. Placa: 6 caracteres del vehículo principal
     qrContent += `Placa:${manifiesto.placa}\n`;
     
-    // 4. Config: Configuración del vehículo
-    qrContent += `Config:2\n`;
+    // 4. Remolque: Solo si existe (6 caracteres)
+    if (manifiesto.placa_remolque) {
+      qrContent += `Remolque:${manifiesto.placa_remolque}\n`;
+    }
     
-    // 5. Orig: Municipio origen (máximo 20 caracteres)
+    // 5. Config: Configuración vehículo (3 o 4 caracteres)
+    const config = manifiesto.configuracion_vehiculo || '2';
+    qrContent += `Config:${config}\n`;
+    
+    // 6. Orig: Municipio origen (máximo 20 caracteres)
     const origen = 'FUNZA CUNDINAMARCA';
     qrContent += `Orig:${origen}\n`;
     
-    // 6. Dest: Municipio destino (máximo 20 caracteres)
+    // 7. Dest: Municipio destino (máximo 20 caracteres)  
     const destino = 'GUADUAS CUNDINAMARCA';
     qrContent += `Dest:${destino}\n`;
     
-    // 7. Mercancia: Descripción sin tildes (máximo 30 caracteres)
+    // 8. Mercancia: Producto sin tildes (máximo 30 caracteres)
     const mercancia = (manifiesto.mercancia_producto_transportado || 'ALIMENTOPARAAVESDECORRAL')
       .replace(/[áàäâ]/gi, 'a')
       .replace(/[éèëê]/gi, 'e')
@@ -118,17 +124,19 @@ const TestPDFPlantilla = () => {
       .substring(0, 30);
     qrContent += `Mercancia:${mercancia}\n`;
     
-    // 8. Conductor: Cédula sin puntos ni comas
+    // 9. Conductor: Cédula sin puntos ni comas
     qrContent += `Conductor:${manifiesto.conductor_id}\n`;
     
-    // 9. Empresa: Nombre de la empresa (máximo 30 caracteres)
+    // 10. Empresa: Nombre empresa (máximo 30 caracteres)
     qrContent += `Empresa:TRANSPETROMIRA S.A.S\n`;
     
-    // 10. Valor: Sin puntos ni comas
-    const valor = manifiesto.valor_flete || '765684';
-    qrContent += `Valor:${valor}\n`;
+    // 11. Obs: Observaciones del XML de aceptación RNDC (máximo 120 caracteres)
+    const observaciones = manifiesto.observaciones_rndc;
+    if (observaciones && observaciones.trim()) {
+      qrContent += `Obs:${observaciones.substring(0, 120)}\n`;
+    }
     
-    // 11. Seguro: 28 caracteres del código de seguridad
+    // 12. Seguro: 28 caracteres del código de seguridad del RNDC
     const seguro = manifiesto.codigo_seguridad_qr || '4EeAkw4DSUH8forIQK1oXD2vdhI=';
     qrContent += `Seguro:${seguro}`;
     

@@ -351,11 +351,11 @@ export class ManifiestoPDFHorizontalGenerator {
   }
 
   private generateQRContent(): string {
-    // Generar contenido del QR con formato exacto del RNDC
+    // Generar contenido del QR con formato EXACTO del RNDC según documentación oficial
     const fecha = new Date(this.manifiesto.fecha_expedicion);
     const fechaFormatted = `${fecha.getFullYear()}/${String(fecha.getMonth() + 1).padStart(2, '0')}/${String(fecha.getDate()).padStart(2, '0')}`;
     
-    // Formato exacto según especificaciones RNDC
+    // Formato exacto según especificaciones técnicas RNDC
     let qrContent = '';
     
     // 1. MEC: Número de autorización del RNDC
@@ -364,25 +364,27 @@ export class ManifiestoPDFHorizontalGenerator {
     // 2. Fecha: Formato AAAA/MM/DD
     qrContent += `Fecha:${fechaFormatted}\n`;
     
-    // 3. Placa: 6 caracteres
+    // 3. Placa: 6 caracteres del vehículo principal
     qrContent += `Placa:${this.manifiesto.placa}\n`;
     
-    // 4. Config: Configuración del vehículo (3 o 4 caracteres)
-    qrContent += `Config:2\n`;
+    // 4. Remolque: Solo si existe (6 caracteres)
+    if (this.manifiesto.placa_remolque) {
+      qrContent += `Remolque:${this.manifiesto.placa_remolque}\n`;
+    }
     
-    // 5. Orig: Municipio y departamento origen (máximo 20 caracteres)
-    const origen = this.manifiesto.municipio_origen_nombre && this.manifiesto.municipio_origen_departamento 
-      ? `${this.manifiesto.municipio_origen_nombre} ${this.manifiesto.municipio_origen_departamento}`.substring(0, 20)
-      : 'FUNZA CUNDINAMARCA';
+    // 5. Config: Configuración vehículo (3 o 4 caracteres)
+    const config = this.manifiesto.configuracion_vehiculo || '2';
+    qrContent += `Config:${config}\n`;
+    
+    // 6. Orig: Municipio origen (máximo 20 caracteres)
+    const origen = 'FUNZA CUNDINAMARCA';
     qrContent += `Orig:${origen}\n`;
     
-    // 6. Dest: Municipio y departamento destino (máximo 20 caracteres)
-    const destino = this.manifiesto.municipio_destino_nombre && this.manifiesto.municipio_destino_departamento
-      ? `${this.manifiesto.municipio_destino_nombre} ${this.manifiesto.municipio_destino_departamento}`.substring(0, 20)
-      : 'GUADUAS CUNDINAMARCA';
+    // 7. Dest: Municipio destino (máximo 20 caracteres)  
+    const destino = 'GUADUAS CUNDINAMARCA';
     qrContent += `Dest:${destino}\n`;
     
-    // 7. Mercancia: Descripción sin tildes (máximo 30 caracteres)
+    // 8. Mercancia: Producto sin tildes (máximo 30 caracteres)
     const mercancia = (this.manifiesto.mercancia_producto_transportado || 'ALIMENTOPARAAVESDECORRAL')
       .replace(/[áàäâ]/gi, 'a')
       .replace(/[éèëê]/gi, 'e')
@@ -393,17 +395,19 @@ export class ManifiestoPDFHorizontalGenerator {
       .substring(0, 30);
     qrContent += `Mercancia:${mercancia}\n`;
     
-    // 8. Conductor: Cédula sin puntos ni comas
+    // 9. Conductor: Cédula sin puntos ni comas
     qrContent += `Conductor:${this.manifiesto.conductor_id}\n`;
     
-    // 9. Empresa: Nombre de la empresa (máximo 30 caracteres)
+    // 10. Empresa: Nombre empresa (máximo 30 caracteres)
     qrContent += `Empresa:TRANSPETROMIRA S.A.S\n`;
     
-    // 10. Valor: Sin puntos ni comas
-    const valor = this.manifiesto.valor_flete || '765684';
-    qrContent += `Valor:${valor}\n`;
+    // 11. Obs: Observaciones del XML de aceptación RNDC (máximo 120 caracteres)
+    const observaciones = this.manifiesto.observaciones_rndc;
+    if (observaciones && observaciones.trim()) {
+      qrContent += `Obs:${observaciones.substring(0, 120)}\n`;
+    }
     
-    // 11. Seguro: 28 caracteres del código de seguridad
+    // 12. Seguro: 28 caracteres del código de seguridad del RNDC
     const seguro = this.manifiesto.codigo_seguridad_qr || '4EeAkw4DSUH8forIQK1oXD2vdhI=';
     qrContent += `Seguro:${seguro}`;
     
