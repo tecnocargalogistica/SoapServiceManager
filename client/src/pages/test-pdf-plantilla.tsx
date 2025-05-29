@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
-import { ManifiestoPDFGenerator } from "@/components/ManifiestoPDFGenerator";
+import { ManifiestoPDFHorizontalGenerator } from "@/components/ManifiestoPDFHorizontal";
 import type { Manifiesto } from "@/../../shared/schema";
 
 const TestPDFPlantilla = () => {
@@ -42,19 +42,49 @@ const TestPDFPlantilla = () => {
     if (!manifiestoEjemplo) return;
 
     // Crear una versión temporal del generador con las coordenadas ajustadas
-    const generator = new ManifiestoPDFGenerator(manifiestoEjemplo);
+    const generator = new ManifiestoPDFHorizontalGenerator(manifiestoEjemplo);
     
     // Actualizar las coordenadas dinámicamente
-    (generator as any).campos = {
+    generator.campos = {
       ...coordenadas,
       fontSize: {
-        normal: 8,
-        small: 7,
-        large: 10
+        normal: 9,
+        small: 8,
+        large: 11
       }
     };
 
     await generator.save();
+  };
+
+  const guardarPlantilla = async () => {
+    try {
+      const plantillaData = {
+        nombre: "Plantilla RNDC Horizontal",
+        descripcion: "Plantilla para manifiestos RNDC con imagen horizontal",
+        coordenadas: coordenadas,
+        imagen_path: "Manifiesto.jpg",
+        formato: "horizontal",
+        activa: true
+      };
+
+      const response = await fetch('/api/plantillas-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(plantillaData),
+      });
+
+      if (response.ok) {
+        alert('Plantilla guardada exitosamente');
+      } else {
+        alert('Error guardando plantilla');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error guardando plantilla');
+    }
   };
 
   if (!manifiestoEjemplo) {
@@ -116,12 +146,19 @@ const TestPDFPlantilla = () => {
               </div>
             ))}
             
-            <div className="pt-4 border-t">
+            <div className="pt-4 border-t space-y-3">
               <Button 
                 onClick={generarPDFConCoordenadas}
                 className="w-full"
               >
                 Generar PDF de Prueba
+              </Button>
+              <Button 
+                onClick={guardarPlantilla}
+                variant="outline"
+                className="w-full"
+              >
+                Guardar Coordenadas como Plantilla
               </Button>
             </div>
           </CardContent>

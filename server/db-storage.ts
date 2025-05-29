@@ -3,6 +3,7 @@ import { db } from "./db";
 import { 
   configuraciones, consecutivos, documentos, logActividades, 
   manifiestos, municipios, remesas, sedes, terceros, usuarios, vehiculos,
+  plantillasPdf,
   type Configuracion, type InsertConfiguracion,
   type Consecutivo, type InsertConsecutivo,
   type Documento, type InsertDocumento,
@@ -14,6 +15,7 @@ import {
   type Tercero, type InsertTercero,
   type Usuario, type InsertUsuario,
   type Vehiculo, type InsertVehiculo,
+  type PlantillaPdf, type InsertPlantillaPdf,
   type User, type InsertUser
 } from "@shared/schema";
 import { IStorage } from "./storage";

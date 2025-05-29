@@ -41,6 +41,19 @@ export const documentos = pgTable("documentos", {
   created_at: timestamp("created_at").defaultNow()
 });
 
+// TABLA PLANTILLAS_PDF
+export const plantillasPdf = pgTable("plantillas_pdf", {
+  id: serial("id").primaryKey(),
+  nombre: text("nombre").notNull(),
+  descripcion: text("descripcion"),
+  coordenadas: jsonb("coordenadas").notNull(), // Coordenadas de los campos
+  imagen_path: text("imagen_path").notNull(),
+  formato: text("formato").notNull().default("horizontal"), // horizontal, vertical
+  activa: boolean("activa").notNull().default(false),
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow()
+});
+
 // TABLA LOG_ACTIVIDADES
 export const logActividades = pgTable("log_actividades", {
   id: serial("id").primaryKey(),
@@ -364,6 +377,11 @@ export type InsertUsuario = z.infer<typeof insertUsuarioSchema>;
 
 export type Vehiculo = typeof vehiculos.$inferSelect;
 export type InsertVehiculo = z.infer<typeof insertVehiculoSchema>;
+
+// ESQUEMAS PLANTILLAS PDF
+export const insertPlantillaPdfSchema = createInsertSchema(plantillasPdf);
+export type PlantillaPdf = typeof plantillasPdf.$inferSelect;
+export type InsertPlantillaPdf = z.infer<typeof insertPlantillaPdfSchema>;
 
 // Keep existing users table for compatibility
 export const users = usuarios;

@@ -10,7 +10,7 @@ interface ManifiestoPDFHorizontalProps {
   manifiesto: Manifiesto;
 }
 
-class ManifiestoPDFHorizontalGenerator {
+export class ManifiestoPDFHorizontalGenerator {
   private doc: jsPDF;
   private manifiesto: Manifiesto;
 
