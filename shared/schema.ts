@@ -68,6 +68,78 @@ export const manifiestos = pgTable("manifiestos", {
   respuesta_rndc: text("respuesta_rndc"),
   ingreso_id: text("ingreso_id"), // ID único del RNDC para el manifiesto
   codigo_seguridad_qr: text("codigo_seguridad_qr"), // Código para generar QR
+  
+  // Campos adicionales para el manifiesto oficial RNDC
+  fecha_hora_radicacion: timestamp("fecha_hora_radicacion"),
+  tipo_manifiesto: text("tipo_manifiesto").default("General"),
+  autorizacion_numero: text("autorizacion_numero"),
+  
+  // Información del titular del manifiesto
+  titular_manifiesto_nombre: text("titular_manifiesto_nombre"),
+  titular_manifiesto_documento: text("titular_manifiesto_documento"),
+  
+  // Información detallada del vehículo
+  vehiculo_marca: text("vehiculo_marca"),
+  vehiculo_configuracion: text("vehiculo_configuracion"),
+  vehiculo_peso_vacio: integer("vehiculo_peso_vacio"),
+  vehiculo_peso_cargado: integer("vehiculo_peso_cargado"),
+  vehiculo_codigo_seguridad: text("vehiculo_codigo_seguridad"),
+  vehiculo_vencimiento_soat: date("vehiculo_vencimiento_soat"),
+  vehiculo_poliza: text("vehiculo_poliza"),
+  
+  // Información detallada del conductor principal
+  conductor_nombre_completo: text("conductor_nombre_completo"),
+  conductor_documento_tipo: text("conductor_documento_tipo"),
+  conductor_direccion: text("conductor_direccion"),
+  conductor_telefono: text("conductor_telefono"),
+  conductor_licencia_numero: text("conductor_licencia_numero"),
+  conductor_licencia_categoria: text("conductor_licencia_categoria"),
+  conductor_ciudad: text("conductor_ciudad"),
+  
+  // Información del conductor 2 (si aplica)
+  conductor2_nombre: text("conductor2_nombre"),
+  conductor2_documento: text("conductor2_documento"),
+  conductor2_direccion: text("conductor2_direccion"),
+  conductor2_telefono: text("conductor2_telefono"),
+  conductor2_licencia: text("conductor2_licencia"),
+  conductor2_ciudad: text("conductor2_ciudad"),
+  
+  // Información del propietario/tenedor del vehículo
+  propietario_nombre: text("propietario_nombre"),
+  propietario_documento: text("propietario_documento"),
+  propietario_direccion: text("propietario_direccion"),
+  propietario_telefono: text("propietario_telefono"),
+  propietario_ciudad: text("propietario_ciudad"),
+  
+  // Información de la mercancía
+  mercancia_unidad_medida: text("mercancia_unidad_medida").default("Kilogramos"),
+  mercancia_cantidad: decimal("mercancia_cantidad", { precision: 10, scale: 2 }),
+  mercancia_naturaleza: text("mercancia_naturaleza").default("Carga Normal"),
+  mercancia_empaque: text("mercancia_empaque").default("Paquetes"),
+  mercancia_producto_transportado: text("mercancia_producto_transportado"),
+  mercancia_informacion_remitente: text("mercancia_informacion_remitente"),
+  mercancia_lugar_cargue: text("mercancia_lugar_cargue"),
+  mercancia_informacion_destinatario: text("mercancia_informacion_destinatario"),
+  mercancia_lugar_descargue: text("mercancia_lugar_descargue"),
+  mercancia_dueno_poliza: text("mercancia_dueno_poliza"),
+  mercancia_numero_poliza: text("mercancia_numero_poliza"),
+  
+  // Información de valores económicos
+  valor_total_viaje: decimal("valor_total_viaje", { precision: 12, scale: 2 }),
+  retencion_fuente: decimal("retencion_fuente", { precision: 12, scale: 2 }).default("0"),
+  retencion_ica: decimal("retencion_ica", { precision: 12, scale: 2 }).default("0"),
+  valor_neto_pagar: decimal("valor_neto_pagar", { precision: 12, scale: 2 }),
+  valor_anticipo: decimal("valor_anticipo", { precision: 12, scale: 2 }).default("0"),
+  saldo_pagar: decimal("saldo_pagar", { precision: 12, scale: 2 }),
+  valor_total_letras: text("valor_total_letras"),
+  
+  // Observaciones y términos
+  lugar_pago: text("lugar_pago"),
+  fecha_pago: date("fecha_pago"),
+  cargue_pagado_por: text("cargue_pagado_por").default("DESTINATARIO"),
+  descargue_pagado_por: text("descargue_pagado_por").default("DESTINATARIO"),
+  observaciones_adicionales: text("observaciones_adicionales"),
+  
   created_at: timestamp("created_at").defaultNow()
 });
 

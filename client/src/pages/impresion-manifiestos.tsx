@@ -94,177 +94,370 @@ export default function ImpresionManifiestos() {
     <html>
     <head>
         <meta charset="UTF-8">
-        <title>Manifiesto de Carga ${manifiesto.numero_manifiesto}</title>
+        <title>Manifiesto Electrónico de Carga ${manifiesto.numero_manifiesto}</title>
         <style>
-            @page { margin: 2cm; size: A4; }
+            @page { margin: 1.5cm; size: A4; }
             body { 
                 font-family: Arial, sans-serif; 
-                font-size: 12px; 
-                line-height: 1.4;
-                color: #333;
+                font-size: 9px; 
+                line-height: 1.2;
+                color: #000;
+                margin: 0;
+                padding: 0;
             }
-            .header { 
-                text-align: center; 
-                border-bottom: 2px solid #333; 
-                padding-bottom: 20px; 
-                margin-bottom: 20px;
+            .header-container {
+                display: table;
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 10px;
             }
-            .header h1 { 
-                margin: 0; 
-                font-size: 24px; 
-                font-weight: bold;
-                color: #2563eb;
+            .header-left {
+                display: table-cell;
+                width: 20%;
+                vertical-align: top;
+                padding: 5px;
             }
-            .header h2 { 
-                margin: 5px 0; 
-                font-size: 18px; 
-                color: #666;
-            }
-            .info-grid { 
-                display: grid; 
-                grid-template-columns: 1fr 1fr; 
-                gap: 20px; 
-                margin-bottom: 20px;
-            }
-            .info-section {
-                border: 1px solid #ddd;
-                padding: 15px;
-                border-radius: 5px;
-            }
-            .info-section h3 {
-                margin: 0 0 10px 0;
-                font-size: 14px;
-                font-weight: bold;
-                color: #2563eb;
-                border-bottom: 1px solid #eee;
-                padding-bottom: 5px;
-            }
-            .info-row {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 8px;
-            }
-            .info-label {
-                font-weight: bold;
-                color: #555;
-            }
-            .info-value {
-                color: #333;
-            }
-            .qr-section {
+            .header-center {
+                display: table-cell;
+                width: 60%;
                 text-align: center;
-                margin: 20px 0;
-                padding: 15px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
+                vertical-align: top;
+                padding: 5px;
             }
-            .footer {
-                position: fixed;
-                bottom: 1cm;
-                left: 0;
-                right: 0;
-                text-align: center;
-                font-size: 10px;
-                color: #666;
-                border-top: 1px solid #eee;
-                padding-top: 10px;
+            .header-right {
+                display: table-cell;
+                width: 20%;
+                text-align: right;
+                vertical-align: top;
+                padding: 5px;
             }
-            .status-badge {
+            .logo-area {
+                font-size: 8px;
+                border: 1px solid #000;
+                padding: 5px;
+                height: 80px;
+            }
+            .title {
+                font-size: 16px;
+                font-weight: bold;
+                margin: 0;
+                text-transform: uppercase;
+            }
+            .company-info {
+                font-size: 11px;
+                margin: 5px 0;
+                font-weight: bold;
+            }
+            .qr-placeholder {
+                border: 2px solid #000;
+                width: 80px;
+                height: 80px;
                 display: inline-block;
-                padding: 4px 8px;
-                border-radius: 3px;
+                text-align: center;
+                line-height: 80px;
+                font-size: 8px;
+            }
+            .manifest-info {
                 font-size: 10px;
+                margin-top: 5px;
+            }
+            .dates-section {
+                border: 1px solid #000;
+                margin: 5px 0;
+            }
+            .dates-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .dates-table td, .dates-table th {
+                border: 1px solid #000;
+                padding: 3px;
+                text-align: center;
+                font-size: 8px;
+            }
+            .section-title {
+                background: #f0f0f0;
                 font-weight: bold;
-                background: #10b981;
-                color: white;
+                text-align: center;
+                padding: 4px;
+                border: 1px solid #000;
+                margin: 5px 0 0 0;
+                font-size: 9px;
+                text-transform: uppercase;
+            }
+            .info-table {
+                width: 100%;
+                border-collapse: collapse;
+                border: 1px solid #000;
+                margin-bottom: 5px;
+            }
+            .info-table td, .info-table th {
+                border: 1px solid #000;
+                padding: 2px;
+                font-size: 8px;
+                vertical-align: top;
+            }
+            .info-table th {
+                background: #f8f8f8;
+                font-weight: bold;
+                text-align: center;
+            }
+            .label {
+                font-weight: bold;
+                background: #f8f8f8;
+                width: 25%;
+            }
+            .value {
+                width: 25%;
+            }
+            .values-section {
+                border: 1px solid #000;
+                margin: 5px 0;
+            }
+            .values-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .values-table td {
+                border: 1px solid #000;
+                padding: 3px;
+                font-size: 8px;
+            }
+            .observations {
+                border: 1px solid #000;
+                margin: 5px 0;
+                padding: 5px;
+            }
+            .footer-text {
+                font-size: 7px;
+                text-align: center;
+                margin-top: 10px;
+                line-height: 1.3;
             }
         </style>
     </head>
     <body>
-        <div class="header">
-            <h1>MANIFIESTO DE CARGA</h1>
-            <h2>Sistema RNDC - Colombia</h2>
-            <p><strong>Número:</strong> ${manifiesto.numero_manifiesto}</p>
-            <span class="status-badge">${manifiesto.estado.toUpperCase()}</span>
-        </div>
-
-        <div class="info-grid">
-            <div class="info-section">
-                <h3>📋 Información del Manifiesto</h3>
-                <div class="info-row">
-                    <span class="info-label">Número Manifiesto:</span>
-                    <span class="info-value">${manifiesto.numero_manifiesto}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Remesa Asociada:</span>
-                    <span class="info-value">${manifiesto.consecutivo_remesa}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Fecha Expedición:</span>
-                    <span class="info-value">${format(new Date(manifiesto.fecha_expedicion), "dd/MM/yyyy", { locale: es })}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Valor Flete:</span>
-                    <span class="info-value">$${manifiesto.valor_flete.toLocaleString()}</span>
+        <!-- ENCABEZADO -->
+        <div class="header-container">
+            <div class="header-left">
+                <div class="logo-area">
+                    🇨🇴<br>
+                    La movilidad<br>
+                    es de todos<br>
+                    Mintransporte
                 </div>
             </div>
-
-            <div class="info-section">
-                <h3>🚛 Información del Vehículo</h3>
-                <div class="info-row">
-                    <span class="info-label">Placa:</span>
-                    <span class="info-value">${manifiesto.placa}</span>
+            <div class="header-center">
+                <h1 class="title">MANIFIESTO ELECTRÓNICO DE CARGA</h1>
+                <div class="company-info">AVÍCOLA LOS CAMBULOS S.A.S</div>
+                <div style="font-size: 9px;">
+                    <strong>Nit:</strong> 900123456<br>
+                    <strong>Tel:</strong> 601-234-5678 - 601-987-6543<br>
+                    RESIDENCIAS MARÍTIMA
                 </div>
-                <div class="info-row">
-                    <span class="info-label">Conductor:</span>
-                    <span class="info-value">${manifiesto.conductor_id}</span>
+            </div>
+            <div class="header-right">
+                <div class="qr-placeholder">[QR CODE]</div>
+                <div class="manifest-info">
+                    <strong>Manifiesto:</strong> ${manifiesto.numero_manifiesto}<br>
+                    <strong>Autorización:</strong> ${manifiesto.autorizacion_numero || '104518661'}
                 </div>
             </div>
         </div>
 
-        <div class="info-grid">
-            <div class="info-section">
-                <h3>📍 Origen</h3>
-                <div class="info-row">
-                    <span class="info-label">Municipio:</span>
-                    <span class="info-value">${manifiesto.municipio_origen}</span>
-                </div>
-            </div>
-
-            <div class="info-section">
-                <h3>📍 Destino</h3>
-                <div class="info-row">
-                    <span class="info-label">Municipio:</span>
-                    <span class="info-value">${manifiesto.municipio_destino}</span>
-                </div>
-            </div>
+        <!-- FECHAS Y TIPO -->
+        <div class="dates-section">
+            <table class="dates-table">
+                <tr>
+                    <th>FECHA DE EXPEDICIÓN</th>
+                    <th>FECHA Y HORA RADICACIÓN</th>
+                    <th>TIPO DE MANIFIESTO</th>
+                    <th>ORIGEN DEL VIAJE</th>
+                    <th>DESTINO DEL VIAJE</th>
+                </tr>
+                <tr>
+                    <td>${format(new Date(manifiesto.fecha_expedicion), "yyyy/MM/dd", { locale: es })}</td>
+                    <td>${manifiesto.fecha_hora_radicacion ? format(new Date(manifiesto.fecha_hora_radicacion), "yyyy/MM/dd HH:mm 'pm'", { locale: es }) : 'N/A'}</td>
+                    <td>${manifiesto.tipo_manifiesto || 'General'}</td>
+                    <td>${manifiesto.municipio_origen}</td>
+                    <td>${manifiesto.municipio_destino}</td>
+                </tr>
+            </table>
         </div>
 
-        ${manifiesto.ingreso_id ? `
-        <div class="info-section">
-            <h3>🏛️ Información RNDC</h3>
-            <div class="info-row">
-                <span class="info-label">ID Ingreso RNDC:</span>
-                <span class="info-value">${manifiesto.ingreso_id}</span>
-            </div>
-            ${manifiesto.codigo_seguridad_qr ? `
-            <div class="info-row">
-                <span class="info-label">Código QR:</span>
-                <span class="info-value">${manifiesto.codigo_seguridad_qr}</span>
-            </div>
+        <!-- INFORMACIÓN DEL VEHÍCULO Y CONDUCTORES -->
+        <div class="section-title">INFORMACIÓN DEL VEHÍCULO Y CONDUCTORES</div>
+        <table class="info-table">
+            <tr>
+                <td class="label">TITULAR MANIFIESTO</td>
+                <td class="value">${manifiesto.titular_manifiesto_nombre || 'FABRICIANO QUINTERO MUÑOZ'}</td>
+                <td class="label">DOCUMENTO IDENTIFICACIÓN</td>
+                <td class="value">${manifiesto.titular_manifiesto_documento || '4133687'}</td>
+                <td class="label">ORIGEN</td>
+                <td class="value">${manifiesto.municipio_origen}</td>
+                <td class="label">TELÉFONOS</td>
+                <td class="value">0</td>
+                <td class="label">CIUDAD</td>
+                <td class="value">${manifiesto.municipio_origen}</td>
+            </tr>
+            <tr>
+                <td class="label">PLACA</td>
+                <td class="value">${manifiesto.placa}</td>
+                <td class="label">MARCA</td>
+                <td class="value">${manifiesto.vehiculo_marca || 'CHEVROLET'}</td>
+                <td class="label">CONFIGURACIÓN</td>
+                <td class="value">${manifiesto.vehiculo_configuracion || '2'}</td>
+                <td class="label">PESO VACÍO</td>
+                <td class="value">${manifiesto.vehiculo_peso_vacio || '3000'}</td>
+                <td class="label">PESO CARGADO</td>
+                <td class="value">${manifiesto.vehiculo_peso_cargado || '0'}</td>
+                <td class="label">CÓDIGO SEGURIDAD SOAT</td>
+                <td class="value">${manifiesto.vehiculo_codigo_seguridad || '860002400 LA PREVISORA S.A COMPAÑÍA'}</td>
+                <td class="label">No PÓLIZA</td>
+                <td class="value">${manifiesto.vehiculo_poliza || '438006646'}</td>
+                <td class="label">F. vencimiento SOAT</td>
+                <td class="value">${manifiesto.vehiculo_vencimiento_soat ? format(new Date(manifiesto.vehiculo_vencimiento_soat), "yyyy/MM/dd", { locale: es }) : '2026/02/18'}</td>
+            </tr>
+            <tr>
+                <td class="label">CONDUCTOR</td>
+                <td class="value">${manifiesto.conductor_nombre_completo || 'JAROL ANDRÉS DURÁN SALDAÑA'}</td>
+                <td class="label">DOCUMENTO IDENTIFICACIÓN</td>
+                <td class="value">${manifiesto.conductor_id}</td>
+                <td class="label">DIRECCIÓN CONDUCTOR 1</td>
+                <td class="value">${manifiesto.conductor_direccion || 'DIAGONAL 18 #3-105 VILLA MARÍA ETAPA 3'}</td>
+                <td class="label">TELÉFONOS</td>
+                <td class="value">${manifiesto.conductor_telefono || '0.0'}</td>
+                <td class="label">No de LICENCIA</td>
+                <td class="value">${manifiesto.conductor_licencia_numero || 'C2-1073511288'}</td>
+                <td class="label">CIUDAD CONDUCTOR</td>
+                <td class="value">${manifiesto.conductor_ciudad || 'MOSQUERA'}</td>
+            </tr>
+            ${manifiesto.conductor2_nombre ? `
+            <tr>
+                <td class="label">CONDUCTOR No. 2</td>
+                <td class="value">${manifiesto.conductor2_nombre}</td>
+                <td class="label">DOCUMENTO IDENTIFICACIÓN</td>
+                <td class="value">${manifiesto.conductor2_documento}</td>
+                <td class="label">DIRECCIÓN CONDUCTOR 2</td>
+                <td class="value">${manifiesto.conductor2_direccion}</td>
+                <td class="label">TELÉFONOS</td>
+                <td class="value">${manifiesto.conductor2_telefono}</td>
+                <td class="label">No de LICENCIA</td>
+                <td class="value">${manifiesto.conductor2_licencia}</td>
+                <td class="label">CIUDAD CONDUCTOR 2</td>
+                <td class="value">${manifiesto.conductor2_ciudad}</td>
+            </tr>
             ` : ''}
-        </div>
-        ` : ''}
+            <tr>
+                <td class="label">POSEEDOR O TENEDOR VEHÍCULO</td>
+                <td class="value">${manifiesto.propietario_nombre || 'JAROL ANDRÉS DURÁN SALDAÑA'}</td>
+                <td class="label">DOCUMENTO IDENTIFICACIÓN</td>
+                <td class="value">${manifiesto.propietario_documento || '1073511288'}</td>
+                <td class="label">DIRECCIÓN</td>
+                <td class="value">${manifiesto.propietario_direccion || ''}</td>
+                <td class="label">TELÉFONOS</td>
+                <td class="value">${manifiesto.propietario_telefono || ''}</td>
+                <td class="label">CIUDAD</td>
+                <td class="value">${manifiesto.propietario_ciudad || ''}</td>
+            </tr>
+        </table>
 
-        <div class="qr-section">
-            <h3>📱 Código QR</h3>
-            <p>Código de Seguridad: ${manifiesto.codigo_seguridad_qr || 'N/A'}</p>
-            <p><em>Escanee este código para verificar la autenticidad del documento</em></p>
+        <!-- INFORMACIÓN DE LA MERCANCÍA TRANSPORTADA -->
+        <div class="section-title">INFORMACIÓN DE LA MERCANCÍA TRANSPORTADA</div>
+        <table class="info-table">
+            <tr>
+                <th>Nro. Remesa</th>
+                <th>Unidad Medida</th>
+                <th>Cantidad</th>
+                <th>Naturaleza</th>
+                <th>Empaque</th>
+                <th>Producto Transportado</th>
+                <th>Información Remitente / Lugar Cargue</th>
+                <th>Información Destinatario / Lugar Descargue</th>
+                <th>Dueño Póliza</th>
+                <th>No existe póliza</th>
+            </tr>
+            <tr>
+                <td>${manifiesto.consecutivo_remesa}</td>
+                <td>${manifiesto.mercancia_unidad_medida || 'Kilogramos'}</td>
+                <td>${manifiesto.mercancia_cantidad || '7,000.00'}</td>
+                <td>${manifiesto.mercancia_naturaleza || 'Carga Normal'}</td>
+                <td>${manifiesto.mercancia_empaque || 'Paquetes'}</td>
+                <td>${manifiesto.mercancia_producto_transportado || 'ALIMENTOPARAAVESECTORRIAL'}</td>
+                <td>${manifiesto.mercancia_informacion_remitente || '860058314 AVÍCOLA LOS CAMBULOS S.A'}</td>
+                <td>${manifiesto.mercancia_informacion_destinatario || '860058314 AVÍCOLA LOS CAMBULOS S.A'}</td>
+                <td>${manifiesto.mercancia_dueno_poliza || ''}</td>
+                <td>${manifiesto.mercancia_numero_poliza || ''}</td>
+            </tr>
+            <tr>
+                <td colspan="2">Remesa No:${manifiesto.consecutivo_remesa}</td>
+                <td colspan="2">${manifiesto.mercancia_producto_transportado || 'ALIMENTOPARAAVESECTORRIAL'}</td>
+                <td colspan="3">${manifiesto.mercancia_lugar_cargue || 'FUNZA CUNDINAMARCA'}</td>
+                <td colspan="3">${manifiesto.mercancia_lugar_descargue || 'GUADUAS CUNDINAMARCA'}</td>
+            </tr>
+        </table>
+
+        <!-- VALORES -->
+        <div style="display: table; width: 100%;">
+            <div style="display: table-cell; width: 70%; vertical-align: top;">
+                <div class="section-title">VALORES</div>
+                <table class="values-table">
+                    <tr>
+                        <td class="label">VALOR TOTAL DEL VIAJE</td>
+                        <td class="value">${(manifiesto.valor_total_viaje || manifiesto.valor_flete || 758624).toLocaleString()}.00</td>
+                    </tr>
+                    <tr>
+                        <td class="label">RETENCIÓN EN LA FUENTE</td>
+                        <td class="value">${(manifiesto.retencion_fuente || 7567).toLocaleString()}.00</td>
+                    </tr>
+                    <tr>
+                        <td class="label">RETENCIÓN ICA</td>
+                        <td class="value">${(manifiesto.retencion_ica || 0).toLocaleString()}.00</td>
+                    </tr>
+                    <tr>
+                        <td class="label">VALOR NETO A PAGAR</td>
+                        <td class="value">${(manifiesto.valor_neto_pagar || 758027).toLocaleString()}.00</td>
+                    </tr>
+                    <tr>
+                        <td class="label">VALOR ANTICIPO</td>
+                        <td class="value">${(manifiesto.valor_anticipo || 0).toLocaleString()}.00</td>
+                    </tr>
+                    <tr>
+                        <td class="label">SALDO A PAGAR</td>
+                        <td class="value">${(manifiesto.saldo_pagar || 758027).toLocaleString()}.00</td>
+                    </tr>
+                </table>
+                <div style="font-size: 7px; margin-top: 5px;">
+                    <strong>VALOR TOTAL DEL VIAJE EN LETRAS:</strong> ${manifiesto.valor_total_letras || 'SETECIENTOS CINCUENTA Y OCHO MIL SEISCIENTOS VEINTISIETE PESOS'}
+                </div>
+            </div>
+            <div style="display: table-cell; width: 30%; vertical-align: top; padding-left: 10px;">
+                <div class="section-title">OBSERVACIONES</div>
+                <table class="values-table">
+                    <tr>
+                        <td class="label">LUGAR DE PAGO</td>
+                        <td class="value">${manifiesto.lugar_pago || 'BOGOTA BOGOTA D.C.'}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">FECHA</td>
+                        <td class="value">${manifiesto.fecha_pago ? format(new Date(manifiesto.fecha_pago), "yyyy/MM/dd", { locale: es }) : '2025/08/28'}</td>
+                    </tr>
+                </table>
+                <div style="margin-top: 10px; border: 1px solid #000; padding: 5px;">
+                    <div style="text-align: center; font-weight: bold; font-size: 8px;">CARGUE PAGADO POR</div>
+                    <div style="text-align: center; padding: 5px;">${manifiesto.cargue_pagado_por || 'DESTINATARIO'}</div>
+                </div>
+                <div style="margin-top: 5px; border: 1px solid #000; padding: 5px;">
+                    <div style="text-align: center; font-weight: bold; font-size: 8px;">DESCARGUE PAGADO POR</div>
+                    <div style="text-align: center; padding: 5px;">${manifiesto.descargue_pagado_por || 'DESTINATARIO'}</div>
+                </div>
+            </div>
         </div>
 
-        <div class="footer">
-            <p>Documento generado el ${format(new Date(), "dd/MM/yyyy 'a las' HH:mm", { locale: es })}</p>
-            <p>Sistema RNDC - Registro Nacional de Carga</p>
+        <!-- PIE DE PÁGINA -->
+        <div class="footer-text">
+            Esta validez de este documento podrá ser consultada en el Registro Nacional de Despachos de Carga <strong>Firma y Huella del TITULAR MANIFIESTO o ACEPTACIÓN DIGITAL</strong> | <strong>Firma y Huella del CONDUCTOR o ACEPTACIÓN DIGITAL</strong><br>
+            Carga RNDC descargada a la Superintendencia de Puertos y Transporte, en los términos señalados en el Código, artículo 1013, numeral 3 del código de comercio electrónico: sirecordnotfound@mintransporte.gov.co
         </div>
     </body>
     </html>`;
