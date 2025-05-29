@@ -1807,5 +1807,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Ruta para obtener manifiestos con datos completos
+  app.get('/api/manifiestos/completos', async (req: Request, res: Response) => {
+    try {
+      const manifiestos = await storage.getManifiestosCompletos();
+      res.json(manifiestos);
+    } catch (error) {
+      console.error('Error al obtener manifiestos completos:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  });
+
   return httpServer;
 }

@@ -1,4 +1,4 @@
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc, sql, alias } from "drizzle-orm";
 import { db } from "./db";
 import { 
   configuraciones, consecutivos, documentos, logActividades, 
@@ -143,6 +143,97 @@ export class DatabaseStorage implements IStorage {
   // Manifiestos
   async getManifiestos(): Promise<Manifiesto[]> {
     return await db.select().from(manifiestos).orderBy(desc(manifiestos.created_at));
+  }
+
+  async getManifiestosCompletos(): Promise<any[]> {
+    try {
+      const result = await db
+        .select({
+          // Datos del manifiesto
+          id: manifiestos.id,
+          numero_manifiesto: manifiestos.numero_manifiesto,
+          consecutivo_remesa: manifiestos.consecutivo_remesa,
+          fecha_expedicion: manifiestos.fecha_expedicion,
+          municipio_origen: manifiestos.municipio_origen,
+          municipio_destino: manifiestos.municipio_destino,
+          placa: manifiestos.placa,
+          conductor_id: manifiestos.conductor_id,
+          valor_flete: manifiestos.valor_flete,
+          estado: manifiestos.estado,
+          naturaleza_carga: manifiestos.naturaleza_carga,
+          producto: manifiestos.producto,
+          empaque: manifiestos.empaque,
+          cantidad: manifiestos.cantidad,
+          unidad_medida: manifiestos.unidad_medida,
+          peso_kg: manifiestos.peso_kg,
+          observaciones: manifiestos.observaciones,
+          created_at: manifiestos.created_at,
+          codigo_sede_origen: manifiestos.codigo_sede_origen,
+          codigo_sede_destino: manifiestos.codigo_sede_destino,
+          conductor2_nombre: manifiestos.conductor2_nombre,
+          conductor2_numero_documento: manifiestos.conductor2_numero_documento,
+          conductor2_licencia: manifiestos.conductor2_licencia,
+          propietario_nombre: manifiestos.propietario_nombre,
+          propietario_documento: manifiestos.propietario_documento,
+          
+          // Datos del vehículo (propietario y tenedor)
+          vehiculo_propietario_nombre: vehiculos.propietario_nombre,
+          vehiculo_propietario_numero_doc: vehiculos.propietario_numero_doc,
+          vehiculo_propietario_tipo_doc: vehiculos.propietario_tipo_doc,
+          vehiculo_tenedor_nombre: vehiculos.tenedor_nombre,
+          vehiculo_tenedor_numero_doc: vehiculos.tenedor_numero_doc,
+          vehiculo_tenedor_tipo_doc: vehiculos.tenedor_tipo_doc,
+          
+          // Datos del tercero conductor
+          conductor_nombre: terceros.nombre,
+          conductor_apellido: terceros.apellido,
+          conductor_direccion: terceros.direccion,
+          conductor_telefono: terceros.telefono,
+          conductor_numero_licencia: terceros.numero_licencia,
+          conductor_categoria_licencia: terceros.categoria_licencia,
+          conductor_municipio_codigo: terceros.municipio_codigo,
+          
+          // Datos del tercero propietario
+          propietario_tercero_nombre: sql`prop_tercero.nombre`,
+          propietario_tercero_apellido: sql`prop_tercero.apellido`,
+          propietario_tercero_direccion: sql`prop_tercero.direccion`,
+          propietario_tercero_telefono: sql`prop_tercero.telefono`,
+          propietario_tercero_municipio: sql`prop_tercero.municipio_codigo`,
+          
+          // Datos de sede origen
+          sede_origen_nit: sql`sede_origen.nit`,
+          sede_origen_nombre: sql`sede_origen.nombre`,
+          sede_origen_direccion: sql`sede_origen.direccion`,
+          sede_origen_municipio: sql`sede_origen.municipio_codigo`,
+          
+          // Datos de sede destino
+          sede_destino_nit: sql`sede_destino.nit`,
+          sede_destino_nombre: sql`sede_destino.nombre`,
+          sede_destino_direccion: sql`sede_destino.direccion`,
+          sede_destino_municipio: sql`sede_destino.municipio_codigo`,
+        })
+        .from(manifiestos)
+        .leftJoin(vehiculos, eq(manifiestos.placa, vehiculos.placa))
+        .leftJoin(terceros, eq(manifiestos.conductor_id, terceros.numero_documento))
+        .leftJoin(
+          alias(terceros, 'prop_tercero'),
+          eq(vehiculos.propietario_numero_doc, sql`prop_tercero.numero_documento`)
+        )
+        .leftJoin(
+          alias(sedes, 'sede_origen'),
+          eq(manifiestos.codigo_sede_origen, sql`sede_origen.codigo`)
+        )
+        .leftJoin(
+          alias(sedes, 'sede_destino'),
+          eq(manifiestos.codigo_sede_destino, sql`sede_destino.codigo`)
+        )
+        .orderBy(desc(manifiestos.created_at));
+
+      return result;
+    } catch (error) {
+      console.error("❌ Error en getManifiestosCompletos:", error);
+      return [];
+    }
   }
 
   async getManifiestoByNumero(numero: string): Promise<Manifiesto | undefined> {
