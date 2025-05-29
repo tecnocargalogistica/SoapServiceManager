@@ -14,27 +14,43 @@ export class ManifiestoPDFHorizontalGenerator {
   private doc: jsPDF;
   private manifiesto: Manifiesto;
 
-  // Coordenadas ajustadas para el formato horizontal basadas en tu plantilla
-  // Conversión aproximada de píxeles a mm (asumiendo 72 DPI): pixel * 0.352778
+  // Coordenadas en píxeles (se convertirán a mm automáticamente)
   public campos = {
-    // CONSECUTIVO: X 1076, Y 170 (píxeles) -> X ~380, Y ~60 (mm)
-    numeroManifiesto: { x: 380, y: 60 },
+    // CONSECUTIVO: coordenadas en píxeles según tu imagen
+    numeroManifiesto: { x: 1076, y: 170 },
     
-    // ID (respuesta XML): X 1101, Y 213 (píxeles) -> X ~389, Y ~75 (mm)  
-    idRespuesta: { x: 389, y: 75 },
+    // ID (respuesta XML): coordenadas en píxeles según tu imagen
+    idRespuesta: { x: 1101, y: 213 },
     
-    fechaExpedicion: { x: 50, y: 85 },
-    origenViaje: { x: 130, y: 85 },
-    destinoViaje: { x: 200, y: 85 },
-    placa: { x: 50, y: 125 },
-    documentoConductor: { x: 160, y: 140 },
-    numeroRemesa: { x: 50, y: 195 },
+    // Otros campos (ajustar según tu imagen)
+    fechaExpedicion: { x: 200, y: 300 },
+    origenViaje: { x: 500, y: 300 },
+    destinoViaje: { x: 800, y: 300 },
+    placa: { x: 200, y: 400 },
+    documentoConductor: { x: 600, y: 450 },
+    numeroRemesa: { x: 200, y: 600 },
     fontSize: {
       normal: 9,
       small: 8,
       large: 11
     }
   };
+
+  // Método para convertir píxeles a mm (basado en el tamaño de tu imagen)
+  private pixelToMM(pixelValue: number, isX: boolean = true): number {
+    // Tu imagen es 1635x1050 píxeles
+    // PDF A4 horizontal es 297x210 mm
+    const imageWidth = 1635;
+    const imageHeight = 1050;
+    const pdfWidth = 297;
+    const pdfHeight = 210;
+    
+    if (isX) {
+      return (pixelValue / imageWidth) * pdfWidth;
+    } else {
+      return (pixelValue / imageHeight) * pdfHeight;
+    }
+  }
 
   constructor(manifiesto: Manifiesto) {
     this.manifiesto = manifiesto;
@@ -152,16 +168,22 @@ export class ManifiestoPDFHorizontalGenerator {
     // Configurar fuente
     this.doc.setFont('helvetica', 'normal');
 
-    // Número de manifiesto (CONSECUTIVO)
+    // Número de manifiesto (CONSECUTIVO) - convertir píxeles a mm
     this.doc.setFontSize(campos.fontSize.large);
     this.doc.setFont('helvetica', 'bold');
-    this.doc.text(this.manifiesto.numero_manifiesto, campos.numeroManifiesto.x, campos.numeroManifiesto.y);
+    const consecutivoX = this.pixelToMM(campos.numeroManifiesto.x, true);
+    const consecutivoY = this.pixelToMM(campos.numeroManifiesto.y, false);
+    this.doc.text(this.manifiesto.numero_manifiesto, consecutivoX, consecutivoY);
+    console.log(`CONSECUTIVO: píxeles(${campos.numeroManifiesto.x}, ${campos.numeroManifiesto.y}) → mm(${consecutivoX.toFixed(1)}, ${consecutivoY.toFixed(1)})`);
 
-    // ID de respuesta (simulando ID del XML de respuesta)
+    // ID de respuesta (simulando ID del XML de respuesta) - convertir píxeles a mm
     this.doc.setFontSize(campos.fontSize.normal);
     this.doc.setFont('helvetica', 'normal');
     const idRespuesta = this.manifiesto.id ? this.manifiesto.id.toString() : 'ID_XML_RESPONSE';
-    this.doc.text(idRespuesta, campos.idRespuesta.x, campos.idRespuesta.y);
+    const idX = this.pixelToMM(campos.idRespuesta.x, true);
+    const idY = this.pixelToMM(campos.idRespuesta.y, false);
+    this.doc.text(idRespuesta, idX, idY);
+    console.log(`ID RESPUESTA: píxeles(${campos.idRespuesta.x}, ${campos.idRespuesta.y}) → mm(${idX.toFixed(1)}, ${idY.toFixed(1)})`);
 
     // Cambiar a fuente normal para el resto
     this.doc.setFont('helvetica', 'normal');
@@ -169,25 +191,25 @@ export class ManifiestoPDFHorizontalGenerator {
 
     // Fecha de expedición
     const fechaFormateada = format(new Date(this.manifiesto.fecha_expedicion), 'dd/MM/yyyy', { locale: es });
-    this.doc.text(fechaFormateada, campos.fechaExpedicion.x, campos.fechaExpedicion.y);
+    this.doc.text(fechaFormateada, this.pixelToMM(campos.fechaExpedicion.x), this.pixelToMM(campos.fechaExpedicion.y, false));
 
     // Origen del viaje
-    this.doc.text(this.manifiesto.municipio_origen || '', campos.origenViaje.x, campos.origenViaje.y);
+    this.doc.text(this.manifiesto.municipio_origen || '', this.pixelToMM(campos.origenViaje.x), this.pixelToMM(campos.origenViaje.y, false));
 
     // Destino del viaje
-    this.doc.text(this.manifiesto.municipio_destino || '', campos.destinoViaje.x, campos.destinoViaje.y);
+    this.doc.text(this.manifiesto.municipio_destino || '', this.pixelToMM(campos.destinoViaje.x), this.pixelToMM(campos.destinoViaje.y, false));
 
     // Placa del vehículo
     this.doc.setFont('helvetica', 'bold');
-    this.doc.text(this.manifiesto.placa || '', campos.placa.x, campos.placa.y);
+    this.doc.text(this.manifiesto.placa || '', this.pixelToMM(campos.placa.x), this.pixelToMM(campos.placa.y, false));
 
     // Documento del conductor
     this.doc.setFont('helvetica', 'normal');
-    this.doc.text(this.manifiesto.conductor_id || '', campos.documentoConductor.x, campos.documentoConductor.y);
+    this.doc.text(this.manifiesto.conductor_id || '', this.pixelToMM(campos.documentoConductor.x), this.pixelToMM(campos.documentoConductor.y, false));
 
     // Número de remesa
     this.doc.setFont('helvetica', 'bold');
-    this.doc.text(this.manifiesto.consecutivo_remesa || '', campos.numeroRemesa.x, campos.numeroRemesa.y);
+    this.doc.text(this.manifiesto.consecutivo_remesa || '', this.pixelToMM(campos.numeroRemesa.x), this.pixelToMM(campos.numeroRemesa.y, false));
   }
 
   private generateFallbackPDF(): void {

@@ -11,15 +11,15 @@ import type { Manifiesto } from "@/../../shared/schema";
 
 const TestPDFPlantilla = () => {
   const [coordenadas, setCoordenadas] = useState({
-    // Coordenadas de prueba convertidas de píxeles a mm
-    numeroManifiesto: { x: 380, y: 60 }, // CONSECUTIVO: X 1076, Y 170 píxeles
-    idRespuesta: { x: 389, y: 75 }, // ID respuesta XML: X 1101, Y 213 píxeles
-    fechaExpedicion: { x: 50, y: 85 },
-    origenViaje: { x: 130, y: 85 },
-    destinoViaje: { x: 200, y: 85 },
-    placa: { x: 50, y: 125 },
-    documentoConductor: { x: 160, y: 140 },
-    numeroRemesa: { x: 50, y: 195 }
+    // Coordenadas en píxeles según tu imagen (1635x1050)
+    numeroManifiesto: { x: 1076, y: 170 }, // CONSECUTIVO
+    idRespuesta: { x: 1101, y: 213 }, // ID respuesta XML
+    fechaExpedicion: { x: 200, y: 300 },
+    origenViaje: { x: 500, y: 300 },
+    destinoViaje: { x: 800, y: 300 },
+    placa: { x: 200, y: 400 },
+    documentoConductor: { x: 600, y: 450 },
+    numeroRemesa: { x: 200, y: 600 }
   });
 
   const { data: manifiestos } = useQuery<Manifiesto[]>({
@@ -226,10 +226,11 @@ const TestPDFPlantilla = () => {
             </div>
 
             <div className="bg-blue-50 p-3 rounded text-sm">
-              <p className="font-medium text-blue-800 mb-1">Coordenadas de referencia:</p>
+              <p className="font-medium text-blue-800 mb-1">Coordenadas en píxeles:</p>
               <p className="text-blue-700">
-                X: Posición horizontal (0 = izquierda, 210 = derecha)<br/>
-                Y: Posición vertical (0 = arriba, 297 = abajo)
+                X: Posición horizontal (0 = izquierda, 1635 = derecha)<br/>
+                Y: Posición vertical (0 = arriba, 1050 = abajo)<br/>
+                <span className="font-medium">Tu imagen:</span> 1635 × 1050 píxeles
               </p>
             </div>
           </CardContent>
