@@ -280,25 +280,24 @@ const EditorPlantillaVisual = () => {
             <CardContent>
               <div
                 ref={canvasRef}
-                className="relative border-2 border-dashed border-gray-300 overflow-auto max-h-[600px] bg-white"
+                className="relative border-2 border-dashed border-gray-300 overflow-auto bg-gray-100"
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
                 style={{ 
                   cursor: draggedField ? 'grabbing' : 'default',
-                  width: `${216 * scale}px`, // Ancho carta (216mm)
-                  height: `${279 * scale}px` // Alto carta (279mm)
+                  width: '100%',
+                  height: '600px'
                 }}
               >
                 {/* Área de trabajo horizontal con imagen de fondo */}
                 <div 
                   ref={imageRef}
-                  className="absolute inset-0 bg-white border border-gray-400"
+                  className="relative bg-white border border-gray-400 mx-auto my-4 shadow-lg"
                   style={{
-                    width: '837px', // Formato horizontal (279mm)
-                    height: '648px', // (216mm)
-                    transform: `scale(${scale})`,
-                    transformOrigin: 'top left',
+                    width: `${837 * scale}px`, // Formato horizontal (279mm * 3)
+                    height: `${648 * scale}px`, // (216mm * 3)
+                    transformOrigin: 'top center',
                     backgroundImage: imagenFondo ? `url(/api/plantillas-pdf/imagen/${imagenFondo})` : 'none',
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',
@@ -311,15 +310,14 @@ const EditorPlantillaVisual = () => {
                 {campos.map((campo) => (
                   <div
                     key={campo.id}
-                    className={`absolute border-2 px-2 py-1 text-xs font-medium cursor-grab select-none
+                    className={`absolute border-2 px-2 py-1 text-xs font-medium cursor-grab select-none z-20
                       ${campo.isDragging 
-                        ? 'border-blue-500 bg-blue-200 cursor-grabbing z-10' 
+                        ? 'border-blue-500 bg-blue-200 cursor-grabbing z-30' 
                         : 'border-red-500 bg-red-200 hover:bg-red-300'
                       }`}
                     style={{
-                      left: campo.x * scale,
-                      top: campo.y * scale,
-                      transform: `scale(${scale})`,
+                      left: `${(campo.x * scale) + ((837 * scale - 837) / 2) + 20}px`,
+                      top: `${(campo.y * scale) + 20}px`,
                       transformOrigin: 'top left'
                     }}
                     onMouseDown={(e) => handleMouseDown(campo.id, e)}
