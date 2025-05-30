@@ -683,12 +683,12 @@ export class ManifiestoPDFHorizontalGenerator {
       this.doc.setFontSize(9);
       this.doc.setTextColor(0, 0, 0);
 
-      // Convertir coordenadas de píxeles a milímetros para la segunda página
+      // Coordenadas directas en milímetros para la segunda página
       // Placa del vehículo (campo "Placa Vehiculo")
       if (this.manifiesto.placa) {
-        const placaX = this.pixelToMM(124);
-        const placaY = this.pixelToMM(152, false);
-        console.log(`PLACA SEGUNDA PÁGINA: ${this.manifiesto.placa} en píxeles (124, 152) → mm (${placaX}, ${placaY})`);
+        const placaX = 35; // mm
+        const placaY = 46; // mm
+        console.log(`PLACA SEGUNDA PÁGINA: ${this.manifiesto.placa} en coordenadas directas (${placaX}mm, ${placaY}mm)`);
         this.doc.text(this.manifiesto.placa, placaX, placaY);
       }
 
