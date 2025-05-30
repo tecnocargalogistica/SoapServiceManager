@@ -683,23 +683,23 @@ export class ManifiestoPDFHorizontalGenerator {
       this.doc.setFontSize(9);
       this.doc.setTextColor(0, 0, 0);
 
-      // Coordenadas ajustadas para la segunda página basadas en la imagen proporcionada
-      // Placa del vehículo (campo "Placa Vehiculo" - izquierda)
+      // Coordenadas exactas para la segunda página proporcionadas por el usuario
+      // Placa del vehículo (campo "Placa Vehiculo")
       if (this.manifiesto.placa) {
-        console.log(`PLACA SEGUNDA PÁGINA: ${this.manifiesto.placa} en coordenadas (85, 173)`);
-        this.doc.text(this.manifiesto.placa, 85, 173);
+        console.log(`PLACA SEGUNDA PÁGINA: ${this.manifiesto.placa} en coordenadas (124, 152)`);
+        this.doc.text(this.manifiesto.placa, 124, 152);
       }
 
-      // Nombre del conductor (campo "Nombre del Conductor" - centro)
+      // Nombre del conductor (campo "Nombre del Conductor")
       if (this.datosCompletos?.conductor?.nombre_completo) {
-        console.log(`NOMBRE CONDUCTOR SEGUNDA PÁGINA: ${this.datosCompletos.conductor.nombre_completo} en coordenadas (200, 173)`);
-        this.doc.text(this.datosCompletos.conductor.nombre_completo, 200, 173);
+        console.log(`NOMBRE CONDUCTOR SEGUNDA PÁGINA: ${this.datosCompletos.conductor.nombre_completo} en coordenadas (33, 152)`);
+        this.doc.text(this.datosCompletos.conductor.nombre_completo, 33, 152);
       }
 
-      // Identificación del conductor (campo "CC" - derecha)
+      // Identificación del conductor (campo "CC")
       if (this.datosCompletos?.conductor?.numero_documento) {
-        console.log(`IDENTIFICACIÓN SEGUNDA PÁGINA: ${this.datosCompletos.conductor.numero_documento} en coordenadas (260, 173)`);
-        this.doc.text(this.datosCompletos.conductor.numero_documento, 260, 173);
+        console.log(`IDENTIFICACIÓN SEGUNDA PÁGINA: ${this.datosCompletos.conductor.numero_documento} en coordenadas (522, 152)`);
+        this.doc.text(this.datosCompletos.conductor.numero_documento, 522, 152);
       }
 
       console.log('Textos de segunda página agregados correctamente');
