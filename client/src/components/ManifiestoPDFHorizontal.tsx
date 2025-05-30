@@ -267,12 +267,7 @@ export class ManifiestoPDFHorizontalGenerator {
     this.doc.setFontSize(14);
     this.doc.text(this.manifiesto.numero_manifiesto, this.pixelToMM(campos.numeroManifiesto.x), this.pixelToMM(campos.numeroManifiesto.y, false));
     
-    // ID RESPUESTA (TAMAÑO MAYOR)
-    console.log('ID RESPUESTA: píxeles(' + campos.idRespuesta.x + ', ' + campos.idRespuesta.y + ') → mm(' + this.pixelToMM(campos.idRespuesta.x) + ', ' + this.pixelToMM(campos.idRespuesta.y, false) + ')');
-    this.doc.setFont('helvetica', 'normal');
-    this.doc.setFontSize(14);
-    const idRespuesta = this.manifiesto.id ? this.manifiesto.id.toString() : '';
-    this.doc.text(idRespuesta, this.pixelToMM(campos.idRespuesta.x), this.pixelToMM(campos.idRespuesta.y, false));
+    // Campo ID RESPUESTA eliminado según solicitud del usuario
     
     // Restaurar fuente normal para el resto de campos
     this.doc.setFont('helvetica', 'normal');
@@ -381,10 +376,7 @@ export class ManifiestoPDFHorizontalGenerator {
       this.doc.text('7.000', this.pixelToMM(campos.cantidad.x), this.pixelToMM(campos.cantidad.y, false));
     }
     
-    // Cantidad Cargada: 9.00 (del panel "cantidadCargada")
-    if (campos.cantidadCargada) {
-      this.doc.text('9.00', this.pixelToMM(campos.cantidadCargada.x), this.pixelToMM(campos.cantidadCargada.y, false));
-    }
+    // Campo CANTIDAD CARGADA eliminado según solicitud del usuario
     
     // Número Remesa
     if (campos.numeroRemesa) {
