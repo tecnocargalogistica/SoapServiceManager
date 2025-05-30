@@ -261,15 +261,15 @@ export class ManifiestoPDFHorizontalGenerator {
 
       // === CAMPOS PRINCIPALES ===
     
-    // CONSECUTIVO (EN NEGRITA Y TAMAÑO MAYOR)
+    // CONSECUTIVO (TAMAÑO MAYOR)
     console.log('CONSECUTIVO: píxeles(' + campos.numeroManifiesto.x + ', ' + campos.numeroManifiesto.y + ') → mm(' + this.pixelToMM(campos.numeroManifiesto.x) + ', ' + this.pixelToMM(campos.numeroManifiesto.y, false) + ')');
-    this.doc.setFont('helvetica', 'bold');
+    this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(14);
     this.doc.text(this.manifiesto.numero_manifiesto, this.pixelToMM(campos.numeroManifiesto.x), this.pixelToMM(campos.numeroManifiesto.y, false));
     
-    // ID RESPUESTA (EN NEGRITA Y TAMAÑO MAYOR)
+    // ID RESPUESTA (TAMAÑO MAYOR)
     console.log('ID RESPUESTA: píxeles(' + campos.idRespuesta.x + ', ' + campos.idRespuesta.y + ') → mm(' + this.pixelToMM(campos.idRespuesta.x) + ', ' + this.pixelToMM(campos.idRespuesta.y, false) + ')');
-    this.doc.setFont('helvetica', 'bold');
+    this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(14);
     const idRespuesta = this.manifiesto.id ? this.manifiesto.id.toString() : '';
     this.doc.text(idRespuesta, this.pixelToMM(campos.idRespuesta.x), this.pixelToMM(campos.idRespuesta.y, false));
@@ -478,8 +478,8 @@ export class ManifiestoPDFHorizontalGenerator {
     
     // === ID DE CONFIRMACIÓN RNDC ===
     
-    // ID de Ingreso RNDC: 104518661 (EN NEGRITA Y TAMAÑO MAYOR)
-    this.doc.setFont('helvetica', 'bold');
+    // ID de Ingreso RNDC: 104518661 (TAMAÑO MAYOR)
+    this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(14);
     const ingresoId = this.manifiesto.ingreso_id ? this.manifiesto.ingreso_id.toString() : '104518661';
     this.doc.text(ingresoId, this.pixelToMM(campos.ingresoId.x), this.pixelToMM(campos.ingresoId.y, false));
