@@ -16,6 +16,7 @@ import ImpresionManifiestos from "@/pages/impresion-manifiestos";
 import PrototipoManifiesto from "@/pages/prototipo-manifiesto";
 import TestPDFManifiesto from "@/pages/test-pdf-manifiesto";
 import TestPDFPlantilla from "@/pages/test-pdf-plantilla";
+import EditorPlantillaVisual from "@/pages/editor-plantilla-visual";
 import Configuracion from "@/pages/configuracion";
 import GestionDatos from "@/pages/gestion-datos";
 import SOAPCliente from "@/pages/soap-cliente";
@@ -44,6 +45,7 @@ function Router() {
         <Route path="/prototipo-manifiesto" component={PrototipoManifiesto} />
         <Route path="/test-pdf-manifiesto" component={TestPDFManifiesto} />
         <Route path="/test-pdf-plantilla" component={TestPDFPlantilla} />
+        <Route path="/editor-plantilla-visual" component={EditorPlantillaVisual} />
             <Route path="/gestion-datos" component={GestionDatos} />
             <Route path="/soap-cliente" component={SOAPCliente} />
             <Route path="/configuracion" component={Configuracion} />

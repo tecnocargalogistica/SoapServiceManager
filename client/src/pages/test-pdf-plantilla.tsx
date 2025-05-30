@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Edit } from "lucide-react";
 import { Link } from "wouter";
 import { ManifiestoPDFHorizontalGenerator } from "@/components/ManifiestoPDFHorizontal";
 import type { Manifiesto } from "@/../../shared/schema";
@@ -265,11 +265,17 @@ const TestPDFPlantilla = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <div className="mb-6">
+      <div className="mb-6 flex gap-4">
         <Link href="/impresion-manifiestos">
           <Button variant="outline">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver a Impresión
+          </Button>
+        </Link>
+        <Link href="/editor-plantilla-visual">
+          <Button variant="outline">
+            <Edit className="h-4 w-4 mr-2" />
+            Editor Visual Drag & Drop
           </Button>
         </Link>
       </div>
