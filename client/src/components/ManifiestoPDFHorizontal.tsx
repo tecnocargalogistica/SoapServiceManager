@@ -683,23 +683,29 @@ export class ManifiestoPDFHorizontalGenerator {
       this.doc.setFontSize(9);
       this.doc.setTextColor(0, 0, 0);
 
-      // Coordenadas exactas para la segunda página proporcionadas por el usuario
+      // Convertir coordenadas de píxeles a milímetros para la segunda página
       // Placa del vehículo (campo "Placa Vehiculo")
       if (this.manifiesto.placa) {
-        console.log(`PLACA SEGUNDA PÁGINA: ${this.manifiesto.placa} en coordenadas (124, 152)`);
-        this.doc.text(this.manifiesto.placa, 124, 152);
+        const placaX = this.pixelToMM(124);
+        const placaY = this.pixelToMM(152, false);
+        console.log(`PLACA SEGUNDA PÁGINA: ${this.manifiesto.placa} en píxeles (124, 152) → mm (${placaX}, ${placaY})`);
+        this.doc.text(this.manifiesto.placa, placaX, placaY);
       }
 
       // Nombre del conductor (campo "Nombre del Conductor")
       if (this.datosCompletos?.conductor?.nombre_completo) {
-        console.log(`NOMBRE CONDUCTOR SEGUNDA PÁGINA: ${this.datosCompletos.conductor.nombre_completo} en coordenadas (33, 152)`);
-        this.doc.text(this.datosCompletos.conductor.nombre_completo, 33, 152);
+        const nombreX = this.pixelToMM(333);
+        const nombreY = this.pixelToMM(152, false);
+        console.log(`NOMBRE CONDUCTOR SEGUNDA PÁGINA: ${this.datosCompletos.conductor.nombre_completo} en píxeles (333, 152) → mm (${nombreX}, ${nombreY})`);
+        this.doc.text(this.datosCompletos.conductor.nombre_completo, nombreX, nombreY);
       }
 
       // Identificación del conductor (campo "CC")
       if (this.datosCompletos?.conductor?.numero_documento) {
-        console.log(`IDENTIFICACIÓN SEGUNDA PÁGINA: ${this.datosCompletos.conductor.numero_documento} en coordenadas (522, 152)`);
-        this.doc.text(this.datosCompletos.conductor.numero_documento, 522, 152);
+        const idX = this.pixelToMM(522);
+        const idY = this.pixelToMM(152, false);
+        console.log(`IDENTIFICACIÓN SEGUNDA PÁGINA: ${this.datosCompletos.conductor.numero_documento} en píxeles (522, 152) → mm (${idX}, ${idY})`);
+        this.doc.text(this.datosCompletos.conductor.numero_documento, idX, idY);
       }
 
       console.log('Textos de segunda página agregados correctamente');
