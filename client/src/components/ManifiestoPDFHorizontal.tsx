@@ -720,17 +720,18 @@ export class ManifiestoPDFHorizontalGenerator {
         this.doc.setFontSize(7);
       }
 
-      // Ingreso Id duplicado
-      const ingresoId = this.manifiesto.ingreso_id ? this.manifiesto.ingreso_id.toString() : '104518661';
-      if (ingresoId) {
+      // Ingreso Id duplicado - DEBE SER DATO REAL del RNDC
+      if (this.manifiesto.ingreso_id) {
         // Cambiar tamaño de fuente para el ingreso id
         this.doc.setFontSize(12);
         const ingresoX = 247; // mm
         const ingresoY = 49; // mm
-        console.log(`INGRESO ID SEGUNDA PÁGINA: ${ingresoId} en coordenadas directas (${ingresoX}mm, ${ingresoY}mm) con tamaño 12`);
-        this.doc.text(ingresoId, ingresoX, ingresoY);
+        console.log(`INGRESO ID SEGUNDA PÁGINA: ${this.manifiesto.ingreso_id} en coordenadas directas (${ingresoX}mm, ${ingresoY}mm) con tamaño 12 - DATO REAL RNDC`);
+        this.doc.text(this.manifiesto.ingreso_id.toString(), ingresoX, ingresoY);
         // Restaurar tamaño de fuente original
         this.doc.setFontSize(7);
+      } else {
+        console.warn('⚠️ INGRESO ID NO DISPONIBLE - Este campo requiere autorización real del RNDC');
       }
 
       console.log('Textos de segunda página agregados correctamente');
