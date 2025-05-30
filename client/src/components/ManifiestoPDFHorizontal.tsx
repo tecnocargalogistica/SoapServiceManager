@@ -261,7 +261,7 @@ export class ManifiestoPDFHorizontalGenerator {
     this.doc.text(this.manifiesto.propietario_nombre || '', this.pixelToMM(campos.titularManifiesto.x), this.pixelToMM(campos.titularManifiesto.y, false));
     
     // Documento de identificación titular
-    this.doc.text(this.manifiesto.propietario_numero_documento || '', this.pixelToMM(campos.docIdentificacionTitular.x), this.pixelToMM(campos.docIdentificacionTitular.y, false));
+    this.doc.text(this.manifiesto.propietario_documento || '', this.pixelToMM(campos.docIdentificacionTitular.x), this.pixelToMM(campos.docIdentificacionTitular.y, false));
     
     // Dirección titular (por ahora vacío - necesita obtener de terceros)
     this.doc.text('', this.pixelToMM(campos.direccionTitular.x), this.pixelToMM(campos.direccionTitular.y, false));
@@ -275,10 +275,10 @@ export class ManifiestoPDFHorizontalGenerator {
     // === INFORMACIÓN DEL TENEDOR ===
     
     // Tenedor del vehículo (si es diferente del propietario)
-    this.doc.text(this.manifiesto.tenedor_nombre || this.manifiesto.propietario_nombre || '', this.pixelToMM(campos.tenedorVehiculo.x), this.pixelToMM(campos.tenedorVehiculo.y, false));
+    this.doc.text(this.manifiesto.vehiculo_tenedor_nombre || this.manifiesto.vehiculo_propietario_nombre || '', this.pixelToMM(campos.tenedorVehiculo.x), this.pixelToMM(campos.tenedorVehiculo.y, false));
     
     // Documento de identificación tenedor
-    this.doc.text(this.manifiesto.tenedor_numero_documento || this.manifiesto.propietario_numero_documento || '', this.pixelToMM(campos.docIdentificacionTenedor.x), this.pixelToMM(campos.docIdentificacionTenedor.y, false));
+    this.doc.text(this.manifiesto.vehiculo_tenedor_numero_doc || this.manifiesto.vehiculo_propietario_numero_doc || '', this.pixelToMM(campos.docIdentificacionTenedor.x), this.pixelToMM(campos.docIdentificacionTenedor.y, false));
     
     // Dirección tenedor (por ahora vacío)
     this.doc.text('', this.pixelToMM(campos.direccionTenedor.x), this.pixelToMM(campos.direccionTenedor.y, false));
@@ -305,7 +305,7 @@ export class ManifiestoPDFHorizontalGenerator {
     this.doc.text(this.manifiesto.conductor_categoria_licencia || '', this.pixelToMM(campos.claseLicencia.x), this.pixelToMM(campos.claseLicencia.y, false));
     
     // Ciudad conductor
-    this.doc.text(this.manifiesto.conductor_municipio || '', this.pixelToMM(campos.ciudadConductor.x), this.pixelToMM(campos.ciudadConductor.y, false));
+    this.doc.text(this.manifiesto.conductor_municipio_nombre || '', this.pixelToMM(campos.ciudadConductor.x), this.pixelToMM(campos.ciudadConductor.y, false));
 
     // === INFORMACIÓN DE CARGA ===
     
