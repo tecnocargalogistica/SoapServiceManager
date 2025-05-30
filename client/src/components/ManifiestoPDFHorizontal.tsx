@@ -340,11 +340,72 @@ export class ManifiestoPDFHorizontalGenerator {
     // Saldo a pagar (mismo valor según datos reales)
     this.doc.text(valorTotal, this.pixelToMM(campos.saldoPagar.x), this.pixelToMM(campos.saldoPagar.y, false));
     
+    // Valor en letras (convertir $765.684 a letras en mayúsculas)
+    const valorEnLetras = this.numeroALetras(765684) + ' PESOS';
+    this.doc.text(valorEnLetras, this.pixelToMM(campos.valorEnLetras?.x || 50), this.pixelToMM(campos.valorEnLetras?.y || 180, false));
+    
     // === ID DE CONFIRMACIÓN RNDC ===
     
     // ID de Ingreso RNDC (sin prefijo "ID:")
     const ingresoId = this.manifiesto.ingreso_id ? this.manifiesto.ingreso_id.toString() : '';
     this.doc.text(ingresoId, this.pixelToMM(campos.ingresoId.x), this.pixelToMM(campos.ingresoId.y, false));
+  }
+
+  private numeroALetras(numero: number): string {
+    const unidades = ['', 'UNO', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'];
+    const decenas = ['', '', 'VEINTE', 'TREINTA', 'CUARENTA', 'CINCUENTA', 'SESENTA', 'SETENTA', 'OCHENTA', 'NOVENTA'];
+    const especiales = ['DIEZ', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISÉIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE'];
+    const centenas = ['', 'CIENTO', 'DOSCIENTOS', 'TRESCIENTOS', 'CUATROCIENTOS', 'QUINIENTOS', 'SEISCIENTOS', 'SETECIENTOS', 'OCHOCIENTOS', 'NOVECIENTOS'];
+
+    if (numero === 0) return 'CERO';
+    if (numero === 100) return 'CIEN';
+
+    let resultado = '';
+
+    // Millones
+    if (numero >= 1000000) {
+      const millones = Math.floor(numero / 1000000);
+      if (millones === 1) {
+        resultado += 'UN MILLÓN ';
+      } else {
+        resultado += this.numeroALetras(millones) + ' MILLONES ';
+      }
+      numero %= 1000000;
+    }
+
+    // Miles
+    if (numero >= 1000) {
+      const miles = Math.floor(numero / 1000);
+      if (miles === 1) {
+        resultado += 'MIL ';
+      } else {
+        resultado += this.numeroALetras(miles) + ' MIL ';
+      }
+      numero %= 1000;
+    }
+
+    // Centenas
+    if (numero >= 100) {
+      const centena = Math.floor(numero / 100);
+      resultado += centenas[centena] + ' ';
+      numero %= 100;
+    }
+
+    // Decenas y unidades
+    if (numero >= 20) {
+      const decena = Math.floor(numero / 10);
+      const unidad = numero % 10;
+      resultado += decenas[decena];
+      if (unidad > 0) {
+        resultado += ' Y ' + unidades[unidad];
+      }
+    } else if (numero >= 10) {
+      resultado += especiales[numero - 10];
+    } else if (numero > 0) {
+      resultado += unidades[numero];
+    }
+
+    return resultado.trim();
   }
 
   private generateQRContent(): string {
