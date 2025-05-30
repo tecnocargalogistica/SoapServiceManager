@@ -419,9 +419,18 @@ export class ManifiestoPDFHorizontalGenerator {
       this.doc.text('8600588314 PORVENIR (UVE)2', this.pixelToMM(campos.informacionDestinatario.x), this.pixelToMM(campos.informacionDestinatario.y, false));
     }
     
-    // Información Destinatario2: GRANJAS EN LA ZONA DE GUADUAS, GUADUAS - CUNDINAMARCA
+    // Información Destinatario2: GRANJAS EN LA ZONA DE GUADUAS, GUADUAS - CUNDINAMARCA (dividido en 2 líneas)
     if (campos.informacionDestinatario2) {
-      this.doc.text('GRANJAS EN LA ZONA DE GUADUAS, GUADUAS - CUNDINAMARCA', this.pixelToMM(campos.informacionDestinatario2.x), this.pixelToMM(campos.informacionDestinatario2.y, false));
+      const textoCompleto = 'GRANJAS EN LA ZONA DE GUADUAS, GUADUAS - CUNDINAMARCA';
+      const partes = textoCompleto.split(', ');
+      
+      // Primera línea: "GRANJAS EN LA ZONA DE GUADUAS"
+      this.doc.text(partes[0], this.pixelToMM(campos.informacionDestinatario2.x), this.pixelToMM(campos.informacionDestinatario2.y, false));
+      
+      // Segunda línea: "GUADUAS - CUNDINAMARCA" (4mm más abajo)
+      if (partes[1]) {
+        this.doc.text(partes[1], this.pixelToMM(campos.informacionDestinatario2.x), this.pixelToMM(campos.informacionDestinatario2.y, false) + 4);
+      }
     }
     
     // === VALORES ECONÓMICOS ===
