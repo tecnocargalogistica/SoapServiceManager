@@ -53,6 +53,7 @@ export default function CumplimientoNuevo() {
   const [showBatchModalManifiestos, setShowBatchModalManifiestos] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0, processing: false });
   const [batchResults, setBatchResults] = useState<Array<{consecutivo: string, success: boolean, message: string}>>([]);
+  const [rndcResponse, setRndcResponse] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -105,6 +106,9 @@ export default function CumplimientoNuevo() {
       return response.json();
     },
     onSuccess: (data) => {
+      console.log("Respuesta completa del RNDC:", data);
+      setRndcResponse(data);
+      
       if (data.success) {
         toast({
           title: "¡Éxito!",
@@ -121,6 +125,16 @@ export default function CumplimientoNuevo() {
         });
       }
     },
+    onError: (error: any) => {
+      console.log("Error en la solicitud:", error);
+      setRndcResponse({ success: false, error: error.message });
+      
+      toast({
+        title: "Error de conexión",
+        description: error.message || "Error al conectar con el RNDC",
+        variant: "destructive",
+      });
+    }
   });
 
   const handlePreviewCumplimiento = (consecutivo: string) => {
@@ -337,6 +351,45 @@ export default function CumplimientoNuevo() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
+                {/* Mostrar respuesta del RNDC si existe */}
+                {rndcResponse && (
+                  <div className="p-4 border rounded-lg bg-slate-50">
+                    <h4 className="font-semibold mb-2">Última Respuesta del RNDC:</h4>
+                    <div className="text-sm space-y-2">
+                      <div>
+                        <span className="font-medium">Estado:</span>{" "}
+                        <span className={rndcResponse.success ? "text-green-600" : "text-red-600"}>
+                          {rndcResponse.success ? "Exitoso" : "Error"}
+                        </span>
+                      </div>
+                      {rndcResponse.mensaje && (
+                        <div>
+                          <span className="font-medium">Mensaje:</span> {rndcResponse.mensaje}
+                        </div>
+                      )}
+                      {rndcResponse.data?.ingresoId && (
+                        <div>
+                          <span className="font-medium">ID de Ingreso:</span> {rndcResponse.data.ingresoId}
+                        </div>
+                      )}
+                      {rndcResponse.data?.rawResponse && (
+                        <details className="mt-2">
+                          <summary className="cursor-pointer font-medium">Ver respuesta completa del RNDC</summary>
+                          <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-auto max-h-32">
+                            {rndcResponse.data.rawResponse}
+                          </pre>
+                        </details>
+                      )}
+                      {rndcResponse.error && (
+                        <div>
+                          <span className="font-medium">Error:</span>{" "}
+                          <span className="text-red-600">{rndcResponse.error}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <Button 
                   className="w-full"
                   onClick={() => handlePreviewCumplimiento("79824058")}

@@ -1,0 +1,65 @@
+> rest-express@1.0.0 dev
+Inicializando base de datos...ver/index.ts
+8:38:05 AM [express] serving on port 5000
+✅ Base de datos ya inicializada
+8:38:06 AM [express] ✅ Base de datos inicializada correctamente
+Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Intentando envío a endpoint: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+🎯 Usando endpoint personalizado: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+📡 Enviando SOAP a: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+8:38:09 AM [express] GET /api/manifiestos 304 in 214ms :: [{"id":1,"numero_manifiesto":"79824058","c…
+8:38:09 AM [express] GET /api/remesas/exitosas 304 in 250ms :: [{"id":22,"consecutivo":"79824058","c…
+📋 === XML CUMPLIMIENTO PREVIEW 79824058 ===
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:BPMServicesIntf-IBPMServices">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <urn:AtenderMensajeRNDC>
+      <Request>
+        <root>
+          <acceso>
+            <username>TRANSPORTES@739</username>
+            <password>Alejandro_1971</password>
+          </acceso>
+          <solicitud>
+            <tipo>1</tipo>
+            <procesoid>5</procesoid>
+          </solicitud>
+          <variables>
+            <NUMNITEMPRESATRANSPORTE>9013690938</NUMNITEMPRESATRANSPORTE>
+            <CONSECUTIVOREMESA>79824058</CONSECUTIVOREMESA>
+            <TIPOCUMPLIDOREMESA>C</TIPOCUMPLIDOREMESA>
+            <CANTIDADCARGADA>7000</CANTIDADCARGADA>
+            <CANTIDADENTREGADA>7000</CANTIDADENTREGADA>
+            <UNIDADMEDIDACAPACIDAD>1</UNIDADMEDIDACAPACIDAD>
+            <FECHALLEGADACARGUE>28/05/2025</FECHALLEGADACARGUE>
+            <HORALLEGADACARGUEREMESA>08:00</HORALLEGADACARGUEREMESA>
+            <FECHAENTRADACARGUE>28/05/2025</FECHAENTRADACARGUE>
+            <HORAENTRADACARGUEREMESA>08:00</HORAENTRADACARGUEREMESA>
+            <FECHASALIDACARGUE>28/05/2025</FECHASALIDACARGUE>
+            <HORASALIDACARGUEREMESA>10:00</HORASALIDACARGUEREMESA>
+            <FECHALLEGADADESCARGUE>28/05/2025</FECHALLEGADADESCARGUE>
+            <HORALLEGADADESCARGUECUMPLIDO>13:00</HORALLEGADADESCARGUECUMPLIDO>
+            <FECHAENTRADADESCARGUE>28/05/2025</FECHAENTRADADESCARGUE>
+            <HORAENTRADADESCARGUECUMPLIDO>13:00</HORAENTRADADESCARGUECUMPLIDO>
+            <FECHASALIDADESCARGUE>28/05/2025</FECHASALIDADESCARGUE>
+            <HORASALIDADESCARGUECUMPLIDO>15:00</HORASALIDADESCARGUECUMPLIDO>
+          </variables>
+        </root>
+      </Request>
+    </urn:AtenderMensajeRNDC>
+  </soapenv:Body>
+</soapenv:Envelope>
+📋 === FIN XML CUMPLIMIENTO PREVIEW 79824058 ===
+8:38:14 AM [express] GET /api/cumplimiento/preview/79824058 304 in 90ms :: {"success":true,"consecut…
+8:38:14 AM [express] POST /api/rndc/send 200 in 3ms
+8:38:14 AM [express] GET /api/remesas/exitosas 304 in 59ms :: [{"id":22,"consecutivo":"79824058","co…
+Respuesta recibida de http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices: <?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:NS1="urn:BPMServicesIntf-IBPMServices"><NS1:AtenderMensajeRNDCResponse><return xsi:type="xsd:string">&lt;?xml version="1.0" encoding="ISO-8859-1" ?&gt;
+&lt;root&gt;
+&lt;ErrorMSG&gt;Error RNDC01: Falta información en el xml para el acceso.&lt;/ErrorMSG&gt;
+&lt;/root&gt;
+</return></NS1:AtenderMensajeRNDCResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>
+
+8:38:17 AM [express] GET /api/rndc/test 200 in 7442ms :: {"connected":true,"endpoint":"http://rndcws…
