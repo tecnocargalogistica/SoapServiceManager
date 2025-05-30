@@ -5,6 +5,7 @@ import { es } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { FileImage } from "lucide-react";
 import manifestoImagePath from "@assets/Manifiesto.jpg";
+import QRCode from 'qrcode';
 
 interface ManifiestoPDFHorizontalProps {
   manifiesto: Manifiesto;
@@ -19,7 +20,7 @@ export class ManifiestoPDFHorizontalGenerator {
     this.manifiesto = manifiesto;
     this.doc = new jsPDF('landscape', 'mm', 'a4');
     
-    // Coordenadas por defecto
+    // Coordenadas por defecto (sincronizadas con el panel de ajuste)
     this.campos = {
       numeroManifiesto: { x: 1076, y: 170 },
       idRespuesta: { x: 1101, y: 213 },
@@ -27,8 +28,49 @@ export class ManifiestoPDFHorizontalGenerator {
       origenViaje: { x: 500, y: 300 },
       destinoViaje: { x: 800, y: 300 },
       placa: { x: 200, y: 400 },
-      valorEnLetras: { x: 280, y: 827 },
-      ingresoId: { x: 1101, y: 213 },
+      numeroRemesa: { x: 200, y: 600 },
+      
+      // Titular del manifiesto
+      titularManifiesto: { x: 100, y: 450 },
+      docIdentificacionTitular: { x: 100, y: 470 },
+      direccionTitular: { x: 100, y: 490 },
+      telefonoTitular: { x: 100, y: 510 },
+      ciudadTitular: { x: 100, y: 530 },
+      
+      // Tenedor del vehículo  
+      tenedorVehiculo: { x: 400, y: 450 },
+      docIdentificacionTenedor: { x: 400, y: 470 },
+      direccionTenedor: { x: 400, y: 490 },
+      telefonoTenedor: { x: 400, y: 510 },
+      ciudadTenedor: { x: 400, y: 530 },
+      
+      // Conductor
+      conductor: { x: 700, y: 450 },
+      direccionConductor: { x: 700, y: 470 },
+      noLicencia: { x: 700, y: 490 },
+      claseLicencia: { x: 700, y: 510 },
+      ciudadConductor: { x: 700, y: 530 },
+      
+      // Cantidad
+      cantidad: { x: 1000, y: 450 },
+      cantidadCargada: { x: 1000, y: 470 },
+      
+      // Información remitente/destinatario
+      informacionRemitente: { x: 100, y: 650 },
+      informacionRemitente2: { x: 100, y: 670 },
+      informacionDestinatario: { x: 500, y: 650 },
+      informacionDestinatario2: { x: 500, y: 670 },
+      
+      // Valores económicos
+      valorTotalViaje: { x: 1000, y: 650 },
+      valorNetoViaje: { x: 1000, y: 670 },
+      saldoPagar: { x: 1000, y: 690 },
+      valorEnLetras: { x: 50, y: 180 },
+      
+      // Código QR e ID
+      codigoQR: { x: 1200, y: 100, size: 80 },
+      ingresoId: { x: 200, y: 200 },
+      
       fontSize: {
         normal: 9,
         small: 8,
@@ -134,6 +176,7 @@ export class ManifiestoPDFHorizontalGenerator {
         console.log('Imagen de fondo agregada correctamente');
         this.doc.addImage(image, 'JPEG', 0, 0, 297, 210);
         this.addTexts();
+        await this.addQRCode();
       } else {
         console.log('No se pudo cargar la imagen, generando PDF básico...');
         this.generateFallbackPDF();
@@ -227,82 +270,82 @@ export class ManifiestoPDFHorizontalGenerator {
     // === TITULAR DEL MANIFIESTO (PROPIETARIO) ===
     
     // Nombre: FABRICIANO QUINTERO MUÑOZ
-    if (campos.titularNombre) {
-      this.doc.text('FABRICIANO QUINTERO MUÑOZ', this.pixelToMM(campos.titularNombre.x), this.pixelToMM(campos.titularNombre.y, false));
+    if (campos.titularManifiesto) {
+      this.doc.text('FABRICIANO QUINTERO MUÑOZ', this.pixelToMM(campos.titularManifiesto.x), this.pixelToMM(campos.titularManifiesto.y, false));
     }
     
     // Documento: 4133687
-    if (campos.titularDocumento) {
-      this.doc.text('4133687', this.pixelToMM(campos.titularDocumento.x), this.pixelToMM(campos.titularDocumento.y, false));
+    if (campos.docIdentificacionTitular) {
+      this.doc.text('4133687', this.pixelToMM(campos.docIdentificacionTitular.x), this.pixelToMM(campos.docIdentificacionTitular.y, false));
     }
     
     // Dirección: FUNZA
-    if (campos.titularDireccion) {
-      this.doc.text('FUNZA', this.pixelToMM(campos.titularDireccion.x), this.pixelToMM(campos.titularDireccion.y, false));
+    if (campos.direccionTitular) {
+      this.doc.text('FUNZA', this.pixelToMM(campos.direccionTitular.x), this.pixelToMM(campos.direccionTitular.y, false));
     }
     
     // Teléfono: 300000000
-    if (campos.titularTelefono) {
-      this.doc.text('300000000', this.pixelToMM(campos.titularTelefono.x), this.pixelToMM(campos.titularTelefono.y, false));
+    if (campos.telefonoTitular) {
+      this.doc.text('300000000', this.pixelToMM(campos.telefonoTitular.x), this.pixelToMM(campos.telefonoTitular.y, false));
     }
     
     // Ciudad: FUNZA
-    if (campos.titularCiudad) {
-      this.doc.text('FUNZA', this.pixelToMM(campos.titularCiudad.x), this.pixelToMM(campos.titularCiudad.y, false));
+    if (campos.ciudadTitular) {
+      this.doc.text('FUNZA', this.pixelToMM(campos.ciudadTitular.x), this.pixelToMM(campos.ciudadTitular.y, false));
     }
     
     // === TENEDOR DEL VEHÍCULO ===
     
     // Nombre: FABRICIANO QUINTERO MUÑOZ (mismo que titular)
-    if (campos.tenedorNombre) {
-      this.doc.text('FABRICIANO QUINTERO MUÑOZ', this.pixelToMM(campos.tenedorNombre.x), this.pixelToMM(campos.tenedorNombre.y, false));
+    if (campos.tenedorVehiculo) {
+      this.doc.text('FABRICIANO QUINTERO MUÑOZ', this.pixelToMM(campos.tenedorVehiculo.x), this.pixelToMM(campos.tenedorVehiculo.y, false));
     }
     
     // Documento: 4133687 (mismo que titular)
-    if (campos.tenedorDocumento) {
-      this.doc.text('4133687', this.pixelToMM(campos.tenedorDocumento.x), this.pixelToMM(campos.tenedorDocumento.y, false));
+    if (campos.docIdentificacionTenedor) {
+      this.doc.text('4133687', this.pixelToMM(campos.docIdentificacionTenedor.x), this.pixelToMM(campos.docIdentificacionTenedor.y, false));
     }
     
     // Dirección: FUNZA
-    if (campos.tenedorDireccion) {
-      this.doc.text('FUNZA', this.pixelToMM(campos.tenedorDireccion.x), this.pixelToMM(campos.tenedorDireccion.y, false));
+    if (campos.direccionTenedor) {
+      this.doc.text('FUNZA', this.pixelToMM(campos.direccionTenedor.x), this.pixelToMM(campos.direccionTenedor.y, false));
     }
     
     // Teléfono: 300000000
-    if (campos.tenedorTelefono) {
-      this.doc.text('300000000', this.pixelToMM(campos.tenedorTelefono.x), this.pixelToMM(campos.tenedorTelefono.y, false));
+    if (campos.telefonoTenedor) {
+      this.doc.text('300000000', this.pixelToMM(campos.telefonoTenedor.x), this.pixelToMM(campos.telefonoTenedor.y, false));
     }
     
     // Ciudad: 25286000
-    if (campos.tenedorCiudad) {
-      this.doc.text('25286000', this.pixelToMM(campos.tenedorCiudad.x), this.pixelToMM(campos.tenedorCiudad.y, false));
+    if (campos.ciudadTenedor) {
+      this.doc.text('25286000', this.pixelToMM(campos.ciudadTenedor.x), this.pixelToMM(campos.ciudadTenedor.y, false));
     }
     
     // === CONDUCTOR ===
     
     // Nombre: JAROL ANDRES DURAN SALDAÑA
-    if (campos.conductorNombre) {
-      this.doc.text('JAROL ANDRES DURAN SALDAÑA', this.pixelToMM(campos.conductorNombre.x), this.pixelToMM(campos.conductorNombre.y, false));
+    if (campos.conductor) {
+      this.doc.text('JAROL ANDRES DURAN SALDAÑA', this.pixelToMM(campos.conductor.x), this.pixelToMM(campos.conductor.y, false));
     }
     
     // Dirección: DIAGONAL 18 #3-105 VILLA MARIA ETAPA 3
-    if (campos.conductorDireccion) {
-      this.doc.text('DIAGONAL 18 #3-105 VILLA MARIA ETAPA 3', this.pixelToMM(campos.conductorDireccion.x), this.pixelToMM(campos.conductorDireccion.y, false));
+    if (campos.direccionConductor) {
+      this.doc.text('DIAGONAL 18 #3-105 VILLA MARIA ETAPA 3', this.pixelToMM(campos.direccionConductor.x), this.pixelToMM(campos.direccionConductor.y, false));
     }
     
     // No. Licencia: 1073511288
-    if (campos.conductorLicencia) {
-      this.doc.text(this.manifiesto.conductor_id || '1073511288', this.pixelToMM(campos.conductorLicencia.x), this.pixelToMM(campos.conductorLicencia.y, false));
+    if (campos.noLicencia) {
+      this.doc.text(this.manifiesto.conductor_id || '1073511288', this.pixelToMM(campos.noLicencia.x), this.pixelToMM(campos.noLicencia.y, false));
     }
     
     // Clase Licencia: C2
-    if (campos.conductorClaseLicencia) {
-      this.doc.text('C2', this.pixelToMM(campos.conductorClaseLicencia.x), this.pixelToMM(campos.conductorClaseLicencia.y, false));
+    if (campos.claseLicencia) {
+      this.doc.text('C2', this.pixelToMM(campos.claseLicencia.x), this.pixelToMM(campos.claseLicencia.y, false));
     }
     
     // Ciudad Conductor: FUNZA
-    if (campos.conductorCiudad) {
-      this.doc.text('FUNZA', this.pixelToMM(campos.conductorCiudad.x), this.pixelToMM(campos.conductorCiudad.y, false));
+    if (campos.ciudadConductor) {
+      this.doc.text('FUNZA', this.pixelToMM(campos.ciudadConductor.x), this.pixelToMM(campos.ciudadConductor.y, false));
     }
     
     // === INFORMACIÓN DE CARGA ===
@@ -419,6 +462,47 @@ export class ManifiestoPDFHorizontalGenerator {
     // ID de Ingreso RNDC: 104518661
     const ingresoId = this.manifiesto.ingreso_id ? this.manifiesto.ingreso_id.toString() : '104518661';
     this.doc.text(ingresoId, this.pixelToMM(campos.ingresoId.x), this.pixelToMM(campos.ingresoId.y, false));
+  }
+
+  private async addQRCode(): Promise<void> {
+    try {
+      // Datos del QR según especificaciones exactas
+      const qrContent = [
+        `MEC:104518661`,
+        `Fecha:2025/05/29`,
+        `Placa:${this.manifiesto.placa}`,
+        `Config:2`,
+        `Orig:FUNZA CUNDINAMARCA`,
+        `Dest:GUADUAS CUNDINAMARCA`,
+        `Mercancia:ALIMENTOPARAAVESDECORRAL`,
+        `Conductor:${this.manifiesto.conductor_id}`,
+        `Empresa:TRANSPETROMIRA S.A.S`,
+        `Valor:765,684`,
+        `Seguro:4EeAkw4DSUH8forIQK1oXD2vdhI=`
+      ].join('\n');
+
+      console.log('Generando QR con contenido:', qrContent);
+
+      // Generar QR code
+      const qrDataURL = await QRCode.toDataURL(qrContent, {
+        width: 228, // Tamaño optimizado para el PDF
+        margin: 1,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+
+      // Posición del QR según coordenadas del panel
+      const qrSize = 41.4; // 228 píxeles = ~41.4mm
+      const qrX = this.pixelToMM(this.campos.codigoQR.x); 
+      const qrY = this.pixelToMM(this.campos.codigoQR.y, false);
+
+      this.doc.addImage(qrDataURL, 'PNG', qrX, qrY, qrSize, qrSize);
+      console.log(`Código QR agregado en coordenadas: x=${qrX}mm, y=${qrY}mm, tamaño=${qrSize}mm`);
+    } catch (error) {
+      console.error('Error generando código QR:', error);
+    }
   }
 
   private generateFallbackPDF(): void {
