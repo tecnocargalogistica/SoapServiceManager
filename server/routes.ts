@@ -1708,9 +1708,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Manifiesto no encontrado" });
       }
 
+      // Buscar la remesa asociada para obtener la cantidad cargada
+      const remesaData = await storage.getRemesaByConsecutivo(manifiesto.consecutivo_remesa);
+      if (!remesaData) {
+        return res.status(404).json({ error: "Remesa asociada no encontrada" });
+      }
+
       const cumplimientoData = {
         consecutivoRemesa: manifiesto.consecutivo_remesa,
         fechaCumplimiento: fecha,
+        cantidadCargada: remesaData.toneladas,
+        horaCitaCargue: "08:00",
+        horaCitaDescargue: "13:00",
         config
       };
 
