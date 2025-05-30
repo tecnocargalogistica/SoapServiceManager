@@ -350,68 +350,43 @@ export class ManifiestoPDFHorizontalGenerator {
     
     // === INFORMACIÓN DE CARGA ===
     
-    // Cantidad (Kg): 7.000
-    if (campos.cantidadKg) {
-      this.doc.text('7.000', this.pixelToMM(campos.cantidadKg.x), this.pixelToMM(campos.cantidadKg.y, false));
+    // Cantidad: 7.000 (del panel "cantidad")
+    if (campos.cantidad) {
+      this.doc.text('7.000', this.pixelToMM(campos.cantidad.x), this.pixelToMM(campos.cantidad.y, false));
     }
     
-    // Toneladas: 9.00
-    if (campos.toneladas) {
-      this.doc.text('9.00', this.pixelToMM(campos.toneladas.x), this.pixelToMM(campos.toneladas.y, false));
+    // Cantidad Cargada: 9.00 (del panel "cantidadCargada")
+    if (campos.cantidadCargada) {
+      this.doc.text('9.00', this.pixelToMM(campos.cantidadCargada.x), this.pixelToMM(campos.cantidadCargada.y, false));
     }
     
-    // Unidad Medida: Kilogramos
-    if (campos.unidadMedida) {
-      this.doc.text('Kilogramos', this.pixelToMM(campos.unidadMedida.x), this.pixelToMM(campos.unidadMedida.y, false));
-    }
-    
-    // Naturaleza Carga: Carga Normal
-    if (campos.naturalezaCarga) {
-      this.doc.text('Carga Normal', this.pixelToMM(campos.naturalezaCarga.x), this.pixelToMM(campos.naturalezaCarga.y, false));
-    }
-    
-    // Producto: Alimento para animales
-    if (campos.producto) {
-      this.doc.text('Alimento para animales', this.pixelToMM(campos.producto.x), this.pixelToMM(campos.producto.y, false));
-    }
-    
-    // Empaque: A granel
-    if (campos.empaque) {
-      this.doc.text('A granel', this.pixelToMM(campos.empaque.x), this.pixelToMM(campos.empaque.y, false));
+    // Número Remesa
+    if (campos.numeroRemesa) {
+      this.doc.text(this.manifiesto.consecutivo_remesa || this.manifiesto.numero_manifiesto, this.pixelToMM(campos.numeroRemesa.x), this.pixelToMM(campos.numeroRemesa.y, false));
     }
     
     // === INFORMACIÓN REMITENTE ===
     
-    // NIT y Razón Social: 8600588314 ALBATEQ-ALBATEQ
-    if (campos.remitenteNit) {
-      this.doc.text('8600588314 ALBATEQ-ALBATEQ', this.pixelToMM(campos.remitenteNit.x), this.pixelToMM(campos.remitenteNit.y, false));
+    // Información Remitente: 8600588314 ALBATEQ-ALBATEQ
+    if (campos.informacionRemitente) {
+      this.doc.text('8600588314 ALBATEQ-ALBATEQ', this.pixelToMM(campos.informacionRemitente.x), this.pixelToMM(campos.informacionRemitente.y, false));
     }
     
-    // Dirección y Municipio: VIA FUNZA COTA KILOMETRO 2, FUNZA - CUNDINAMARCA
-    if (campos.remitenteDireccion) {
-      this.doc.text('VIA FUNZA COTA KILOMETRO 2, FUNZA - CUNDINAMARCA', this.pixelToMM(campos.remitenteDireccion.x), this.pixelToMM(campos.remitenteDireccion.y, false));
-    }
-    
-    // Lugar Cargue: FUNZA - CUNDINAMARCA
-    if (campos.lugarCargue) {
-      this.doc.text('FUNZA - CUNDINAMARCA', this.pixelToMM(campos.lugarCargue.x), this.pixelToMM(campos.lugarCargue.y, false));
+    // Información Remitente2: VIA FUNZA COTA KILOMETRO 2, FUNZA - CUNDINAMARCA
+    if (campos.informacionRemitente2) {
+      this.doc.text('VIA FUNZA COTA KILOMETRO 2, FUNZA - CUNDINAMARCA', this.pixelToMM(campos.informacionRemitente2.x), this.pixelToMM(campos.informacionRemitente2.y, false));
     }
     
     // === INFORMACIÓN DESTINATARIO ===
     
-    // NIT y Razón Social: 8600588314 PORVENIR (UVE)2
-    if (campos.destinatarioNit) {
-      this.doc.text('8600588314 PORVENIR (UVE)2', this.pixelToMM(campos.destinatarioNit.x), this.pixelToMM(campos.destinatarioNit.y, false));
+    // Información Destinatario: 8600588314 PORVENIR (UVE)2
+    if (campos.informacionDestinatario) {
+      this.doc.text('8600588314 PORVENIR (UVE)2', this.pixelToMM(campos.informacionDestinatario.x), this.pixelToMM(campos.informacionDestinatario.y, false));
     }
     
-    // Dirección y Municipio: GRANJAS EN LA ZONA DE GUADUAS, GUADUAS - CUNDINAMARCA
-    if (campos.destinatarioDireccion) {
-      this.doc.text('GRANJAS EN LA ZONA DE GUADUAS, GUADUAS - CUNDINAMARCA', this.pixelToMM(campos.destinatarioDireccion.x), this.pixelToMM(campos.destinatarioDireccion.y, false));
-    }
-    
-    // Lugar Descargue: GUADUAS - CUNDINAMARCA
-    if (campos.lugarDescargue) {
-      this.doc.text('GUADUAS - CUNDINAMARCA', this.pixelToMM(campos.lugarDescargue.x), this.pixelToMM(campos.lugarDescargue.y, false));
+    // Información Destinatario2: GRANJAS EN LA ZONA DE GUADUAS, GUADUAS - CUNDINAMARCA
+    if (campos.informacionDestinatario2) {
+      this.doc.text('GRANJAS EN LA ZONA DE GUADUAS, GUADUAS - CUNDINAMARCA', this.pixelToMM(campos.informacionDestinatario2.x), this.pixelToMM(campos.informacionDestinatario2.y, false));
     }
     
     // === VALORES ECONÓMICOS ===
