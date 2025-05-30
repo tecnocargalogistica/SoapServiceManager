@@ -261,14 +261,22 @@ export class ManifiestoPDFHorizontalGenerator {
 
       // === CAMPOS PRINCIPALES ===
     
-    // CONSECUTIVO
+    // CONSECUTIVO (EN NEGRITA Y TAMAÑO MAYOR)
     console.log('CONSECUTIVO: píxeles(' + campos.numeroManifiesto.x + ', ' + campos.numeroManifiesto.y + ') → mm(' + this.pixelToMM(campos.numeroManifiesto.x) + ', ' + this.pixelToMM(campos.numeroManifiesto.y, false) + ')');
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.setFontSize(14);
     this.doc.text(this.manifiesto.numero_manifiesto, this.pixelToMM(campos.numeroManifiesto.x), this.pixelToMM(campos.numeroManifiesto.y, false));
     
-    // ID RESPUESTA
+    // ID RESPUESTA (EN NEGRITA Y TAMAÑO MAYOR)
     console.log('ID RESPUESTA: píxeles(' + campos.idRespuesta.x + ', ' + campos.idRespuesta.y + ') → mm(' + this.pixelToMM(campos.idRespuesta.x) + ', ' + this.pixelToMM(campos.idRespuesta.y, false) + ')');
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.setFontSize(14);
     const idRespuesta = this.manifiesto.id ? this.manifiesto.id.toString() : '';
     this.doc.text(idRespuesta, this.pixelToMM(campos.idRespuesta.x), this.pixelToMM(campos.idRespuesta.y, false));
+    
+    // Restaurar fuente normal para el resto de campos
+    this.doc.setFont('helvetica', 'normal');
+    this.doc.setFontSize(this.campos.fontSize?.normal || 10);
     
     // === DATOS DEL MANIFIESTO ===
     
