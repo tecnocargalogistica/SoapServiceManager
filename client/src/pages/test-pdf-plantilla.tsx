@@ -188,7 +188,7 @@ const TestPDFPlantilla = () => {
         large: 11
       }
     };
-    const generator = new ManifiestoPDFHorizontalGenerator(manifiestoEjemplo, coordinadasCompletas);
+    const generator = new ManifiestoPDFHorizontalGenerator(manifiestoEjemplo, coordinadasCompletas, imagenFondo);
 
     await generator.save();
   };

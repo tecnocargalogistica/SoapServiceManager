@@ -16,15 +16,19 @@ export class ManifiestoPDFHorizontalGenerator {
   private manifiesto: Manifiesto;
   public campos: any;
   private usarCoordenadasPersonalizadas: boolean;
+  private imagenPath: string;
 
   constructor(manifiesto: Manifiesto, coordenadas?: any, imagenCustom?: string) {
     this.manifiesto = manifiesto;
     this.doc = new jsPDF('landscape', 'mm', 'a4');
     this.usarCoordenadasPersonalizadas = !!coordenadas;
     
+    // Inicializar la ruta de imagen por defecto
+    this.imagenPath = manifestoImagePath;
+    
     // Si se proporciona una imagen custom, usarla
     if (imagenCustom) {
-      this.imagenPath = `@assets/${imagenCustom}`;
+      this.imagenPath = `/@fs/home/runner/workspace/attached_assets/${imagenCustom}`;
     }
     
     // Usar coordenadas pasadas como parámetro o coordenadas por defecto
@@ -183,7 +187,7 @@ export class ManifiestoPDFHorizontalGenerator {
     await this.loadPlantillaCoords(!this.usarCoordenadasPersonalizadas);
     
     try {
-      const image = await this.loadImageAsBase64(manifestoImagePath);
+      const image = await this.loadImageAsBase64(this.imagenPath);
       
       if (image) {
         console.log('Imagen de fondo agregada correctamente');
