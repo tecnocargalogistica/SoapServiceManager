@@ -240,11 +240,13 @@ export class ManifiestoPDFHorizontalGenerator {
     const fechaFormateada = format(new Date(this.manifiesto.fecha_expedicion), 'dd/MM/yyyy', { locale: es });
     this.doc.text(fechaFormateada, this.pixelToMM(campos.fechaExpedicion.x), this.pixelToMM(campos.fechaExpedicion.y, false));
 
-    // Origen del viaje
-    this.doc.text(this.manifiesto.municipio_origen || '', this.pixelToMM(campos.origenViaje.x), this.pixelToMM(campos.origenViaje.y, false));
+    // Origen del viaje (usar nombre completo del municipio)
+    const origenCompleto = `${this.manifiesto.municipio_origen_nombre || ''} - ${this.manifiesto.municipio_origen_departamento || ''}`.trim();
+    this.doc.text(origenCompleto, this.pixelToMM(campos.origenViaje.x), this.pixelToMM(campos.origenViaje.y, false));
 
-    // Destino del viaje
-    this.doc.text(this.manifiesto.municipio_destino || '', this.pixelToMM(campos.destinoViaje.x), this.pixelToMM(campos.destinoViaje.y, false));
+    // Destino del viaje (usar nombre completo del municipio)
+    const destinoCompleto = `${this.manifiesto.municipio_destino_nombre || ''} - ${this.manifiesto.municipio_destino_departamento || ''}`.trim();
+    this.doc.text(destinoCompleto, this.pixelToMM(campos.destinoViaje.x), this.pixelToMM(campos.destinoViaje.y, false));
 
     // Placa del vehículo
     this.doc.setFont('helvetica', 'bold');
@@ -258,10 +260,10 @@ export class ManifiestoPDFHorizontalGenerator {
     this.doc.setFont('helvetica', 'normal');
     
     // Titular del manifiesto (nombre propietario del vehículo)
-    this.doc.text(this.manifiesto.propietario_nombre || '', this.pixelToMM(campos.titularManifiesto.x), this.pixelToMM(campos.titularManifiesto.y, false));
+    this.doc.text(this.manifiesto.vehiculo_propietario_nombre || '', this.pixelToMM(campos.titularManifiesto.x), this.pixelToMM(campos.titularManifiesto.y, false));
     
     // Documento de identificación titular
-    this.doc.text(this.manifiesto.propietario_documento || '', this.pixelToMM(campos.docIdentificacionTitular.x), this.pixelToMM(campos.docIdentificacionTitular.y, false));
+    this.doc.text(this.manifiesto.vehiculo_propietario_numero_doc || '', this.pixelToMM(campos.docIdentificacionTitular.x), this.pixelToMM(campos.docIdentificacionTitular.y, false));
     
     // Dirección titular (por ahora vacío - necesita obtener de terceros)
     this.doc.text('', this.pixelToMM(campos.direccionTitular.x), this.pixelToMM(campos.direccionTitular.y, false));
