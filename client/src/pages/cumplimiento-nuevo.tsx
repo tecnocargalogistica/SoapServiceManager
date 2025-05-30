@@ -815,6 +815,37 @@ export default function CumplimientoNuevo() {
             </Card>
           </div>
         )}
+
+        {/* Modal de Confirmación de Procesamiento en Lote para Manifiestos */}
+        {showBatchModalManifiestos && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <Card className="w-full max-w-md">
+              <CardHeader>
+                <CardTitle>Confirmar Procesamiento en Lote - Manifiestos</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  ¿Deseas procesar {selectedManifiestos.length} manifiestos seleccionados? 
+                  Este proceso enviará cada manifiesto al RNDC con pausas de 2 segundos entre envíos.
+                </p>
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowBatchModalManifiestos(false)}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={confirmarProcesarLoteManifiestos}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Procesar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
