@@ -94,8 +94,13 @@ const TestPDFPlantilla = () => {
       console.log('Plantilla activa recibida:', plantillaActiva);
       if (plantillaActiva.coordenadas) {
         try {
-          const coordenadasGuardadas = JSON.parse(plantillaActiva.coordenadas);
-          console.log('Coordenadas parseadas:', coordenadasGuardadas);
+          // Si las coordenadas ya son un objeto, las usamos directamente
+          // Si son un string, las parseamos
+          const coordenadasGuardadas = typeof plantillaActiva.coordenadas === 'string' 
+            ? JSON.parse(plantillaActiva.coordenadas)
+            : plantillaActiva.coordenadas;
+          
+          console.log('Coordenadas cargadas:', coordenadasGuardadas);
           setCoordenadas(coordenadasGuardadas);
           console.log('✅ Plantilla activa cargada automáticamente:', plantillaActiva.nombre);
         } catch (error) {
