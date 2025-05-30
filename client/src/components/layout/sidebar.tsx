@@ -15,8 +15,7 @@ import {
   User,
   LogOut,
   Code2,
-  Printer,
-  Layout
+  Printer
 } from "lucide-react";
 
 const navigation = [
@@ -46,7 +45,6 @@ const navigation = [
     section: "Sistema",
     items: [
       { name: "Configuraciones", href: "/configuracion", icon: Settings },
-      { name: "Plantillas PDF", href: "/test-pdf-plantilla", icon: Layout },
       { name: "Log de Actividades", href: "/logs", icon: History },
     ]
   }

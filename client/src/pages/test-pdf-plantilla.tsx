@@ -73,18 +73,7 @@ const TestPDFPlantilla = () => {
     queryKey: ['/api/manifiestos/completos'],
   });
 
-  const { data: plantillaActiva } = useQuery<any>({
-    queryKey: ['/api/plantillas-pdf/activa'],
-  });
-
   const manifiestoEjemplo = manifiestos?.[0];
-
-  // Cargar coordenadas desde la plantilla activa
-  useEffect(() => {
-    if (plantillaActiva && plantillaActiva.coordenadas) {
-      setCoordenadas(plantillaActiva.coordenadas);
-    }
-  }, [plantillaActiva]);
   
   // Estados para el QR
   const [qrContent, setQrContent] = useState<string>('');
@@ -175,11 +164,11 @@ const TestPDFPlantilla = () => {
     }
   }, [selectedManifiesto]);
 
-  const handleCoordenadasChange = (campo: string, eje: 'x' | 'y' | 'size', valor: number) => {
+  const handleCoordenadasChange = (campo: string, eje: 'x' | 'y', valor: number) => {
     setCoordenadas(prev => ({
       ...prev,
       [campo]: {
-        ...(prev[campo as keyof typeof prev] as any),
+        ...prev[campo as keyof typeof prev],
         [eje]: valor
       }
     }));
@@ -314,46 +303,31 @@ const TestPDFPlantilla = () => {
             </p>
           </CardHeader>
           <CardContent className="space-y-6">
-            {Object.entries(coordenadas).map(([campo, coords]) => {
-              // Asegurar que coords tenga las propiedades x e y
-              const coordsTyped = coords as any;
-              return (
-                <div key={campo} className="grid grid-cols-3 gap-3 items-center">
-                  <Label className="text-sm font-medium">
-                    {campo.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                  </Label>
-                  <div className="flex items-center gap-2">
-                    <Label className="text-xs">X:</Label>
-                    <Input
-                      type="number"
-                      value={coordsTyped.x || 0}
-                      onChange={(e) => handleCoordenadasChange(campo, 'x', Number(e.target.value))}
-                      className="w-20 h-8 text-xs"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Label className="text-xs">Y:</Label>
-                    <Input
-                      type="number"
-                      value={coordsTyped.y || 0}
-                      onChange={(e) => handleCoordenadasChange(campo, 'y', Number(e.target.value))}
-                      className="w-20 h-8 text-xs"
-                    />
-                  </div>
-                  {coordsTyped.size && (
-                    <div className="col-span-3 flex items-center gap-2 ml-4">
-                      <Label className="text-xs">Tamaño:</Label>
-                      <Input
-                        type="number"
-                        value={coordsTyped.size || 0}
-                        onChange={(e) => handleCoordenadasChange(campo, 'size', Number(e.target.value))}
-                        className="w-20 h-8 text-xs"
-                      />
-                    </div>
-                  )}
+            {Object.entries(coordenadas).map(([campo, coords]) => (
+              <div key={campo} className="grid grid-cols-3 gap-3 items-center">
+                <Label className="text-sm font-medium">
+                  {campo.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                </Label>
+                <div className="flex items-center gap-2">
+                  <Label className="text-xs">X:</Label>
+                  <Input
+                    type="number"
+                    value={coords.x}
+                    onChange={(e) => handleCoordenadasChange(campo, 'x', Number(e.target.value))}
+                    className="w-20 h-8 text-xs"
+                  />
                 </div>
-              );
-            })}
+                <div className="flex items-center gap-2">
+                  <Label className="text-xs">Y:</Label>
+                  <Input
+                    type="number"
+                    value={coords.y}
+                    onChange={(e) => handleCoordenadasChange(campo, 'y', Number(e.target.value))}
+                    className="w-20 h-8 text-xs"
+                  />
+                </div>
+              </div>
+            ))}
             
             <div className="pt-4 border-t space-y-3">
               <Button 
