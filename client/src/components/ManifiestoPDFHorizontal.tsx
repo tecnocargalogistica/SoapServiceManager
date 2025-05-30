@@ -687,23 +687,23 @@ export class ManifiestoPDFHorizontalGenerator {
       // Placa del vehículo (campo "Placa Vehiculo")
       if (this.manifiesto.placa) {
         const placaX = 35; // mm
-        const placaY = 52; // mm
+        const placaY = 44; // mm
         console.log(`PLACA SEGUNDA PÁGINA: ${this.manifiesto.placa} en coordenadas directas (${placaX}mm, ${placaY}mm)`);
         this.doc.text(this.manifiesto.placa, placaX, placaY);
       }
 
       // Nombre del conductor (campo "Nombre del Conductor")
       if (this.datosCompletos?.conductor?.nombre_completo) {
-        const nombreX = 90; // mm
-        const nombreY = 52; // mm
+        const nombreX = 120; // mm
+        const nombreY = 44; // mm
         console.log(`NOMBRE CONDUCTOR SEGUNDA PÁGINA: ${this.datosCompletos.conductor.nombre_completo} en coordenadas directas (${nombreX}mm, ${nombreY}mm)`);
         this.doc.text(this.datosCompletos.conductor.nombre_completo, nombreX, nombreY);
       }
 
       // Identificación del conductor (campo "CC")
       if (this.datosCompletos?.conductor?.numero_documento) {
-        const idX = 136; // mm
-        const idY = 52; // mm
+        const idX = 220; // mm
+        const idY = 44; // mm
         console.log(`IDENTIFICACIÓN SEGUNDA PÁGINA: ${this.datosCompletos.conductor.numero_documento} en coordenadas directas (${idX}mm, ${idY}mm)`);
         this.doc.text(this.datosCompletos.conductor.numero_documento, idX, idY);
       }
