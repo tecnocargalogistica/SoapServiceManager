@@ -17,6 +17,7 @@ export class ManifiestoPDFHorizontalGenerator {
   public campos: any;
   private usarCoordenadasPersonalizadas: boolean;
   private imagenPath: string;
+  private datosCompletos: any;
 
   constructor(manifiesto: Manifiesto, coordenadas?: any, imagenCustom?: string) {
     this.manifiesto = manifiesto;
@@ -183,6 +184,9 @@ export class ManifiestoPDFHorizontalGenerator {
   async generate(): Promise<void> {
     console.log('Iniciando generación de PDF horizontal...');
     
+    // Cargar datos completos del manifiesto
+    await this.loadDatosCompletos();
+    
     // Solo cargar coordenadas de plantilla si no se pasaron coordenadas personalizadas
     await this.loadPlantillaCoords(!this.usarCoordenadasPersonalizadas);
     
@@ -201,6 +205,22 @@ export class ManifiestoPDFHorizontalGenerator {
     } catch (error) {
       console.error('Error generando PDF:', error);
       this.generateFallbackPDF();
+    }
+  }
+
+  private async loadDatosCompletos(): Promise<void> {
+    try {
+      const response = await fetch(`/api/manifiestos/datos-completos/${this.manifiesto.numero_manifiesto}`);
+      if (response.ok) {
+        this.datosCompletos = await response.json();
+        console.log('Datos completos cargados:', this.datosCompletos);
+      } else {
+        console.error('Error cargando datos completos del manifiesto');
+        this.datosCompletos = null;
+      }
+    } catch (error) {
+      console.error('Error al cargar datos completos:', error);
+      this.datosCompletos = null;
     }
   }
 
@@ -279,25 +299,48 @@ export class ManifiestoPDFHorizontalGenerator {
     const fecha = format(new Date(this.manifiesto.fecha_expedicion), 'dd/MM/yyyy', { locale: es });
     this.doc.text(fecha, this.pixelToMM(campos.fechaExpedicion.x), this.pixelToMM(campos.fechaExpedicion.y, false));
     
-    // Origen y destino
-    this.doc.text(this.manifiesto.municipio_origen || '', this.pixelToMM(campos.origenViaje.x), this.pixelToMM(campos.origenViaje.y, false));
-    this.doc.text(this.manifiesto.municipio_destino || '', this.pixelToMM(campos.destinoViaje.x), this.pixelToMM(campos.destinoViaje.y, false));
+    // Origen y destino con nombres completos de municipios
+    if (this.datosCompletos?.municipios) {
+      this.doc.text(this.datosCompletos.municipios.origen, this.pixelToMM(campos.origenViaje.x), this.pixelToMM(campos.origenViaje.y, false));
+      this.doc.text(this.datosCompletos.municipios.destino, this.pixelToMM(campos.destinoViaje.x), this.pixelToMM(campos.destinoViaje.y, false));
+    }
     
     // === INFORMACIÓN DEL VEHÍCULO ===
     
     // Placa
     this.doc.text(this.manifiesto.placa || '', this.pixelToMM(campos.placa.x), this.pixelToMM(campos.placa.y, false));
     
-    // === TITULAR DEL MANIFIESTO (PROPIETARIO) ===
-    
-    // Nombre: FABRICIANO QUINTERO MUÑOZ
-    if (campos.titularManifiesto) {
-      this.doc.text('FABRICIANO QUINTERO MUÑOZ', this.pixelToMM(campos.titularManifiesto.x), this.pixelToMM(campos.titularManifiesto.y, false));
+    // Peso vacío del vehículo
+    if (campos.pesoVacio && this.datosCompletos?.vehiculo?.peso_vacio_kg) {
+      this.doc.text(`${this.datosCompletos.vehiculo.peso_vacio_kg} kg`, this.pixelToMM(campos.pesoVacio.x), this.pixelToMM(campos.pesoVacio.y, false));
     }
     
-    // Documento: 4133687
-    if (campos.docIdentificacionTitular) {
-      this.doc.text('4133687', this.pixelToMM(campos.docIdentificacionTitular.x), this.pixelToMM(campos.docIdentificacionTitular.y, false));
+    // Compañía de seguros
+    if (campos.companiaSeguro && this.datosCompletos?.vehiculo?.aseguradora) {
+      this.doc.text(this.datosCompletos.vehiculo.aseguradora, this.pixelToMM(campos.companiaSeguro.x), this.pixelToMM(campos.companiaSeguro.y, false));
+    }
+    
+    // Número de póliza
+    if (campos.numeroPoliza && this.datosCompletos?.vehiculo?.numero_poliza) {
+      this.doc.text(this.datosCompletos.vehiculo.numero_poliza, this.pixelToMM(campos.numeroPoliza.x), this.pixelToMM(campos.numeroPoliza.y, false));
+    }
+    
+    // Fecha de vencimiento SOAT
+    if (campos.vencimientoSoat && this.datosCompletos?.vehiculo?.vence_soat) {
+      const fechaVencimiento = format(new Date(this.datosCompletos.vehiculo.vence_soat), 'dd/MM/yyyy', { locale: es });
+      this.doc.text(fechaVencimiento, this.pixelToMM(campos.vencimientoSoat.x), this.pixelToMM(campos.vencimientoSoat.y, false));
+    }
+    
+    // === TITULAR DEL MANIFIESTO (PROPIETARIO) ===
+    
+    // Nombre del propietario (datos reales)
+    if (campos.titularManifiesto && this.datosCompletos?.propietario?.nombre_completo) {
+      this.doc.text(this.datosCompletos.propietario.nombre_completo, this.pixelToMM(campos.titularManifiesto.x), this.pixelToMM(campos.titularManifiesto.y, false));
+    }
+    
+    // Documento del propietario (datos reales)
+    if (campos.docIdentificacionTitular && this.datosCompletos?.propietario?.numero_documento) {
+      this.doc.text(this.datosCompletos.propietario.numero_documento, this.pixelToMM(campos.docIdentificacionTitular.x), this.pixelToMM(campos.docIdentificacionTitular.y, false));
     }
     
     // Dirección: FUNZA
@@ -344,29 +387,34 @@ export class ManifiestoPDFHorizontalGenerator {
     
     // === CONDUCTOR ===
     
-    // Nombre: JAROL ANDRES DURAN SALDAÑA
-    if (campos.conductor) {
-      this.doc.text('JAROL ANDRES DURAN SALDAÑA', this.pixelToMM(campos.conductor.x), this.pixelToMM(campos.conductor.y, false));
+    // Nombre del conductor (datos reales)
+    if (campos.conductor && this.datosCompletos?.conductor) {
+      this.doc.text(this.datosCompletos.conductor.nombre_completo, this.pixelToMM(campos.conductor.x), this.pixelToMM(campos.conductor.y, false));
     }
     
-    // Dirección: DIAGONAL 18 #3-105 VILLA MARIA ETAPA 3
-    if (campos.direccionConductor) {
-      this.doc.text('DIAGONAL 18 #3-105 VILLA MARIA ETAPA 3', this.pixelToMM(campos.direccionConductor.x), this.pixelToMM(campos.direccionConductor.y, false));
+    // Dirección del conductor (datos reales)
+    if (campos.direccionConductor && this.datosCompletos?.conductor?.direccion) {
+      this.doc.text(this.datosCompletos.conductor.direccion, this.pixelToMM(campos.direccionConductor.x), this.pixelToMM(campos.direccionConductor.y, false));
     }
     
-    // No. Licencia: 1073511288
-    if (campos.noLicencia) {
-      this.doc.text(this.manifiesto.conductor_id || '1073511288', this.pixelToMM(campos.noLicencia.x), this.pixelToMM(campos.noLicencia.y, false));
+    // Teléfono del conductor (datos reales)
+    if (campos.telefonoConductor && this.datosCompletos?.conductor?.telefono) {
+      this.doc.text(this.datosCompletos.conductor.telefono, this.pixelToMM(campos.telefonoConductor.x), this.pixelToMM(campos.telefonoConductor.y, false));
     }
     
-    // Clase Licencia: C2
-    if (campos.claseLicencia) {
-      this.doc.text('C2', this.pixelToMM(campos.claseLicencia.x), this.pixelToMM(campos.claseLicencia.y, false));
+    // No. Licencia: Identificación del conductor
+    if (campos.noLicencia && this.datosCompletos?.conductor?.numero_documento) {
+      this.doc.text(this.datosCompletos.conductor.numero_documento, this.pixelToMM(campos.noLicencia.x), this.pixelToMM(campos.noLicencia.y, false));
     }
     
-    // Ciudad Conductor: FUNZA
-    if (campos.ciudadConductor) {
-      this.doc.text('FUNZA', this.pixelToMM(campos.ciudadConductor.x), this.pixelToMM(campos.ciudadConductor.y, false));
+    // Clase Licencia (datos reales)
+    if (campos.claseLicencia && this.datosCompletos?.conductor?.categoria_licencia) {
+      this.doc.text(this.datosCompletos.conductor.categoria_licencia, this.pixelToMM(campos.claseLicencia.x), this.pixelToMM(campos.claseLicencia.y, false));
+    }
+    
+    // Ciudad Conductor: municipio convertido a nombre
+    if (campos.ciudadConductor && this.datosCompletos?.municipios?.conductor) {
+      this.doc.text(this.datosCompletos.municipios.conductor, this.pixelToMM(campos.ciudadConductor.x), this.pixelToMM(campos.ciudadConductor.y, false));
     }
     
     // === INFORMACIÓN DE CARGA ===

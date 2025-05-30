@@ -1878,5 +1878,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get complete manifiesto data for PDF generation
+  app.get('/api/manifiestos/datos-completos/:numeroManifiesto', async (req: Request, res: Response) => {
+    try {
+      const numeroManifiesto = req.params.numeroManifiesto;
+      
+      // Obtener manifiesto
+      const manifiesto = await storage.getManifiestoByNumero(numeroManifiesto);
+      if (!manifiesto) {
+        return res.status(404).json({ error: "Manifiesto no encontrado" });
+      }
+
+      // Obtener remesa asociada
+      const remesa = await storage.getRemesaByConsecutivo(manifiesto.consecutivo_remesa);
+      if (!remesa) {
+        return res.status(404).json({ error: "Remesa asociada no encontrada" });
+      }
+
+      // Obtener datos del vehículo
+      const vehiculo = await storage.getVehiculoByPlaca(remesa.placa);
+      if (!vehiculo) {
+        return res.status(404).json({ error: "Vehículo no encontrado" });
+      }
+
+      // Obtener datos del conductor
+      const conductor = await storage.getTerceroByDocumento(manifiesto.conductor_id);
+      if (!conductor) {
+        return res.status(404).json({ error: "Conductor no encontrado" });
+      }
+
+      // Obtener propietario del vehículo
+      const propietario = await storage.getTerceroByDocumento(vehiculo.propietario_numero_doc);
+
+      // Obtener municipios
+      const municipios = await storage.getMunicipios();
+      const municipioConductor = municipios.find(m => m.codigo === conductor.municipio_codigo);
+      const sedes = await storage.getSedes();
+      const sedeOrigen = sedes.find(s => s.codigo_sede === remesa.codigo_sede_remitente);
+      const sedeDestino = sedes.find(s => s.codigo_sede === remesa.codigo_sede_destinatario);
+      const municipioOrigen = municipios.find(m => m.codigo === sedeOrigen?.municipio_codigo);
+      const municipioDestino = municipios.find(m => m.codigo === sedeDestino?.municipio_codigo);
+
+      // Preparar datos completos
+      const datosCompletos = {
+        manifiesto,
+        remesa,
+        vehiculo: {
+          ...vehiculo,
+          peso_vacio_kg: vehiculo.peso_vacio,
+          aseguradora: vehiculo.aseguradora,
+          numero_poliza: vehiculo.numero_poliza,
+          vence_soat: vehiculo.vence_soat
+        },
+        conductor: {
+          ...conductor,
+          nombre_completo: `${conductor.nombre} ${conductor.apellido || ''}`.trim(),
+          telefono: conductor.telefono,
+          municipio: municipioConductor ? `${municipioConductor.nombre} CUNDINAMARCA` : 'FUNZA CUNDINAMARCA'
+        },
+        propietario: propietario ? {
+          ...propietario,
+          nombre_completo: propietario.nombre || vehiculo.propietario_nombre
+        } : {
+          nombre_completo: vehiculo.propietario_nombre,
+          numero_documento: vehiculo.propietario_numero_doc
+        },
+        municipios: {
+          origen: municipioOrigen ? `${municipioOrigen.nombre} CUNDINAMARCA` : 'FUNZA CUNDINAMARCA',
+          destino: municipioDestino ? `${municipioDestino.nombre} CUNDINAMARCA` : 'GUADUAS CUNDINAMARCA',
+          conductor: municipioConductor ? `${municipioConductor.nombre} CUNDINAMARCA` : 'FUNZA CUNDINAMARCA'
+        }
+      };
+
+      res.json(datosCompletos);
+    } catch (error: any) {
+      console.error('Error fetching datos completos:', error);
+      res.status(500).json({ error: error.message || 'Error al obtener datos completos' });
+    }
+  });
+
   return httpServer;
 }
