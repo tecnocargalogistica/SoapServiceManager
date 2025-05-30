@@ -6,6 +6,8 @@ import { xmlGenerator } from "./xml-generator";
 import { excelProcessor } from "./excel-processor";
 import multer from "multer";
 import { z } from "zod";
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Configure multer for file uploads
 const upload = multer({ 
@@ -1827,8 +1829,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const filepath = `attached_assets/${filename}`;
 
       // Save file to attached_assets directory
-      const fs = require('fs');
-      const path = require('path');
       
       // Ensure attached_assets directory exists
       const assetsDir = path.join(process.cwd(), 'attached_assets');
