@@ -478,9 +478,15 @@ export class ManifiestoPDFHorizontalGenerator {
     
     // === ID DE CONFIRMACIÓN RNDC ===
     
-    // ID de Ingreso RNDC: 104518661
+    // ID de Ingreso RNDC: 104518661 (EN NEGRITA Y TAMAÑO MAYOR)
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.setFontSize(16);
     const ingresoId = this.manifiesto.ingreso_id ? this.manifiesto.ingreso_id.toString() : '104518661';
     this.doc.text(ingresoId, this.pixelToMM(campos.ingresoId.x), this.pixelToMM(campos.ingresoId.y, false));
+    
+    // Restaurar fuente normal después del ID de ingreso
+    this.doc.setFont('helvetica', 'normal');
+    this.doc.setFontSize(this.campos.fontSize?.normal || 10);
     
     } catch (error) {
       console.error('Error en addTexts:', error);
