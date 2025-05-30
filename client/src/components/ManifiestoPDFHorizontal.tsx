@@ -680,23 +680,26 @@ export class ManifiestoPDFHorizontalGenerator {
       console.log('Agregando textos a la segunda página...');
       
       this.doc.setFont('helvetica', 'normal');
-      this.doc.setFontSize(10);
+      this.doc.setFontSize(9);
       this.doc.setTextColor(0, 0, 0);
 
-      // Coordenadas estimadas basadas en la imagen de la segunda página
-      // Placa del vehículo (en el campo "Placa Vehiculo")
+      // Coordenadas ajustadas para la segunda página basadas en la imagen proporcionada
+      // Placa del vehículo (campo "Placa Vehiculo" - izquierda)
       if (this.manifiesto.placa) {
+        console.log(`PLACA SEGUNDA PÁGINA: ${this.manifiesto.placa} en coordenadas (85, 173)`);
         this.doc.text(this.manifiesto.placa, 85, 173);
       }
 
-      // Nombre del conductor (en el campo "Nombre del Conductor")
+      // Nombre del conductor (campo "Nombre del Conductor" - centro)
       if (this.datosCompletos?.conductor?.nombre_completo) {
-        this.doc.text(this.datosCompletos.conductor.nombre_completo, 290, 173);
+        console.log(`NOMBRE CONDUCTOR SEGUNDA PÁGINA: ${this.datosCompletos.conductor.nombre_completo} en coordenadas (200, 173)`);
+        this.doc.text(this.datosCompletos.conductor.nombre_completo, 200, 173);
       }
 
-      // Identificación del conductor (en el campo "CC")
+      // Identificación del conductor (campo "CC" - derecha)
       if (this.datosCompletos?.conductor?.numero_documento) {
-        this.doc.text(this.datosCompletos.conductor.numero_documento, 500, 173);
+        console.log(`IDENTIFICACIÓN SEGUNDA PÁGINA: ${this.datosCompletos.conductor.numero_documento} en coordenadas (260, 173)`);
+        this.doc.text(this.datosCompletos.conductor.numero_documento, 260, 173);
       }
 
       console.log('Textos de segunda página agregados correctamente');
