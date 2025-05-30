@@ -580,6 +580,37 @@ export default function CumplimientoNuevo() {
             </Card>
           </div>
         )}
+
+        {/* Modal de Confirmación de Procesamiento en Lote */}
+        {showBatchModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <Card className="w-full max-w-md">
+              <CardHeader>
+                <CardTitle>Confirmar Procesamiento en Lote</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  ¿Deseas procesar {selectedRemesas.length} remesas seleccionadas? 
+                  Este proceso enviará cada remesa al RNDC con pausas de 2 segundos entre envíos.
+                </p>
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowBatchModal(false)}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={confirmarProcesarLote}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Procesar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
