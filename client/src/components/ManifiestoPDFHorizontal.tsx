@@ -313,6 +313,16 @@ export class ManifiestoPDFHorizontalGenerator {
     // Placa
     this.doc.text(this.manifiesto.placa || '', this.pixelToMM(campos.placa.x), this.pixelToMM(campos.placa.y, false));
     
+    // Marca del vehículo
+    if (campos.marcaVehiculo && this.datosCompletos?.vehiculo?.marca) {
+      this.doc.text(this.datosCompletos.vehiculo.marca, this.pixelToMM(campos.marcaVehiculo.x), this.pixelToMM(campos.marcaVehiculo.y, false));
+    }
+    
+    // Configuración del vehículo
+    if (campos.configuracionVehiculo && this.datosCompletos?.vehiculo?.configuracion) {
+      this.doc.text(this.datosCompletos.vehiculo.configuracion, this.pixelToMM(campos.configuracionVehiculo.x), this.pixelToMM(campos.configuracionVehiculo.y, false));
+    }
+    
     // Peso vacío del vehículo
     if (campos.pesoVacio && this.datosCompletos?.vehiculo?.peso_vacio_kg) {
       this.doc.text(`${this.datosCompletos.vehiculo.peso_vacio_kg} kg`, this.pixelToMM(campos.pesoVacio.x), this.pixelToMM(campos.pesoVacio.y, false));
@@ -323,9 +333,10 @@ export class ManifiestoPDFHorizontalGenerator {
       this.doc.text(this.datosCompletos.vehiculo.aseguradora, this.pixelToMM(campos.companiaSeguro.x), this.pixelToMM(campos.companiaSeguro.y, false));
     }
     
-    // Número de póliza
+    // Número de póliza (solo 6 primeros números)
     if (campos.numeroPoliza && this.datosCompletos?.vehiculo?.numero_poliza) {
-      this.doc.text(this.datosCompletos.vehiculo.numero_poliza, this.pixelToMM(campos.numeroPoliza.x), this.pixelToMM(campos.numeroPoliza.y, false));
+      const primeros6Numeros = this.datosCompletos.vehiculo.numero_poliza.substring(0, 6);
+      this.doc.text(primeros6Numeros, this.pixelToMM(campos.numeroPoliza.x), this.pixelToMM(campos.numeroPoliza.y, false));
     }
     
     // Fecha de vencimiento SOAT
