@@ -210,22 +210,7 @@ const EditorPlantillaVisual = () => {
               <CardTitle>Herramientas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Subir imagen */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Imagen de Fondo</Label>
-                <Input
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png"
-                  onChange={subirImagenFondo}
-                  disabled={subiendoImagen}
-                  className="text-xs"
-                />
-                {imagenFondo && (
-                  <p className="text-xs text-green-600">
-                    ✓ {imagenFondo}
-                  </p>
-                )}
-              </div>
+
 
               {/* Control de zoom */}
               <div className="space-y-2">
