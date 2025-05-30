@@ -19,7 +19,7 @@ interface DraggableField {
 }
 
 const EditorPlantillaVisual = () => {
-  const [imagenFondo, setImagenFondo] = useState<string>("plantilla_1748585072912_PLANTILLA_REAL1_P__gina_1.png");
+  const [imagenFondo, setImagenFondo] = useState<string>("plantilla_1748585151835_PLANTILLA_REAL1_P__gina_1.png");
   const [subiendoImagen, setSubiendoImagen] = useState(false);
   const [draggedField, setDraggedField] = useState<string | null>(null);
   const [scale, setScale] = useState(1);
@@ -298,7 +298,7 @@ const EditorPlantillaVisual = () => {
                     width: `${837 * scale}px`, // Formato horizontal (279mm * 3)
                     height: `${648 * scale}px`, // (216mm * 3)
                     transformOrigin: 'top center',
-                    backgroundImage: imagenFondo ? `url(/api/plantillas-pdf/imagen/${imagenFondo})` : 'none',
+                    backgroundImage: imagenFondo ? `url(/@fs/home/runner/workspace/attached_assets/${imagenFondo})` : 'none',
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center'
