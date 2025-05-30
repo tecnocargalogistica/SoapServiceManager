@@ -694,17 +694,17 @@ export class ManifiestoPDFHorizontalGenerator {
 
       // Nombre del conductor (campo "Nombre del Conductor")
       if (this.datosCompletos?.conductor?.nombre_completo) {
-        const nombreX = this.pixelToMM(333);
-        const nombreY = this.pixelToMM(152, false);
-        console.log(`NOMBRE CONDUCTOR SEGUNDA PÁGINA: ${this.datosCompletos.conductor.nombre_completo} en píxeles (333, 152) → mm (${nombreX}, ${nombreY})`);
+        const nombreX = 120; // mm - ajustar según necesidad
+        const nombreY = 46; // mm - misma línea que la placa
+        console.log(`NOMBRE CONDUCTOR SEGUNDA PÁGINA: ${this.datosCompletos.conductor.nombre_completo} en coordenadas directas (${nombreX}mm, ${nombreY}mm)`);
         this.doc.text(this.datosCompletos.conductor.nombre_completo, nombreX, nombreY);
       }
 
       // Identificación del conductor (campo "CC")
       if (this.datosCompletos?.conductor?.numero_documento) {
-        const idX = this.pixelToMM(522);
-        const idY = this.pixelToMM(152, false);
-        console.log(`IDENTIFICACIÓN SEGUNDA PÁGINA: ${this.datosCompletos.conductor.numero_documento} en píxeles (522, 152) → mm (${idX}, ${idY})`);
+        const idX = 200; // mm - ajustar según necesidad
+        const idY = 46; // mm - misma línea que los otros campos
+        console.log(`IDENTIFICACIÓN SEGUNDA PÁGINA: ${this.datosCompletos.conductor.numero_documento} en coordenadas directas (${idX}mm, ${idY}mm)`);
         this.doc.text(this.datosCompletos.conductor.numero_documento, idX, idY);
       }
 
