@@ -348,10 +348,109 @@ export default function CumplimientoNuevo() {
     previewManifiestoMutation.mutate(numeroManifiesto);
   };
 
+  // Mutación para cumplir manifiesto directamente
+  const cumplirManifiestoMutation = useMutation({
+    mutationFn: async (data: { numeroManifiesto: string; fecha: string }) => {
+      const response = await fetch(`/api/cumplimiento/manifiesto`, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      console.log("Respuesta cumplimiento manifiesto:", data);
+      setRndcResponse(data);
+      
+      if (data.success) {
+        toast({
+          title: "Cumplimiento exitoso",
+          description: "El manifiesto ha sido cumplido correctamente en el RNDC",
+        });
+        setShowXmlModal(false);
+        setXmlPreview("");
+        queryClient.invalidateQueries({ queryKey: ["/api/manifiestos/completos"] });
+      } else {
+        toast({
+          title: "Error en cumplimiento",
+          description: data.mensaje || "Error al cumplir manifiesto en el RNDC",
+          variant: "destructive",
+        });
+      }
+    },
+    onError: (error: any) => {
+      console.log("Error en cumplimiento manifiesto:", error);
+      setRndcResponse({ success: false, error: error.message });
+      
+      toast({
+        title: "Error de conexión",
+        description: error.message || "Error al conectar con el RNDC",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Procesamiento en lotes para manifiestos
+  const procesarLoteManifiestosMutation = useMutation({
+    mutationFn: async (numeroManifiestos: string[]) => {
+      const results = [];
+      setBatchProgress({ processing: true, current: 0, total: numeroManifiestos.length });
+      
+      for (let i = 0; i < numeroManifiestos.length; i++) {
+        const numeroManifiesto = numeroManifiestos[i];
+        setBatchProgress(prev => ({ ...prev, current: i + 1 }));
+        
+        try {
+          const response = await fetch(`/api/cumplimiento/manifiesto`, {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              numeroManifiesto,
+              fecha: new Date().toISOString().split('T')[0]
+            }),
+          });
+          const data = await response.json();
+          
+          results.push({ 
+            consecutivo: numeroManifiesto, 
+            success: data.success, 
+            message: data.success ? "Enviado exitosamente" : data.mensaje 
+          });
+          
+          // Pausa de 2 segundos entre envíos
+          if (i < numeroManifiestos.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+          
+        } catch (error) {
+          results.push({ consecutivo: numeroManifiesto, success: false, message: `Error: ${error}` });
+        }
+      }
+      
+      setBatchResults(results);
+      setBatchProgress(prev => ({ ...prev, processing: false }));
+      return results;
+    },
+    onSuccess: (results) => {
+      const exitosos = results.filter(r => r.success).length;
+      toast({
+        title: "Procesamiento Completado",
+        description: `${exitosos} de ${results.length} cumplimientos de manifiestos enviados exitosamente`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/manifiestos/completos"] });
+    },
+  });
+
+  const confirmarProcesarLoteManifiestos = () => {
+    procesarLoteManifiestosMutation.mutate(selectedManifiestos);
+    setShowBatchModalManifiestos(false);
+  };
+
   const remesasPendientes = remesasExitosas || [];
-  const manifiestosPendientes = manifiestos?.filter(m => 
-    m.estado === "exitoso" && m.ingreso_id
-  ) || [];
+  const manifiestosPendientes = Array.isArray(manifiestos) ? 
+    manifiestos.filter((m: any) => 
+      m.estado === "exitoso" && m.ingreso_id
+    ) : [];
 
   return (
     <div className="container mx-auto py-6">
@@ -649,15 +748,22 @@ export default function CumplimientoNuevo() {
             <Card className="w-full max-w-4xl max-h-[80vh] overflow-hidden">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                  XML de Cumplimiento - Remesa {selectedRemesa}
+                  XML de Cumplimiento - {selectedRemesa ? `Remesa ${selectedRemesa}` : `Manifiesto ${selectedManifiesto}`}
                   <div className="flex gap-2">
                     <Button
-                      onClick={handleEnviarCumplimiento}
-                      disabled={enviarMutation.isPending}
+                      onClick={selectedRemesa ? handleEnviarCumplimiento : () => {
+                        if (selectedManifiesto) {
+                          cumplirManifiestoMutation.mutate({
+                            numeroManifiesto: selectedManifiesto,
+                            fecha: new Date().toISOString().split('T')[0]
+                          });
+                        }
+                      }}
+                      disabled={selectedRemesa ? cumplirRemesaMutation.isPending : cumplirManifiestoMutation.isPending}
                       className="bg-green-600 hover:bg-green-700"
                     >
                       <Send className="h-4 w-4 mr-2" />
-                      {enviarMutation.isPending ? "Enviando..." : "Enviar al RNDC"}
+                      {(selectedRemesa ? cumplirRemesaMutation.isPending : cumplirManifiestoMutation.isPending) ? "Enviando..." : "Enviar al RNDC"}
                     </Button>
                     <Button
                       variant="outline"
