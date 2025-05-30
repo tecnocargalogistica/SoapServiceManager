@@ -514,46 +514,53 @@ export class ManifiestoPDFHorizontalGenerator {
         format: 'a4'
       });
       
-      this.doc.setFontSize(16);
-      this.doc.setFont('helvetica', 'bold');
-      this.doc.text('MANIFIESTO ELECTRÓNICO DE CARGA', 148.5, 30, { align: 'center' });
-      
-      this.doc.setFontSize(12);
-      this.doc.text('TRANSPORTEMIRA S.A.S', 148.5, 45, { align: 'center' });
-      
-      this.doc.setFontSize(10);
-      this.doc.setFont('helvetica', 'normal');
-      let y = 70;
-      
-      this.doc.setFont('helvetica', 'bold');
-      this.doc.setFontSize(12);
-      this.doc.text('CONSECUTIVO:', 20, y);
-      this.doc.text(this.manifiesto.numero_manifiesto, 80, y);
-      y += 15;
-      
-      this.doc.text('ID RESPUESTA:', 20, y);
-      const idRespuesta = this.manifiesto.id ? this.manifiesto.id.toString() : '';
-      this.doc.text(idRespuesta, 80, y);
-      y += 15;
+      try {
+        this.doc.setFontSize(16);
+        this.doc.setFont('helvetica', 'bold');
+        this.doc.text('MANIFIESTO ELECTRÓNICO DE CARGA', 148.5, 30, { align: 'center' });
+        
+        this.doc.setFontSize(12);
+        this.doc.text('TRANSPORTEMIRA S.A.S', 148.5, 45, { align: 'center' });
+        
+        this.doc.setFontSize(10);
+        this.doc.setFont('helvetica', 'normal');
+        let y = 70;
+        
+        this.doc.setFont('helvetica', 'bold');
+        this.doc.setFontSize(12);
+        this.doc.text('CONSECUTIVO:', 20, y);
+        this.doc.text(this.manifiesto.numero_manifiesto, 80, y);
+        y += 15;
+        
+        this.doc.text('ID RESPUESTA:', 20, y);
+        const idRespuesta = this.manifiesto.id ? this.manifiesto.id.toString() : '';
+        this.doc.text(idRespuesta, 80, y);
+        y += 15;
+        
+        this.doc.setFont('helvetica', 'normal');
+        this.doc.setFontSize(10);
+        
+        const fecha = format(new Date(this.manifiesto.fecha_expedicion), 'dd/MM/yyyy', { locale: es });
+        this.doc.text(`Fecha de Expedición: ${fecha}`, 20, y);
+        y += 10;
+        
+        this.doc.text(`Placa: ${this.manifiesto.placa || ''}`, 20, y);
+        y += 10;
+        
+        this.doc.text(`Origen: ${this.manifiesto.municipio_origen || ''}`, 20, y);
+        y += 10;
+        
+        this.doc.text(`Destino: ${this.manifiesto.municipio_destino || ''}`, 20, y);
+        y += 10;
+        
+        this.doc.text(`Conductor: ${this.manifiesto.conductor_id || ''}`, 20, y);
+      } catch (innerError) {
+        console.error('Error en PDF básico:', innerError);
+        // Si todo falla, crear un PDF mínimo
+        this.doc.setFontSize(14);
+        this.doc.text('Error generando manifiesto', 20, 50);
+      }
     }
-    
-    this.doc.setFont('helvetica', 'normal');
-    this.doc.setFontSize(10);
-    
-    const fecha = format(new Date(this.manifiesto.fecha_expedicion), 'dd/MM/yyyy', { locale: es });
-    this.doc.text(`Fecha de Expedición: ${fecha}`, 20, y);
-    y += 10;
-    
-    this.doc.text(`Placa: ${this.manifiesto.placa}`, 20, y);
-    y += 10;
-    
-    this.doc.text(`Origen: ${this.manifiesto.municipio_origen}`, 20, y);
-    y += 10;
-    
-    this.doc.text(`Destino: ${this.manifiesto.municipio_destino}`, 20, y);
-    y += 10;
-    
-    this.doc.text(`Conductor: ${this.manifiesto.conductor_id}`, 20, y);
   }
 
   async save(): Promise<void> {
