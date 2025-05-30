@@ -11,8 +11,9 @@ import { DataTable } from "@/components/data-table";
 import { MunicipioForm } from "@/components/forms/municipio-form";
 import { ConsecutivoForm } from "@/components/forms/consecutivo-form";
 import { useToast } from "@/hooks/use-toast";
-import { Save, TestTube, Settings, Database, Wifi, WifiOff, MapPin, Upload, Plus } from "lucide-react";
+import { Save, TestTube, Settings, Database, Wifi, WifiOff, MapPin, Upload, Plus, FileText, Edit } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
+import { Link } from "wouter";
 
 export default function Configuracion() {
   const [formData, setFormData] = useState<any>({});
@@ -244,7 +245,7 @@ export default function Configuracion() {
       </div>
 
       <Tabs defaultValue="soap" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="soap" className="flex items-center space-x-2">
             <Settings className="h-4 w-4" />
             <span>Configuración SOAP</span>
@@ -256,6 +257,10 @@ export default function Configuracion() {
           <TabsTrigger value="municipios" className="flex items-center space-x-2">
             <MapPin className="h-4 w-4" />
             <span>Municipios</span>
+          </TabsTrigger>
+          <TabsTrigger value="plantillas" className="flex items-center space-x-2">
+            <Upload className="h-4 w-4" />
+            <span>Plantillas PDF</span>
           </TabsTrigger>
           <TabsTrigger value="sistema" className="flex items-center space-x-2">
             <Settings className="h-4 w-4" />
@@ -475,6 +480,80 @@ export default function Configuracion() {
               />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Plantillas PDF */}
+        <TabsContent value="plantillas">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <FileText className="h-5 w-5" />
+                  <span>Editor Visual de Plantillas</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-gray-600">
+                  Configura visualmente las coordenadas de los campos en tus plantillas PDF usando el editor drag-and-drop.
+                </p>
+                
+                <div className="space-y-3">
+                  <Link href="/editor-plantilla-visual">
+                    <Button className="w-full justify-start">
+                      <Edit className="h-4 w-4 mr-2" />
+                      Editor Visual de Coordenadas
+                    </Button>
+                  </Link>
+                  
+                  <Link href="/test-pdf-plantilla">
+                    <Button variant="outline" className="w-full justify-start">
+                      <FileText className="h-4 w-4 mr-2" />
+                      Editor Manual de Coordenadas
+                    </Button>
+                  </Link>
+                </div>
+
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-blue-800 mb-2">Funcionalidades:</h4>
+                  <div className="text-sm text-blue-700 space-y-1">
+                    <p>• Arrastra y posiciona campos visualmente</p>
+                    <p>• Sube imágenes de plantillas personalizadas</p>
+                    <p>• Previsualiza resultados en tiempo real</p>
+                    <p>• Guarda configuraciones automáticamente</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Plantillas Guardadas</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-gray-600">
+                  Gestiona tus plantillas PDF guardadas y selecciona la plantilla activa.
+                </p>
+                
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-green-800 mb-2">Plantilla Activa:</h4>
+                  <p className="text-sm text-green-700">
+                    Plantilla Visual RNDC (Última guardada)
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Button variant="outline" className="w-full justify-start">
+                    <Database className="h-4 w-4 mr-2" />
+                    Ver Todas las Plantillas
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Importar Plantilla
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         {/* Sistema */}
