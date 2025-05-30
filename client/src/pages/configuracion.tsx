@@ -24,6 +24,8 @@ export default function Configuracion() {
   const [uploadingExcel, setUploadingExcel] = useState(false);
   const [showConsecutivoForm, setShowConsecutivoForm] = useState(false);
   const [editingConsecutivo, setEditingConsecutivo] = useState<any>(null);
+  const [editingPlantilla, setEditingPlantilla] = useState<any>(null);
+  const [coordenadasPlantilla, setCoordenadasPlantilla] = useState<any>(null);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -46,6 +48,14 @@ export default function Configuracion() {
 
   const { data: municipios = [] } = useQuery({
     queryKey: ["/api/municipios"]
+  });
+
+  const { data: plantillas = [] } = useQuery({
+    queryKey: ["/api/plantillas-pdf"]
+  });
+
+  const { data: plantillaActiva } = useQuery({
+    queryKey: ["/api/plantillas-pdf/activa"]
   });
 
   const updateConfigMutation = useMutation({
@@ -162,6 +172,32 @@ export default function Configuracion() {
       toast({ title: "Error al cargar archivo", variant: "destructive" });
     } finally {
       setUploadingExcel(false);
+    }
+  };
+
+  const handleCargarPlantillaActiva = () => {
+    if (plantillaActiva && plantillaActiva.coordenadas) {
+      try {
+        const coordenadas = JSON.parse(plantillaActiva.coordenadas);
+        setCoordenadasPlantilla(coordenadas);
+        setEditingPlantilla(plantillaActiva);
+        toast({
+          title: "Plantilla cargada",
+          description: `Se cargó la plantilla "${plantillaActiva.nombre}" con sus coordenadas`
+        });
+      } catch (error) {
+        toast({
+          title: "Error al cargar plantilla",
+          description: "Las coordenadas de la plantilla no son válidas",
+          variant: "destructive"
+        });
+      }
+    } else {
+      toast({
+        title: "No hay plantilla activa",
+        description: "No se encontró una plantilla activa para cargar",
+        variant: "destructive"
+      });
     }
   };
 
@@ -520,29 +556,58 @@ export default function Configuracion() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Plantillas Guardadas</CardTitle>
+                <CardTitle>Plantilla Activa</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-gray-600">
-                  Gestiona tus plantillas PDF guardadas y selecciona la plantilla activa.
-                </p>
-                
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h4 className="font-medium text-green-800 mb-2">Plantilla Activa:</h4>
-                  <p className="text-sm text-green-700">
-                    Plantilla Visual RNDC (Última guardada)
-                  </p>
-                </div>
+                {plantillaActiva ? (
+                  <div className="bg-green-50 p-4 rounded-lg">
+                    <h4 className="font-medium text-green-800 mb-2">Plantilla Actual:</h4>
+                    <p className="text-sm text-green-700 mb-2">
+                      {plantillaActiva.nombre}
+                    </p>
+                    <p className="text-xs text-green-600">
+                      Activa desde: {new Date(plantillaActiva.updated_at || plantillaActiva.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="bg-yellow-50 p-4 rounded-lg">
+                    <h4 className="font-medium text-yellow-800 mb-2">Sin Plantilla Activa</h4>
+                    <p className="text-sm text-yellow-700">
+                      No hay una plantilla PDF configurada como activa
+                    </p>
+                  </div>
+                )}
 
                 <div className="space-y-2">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Database className="h-4 w-4 mr-2" />
-                    Ver Todas las Plantillas
+                  <Button 
+                    variant="default" 
+                    className="w-full justify-start"
+                    onClick={handleCargarPlantillaActiva}
+                    disabled={!plantillaActiva}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Cargar Plantilla para Editar
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Importar Plantilla
-                  </Button>
+                  
+                  {coordenadasPlantilla && (
+                    <div className="bg-blue-50 p-3 rounded-lg">
+                      <p className="text-sm text-blue-700">
+                        ✓ Plantilla cargada y lista para editar
+                      </p>
+                      <Link href="/test-pdf-plantilla">
+                        <Button variant="outline" size="sm" className="mt-2">
+                          Ir al Editor de Plantillas
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+
+                  <Link href="/test-pdf-plantilla">
+                    <Button variant="outline" className="w-full justify-start">
+                      <Upload className="h-4 w-4 mr-2" />
+                      Ir al Editor de Plantillas
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
