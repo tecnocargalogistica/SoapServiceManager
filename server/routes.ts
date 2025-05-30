@@ -1807,6 +1807,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Upload image for plantilla PDF
+  app.post("/api/plantillas-pdf/upload-image", upload.single('image'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No se proporcionó archivo de imagen" });
+      }
+
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+      if (!allowedTypes.includes(req.file.mimetype)) {
+        return res.status(400).json({ error: "Tipo de archivo no válido. Solo se permiten JPG, JPEG y PNG" });
+      }
+
+      // Generate unique filename
+      const timestamp = Date.now();
+      const originalName = req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const filename = `plantilla_${timestamp}_${originalName}`;
+      const filepath = `attached_assets/${filename}`;
+
+      // Save file to attached_assets directory
+      const fs = require('fs');
+      const path = require('path');
+      
+      // Ensure attached_assets directory exists
+      const assetsDir = path.join(process.cwd(), 'attached_assets');
+      if (!fs.existsSync(assetsDir)) {
+        fs.mkdirSync(assetsDir, { recursive: true });
+      }
+      
+      const fullPath = path.join(assetsDir, filename);
+      fs.writeFileSync(fullPath, req.file.buffer);
+
+      res.json({ 
+        success: true, 
+        filename,
+        path: filepath,
+        originalName: req.file.originalname
+      });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      res.status(500).json({ error: "Error al subir imagen" });
+    }
+  });
+
   // Ruta para obtener manifiestos con datos completos
   app.get('/api/manifiestos/completos', async (req: Request, res: Response) => {
     try {

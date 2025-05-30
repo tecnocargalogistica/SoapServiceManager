@@ -11,6 +11,8 @@ import type { Manifiesto } from "@/../../shared/schema";
 import QRCode from 'qrcode';
 
 const TestPDFPlantilla = () => {
+  const [imagenFondo, setImagenFondo] = useState<string>("");
+  const [subiendoImagen, setSubiendoImagen] = useState(false);
   const [coordenadas, setCoordenadas] = useState({
     // Coordenadas en píxeles según tu imagen (1635x1050)
     numeroManifiesto: { x: 1076, y: 170 }, // CONSECUTIVO
@@ -191,13 +193,41 @@ const TestPDFPlantilla = () => {
     await generator.save();
   };
 
+  const subirImagenFondo = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setSubiendoImagen(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('/api/plantillas-pdf/upload-image', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setImagenFondo(result.filename);
+        console.log('Imagen subida:', result.filename);
+      } else {
+        console.error('Error al subir imagen');
+      }
+    } catch (error) {
+      console.error('Error al subir archivo:', error);
+    } finally {
+      setSubiendoImagen(false);
+    }
+  };
+
   const guardarPlantilla = async () => {
     try {
       const plantillaData = {
         nombre: "Plantilla RNDC Horizontal",
         descripcion: "Plantilla para manifiestos RNDC con imagen horizontal",
         coordenadas: coordenadas,
-        imagen_path: "Manifiesto.jpg",
+        imagen_path: imagenFondo || "Manifiesto_PNG_Página_1.jpg",
         formato: "horizontal",
         activa: true
       };
@@ -328,6 +358,28 @@ const TestPDFPlantilla = () => {
             ))}
             
             <div className="pt-4 border-t space-y-3">
+              {/* Subir imagen de fondo */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Imagen de Fondo</Label>
+                <Input
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png"
+                  onChange={subirImagenFondo}
+                  disabled={subiendoImagen}
+                  className="text-xs"
+                />
+                {imagenFondo && (
+                  <p className="text-xs text-green-600">
+                    ✓ Imagen: {imagenFondo}
+                  </p>
+                )}
+                {subiendoImagen && (
+                  <p className="text-xs text-blue-600">
+                    Subiendo imagen...
+                  </p>
+                )}
+              </div>
+              
               <Button 
                 onClick={generarPDFConCoordenadas}
                 className="w-full"

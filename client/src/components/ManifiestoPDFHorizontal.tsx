@@ -17,10 +17,15 @@ export class ManifiestoPDFHorizontalGenerator {
   public campos: any;
   private usarCoordenadasPersonalizadas: boolean;
 
-  constructor(manifiesto: Manifiesto, coordenadas?: any) {
+  constructor(manifiesto: Manifiesto, coordenadas?: any, imagenCustom?: string) {
     this.manifiesto = manifiesto;
     this.doc = new jsPDF('landscape', 'mm', 'a4');
     this.usarCoordenadasPersonalizadas = !!coordenadas;
+    
+    // Si se proporciona una imagen custom, usarla
+    if (imagenCustom) {
+      this.imagenPath = `@assets/${imagenCustom}`;
+    }
     
     // Usar coordenadas pasadas como parámetro o coordenadas por defecto
     this.campos = coordenadas || {
