@@ -500,33 +500,42 @@ export class ManifiestoPDFHorizontalGenerator {
   private generateFallbackPDF(): void {
     console.log('Generando PDF básico sin imagen de fondo...');
     
-    this.doc = new jsPDF({
-      orientation: 'landscape',
-      unit: 'mm',
-      format: 'a4'
-    });
-    
-    this.doc.setFontSize(16);
-    this.doc.setFont('helvetica', 'bold');
-    this.doc.text('MANIFIESTO ELECTRÓNICO DE CARGA', 148.5, 30, { align: 'center' });
-    
-    this.doc.setFontSize(12);
-    this.doc.text('TRANSPORTEMIRA S.A.S', 148.5, 45, { align: 'center' });
-    
-    this.doc.setFontSize(10);
-    this.doc.setFont('helvetica', 'normal');
-    let y = 70;
-    
-    this.doc.setFont('helvetica', 'bold');
-    this.doc.setFontSize(12);
-    this.doc.text('CONSECUTIVO:', 20, y);
-    this.doc.text(this.manifiesto.numero_manifiesto, 80, y);
-    y += 15;
-    
-    this.doc.text('ID RESPUESTA:', 20, y);
-    const idRespuesta = this.manifiesto.id ? this.manifiesto.id.toString() : 'ID_XML_RESPONSE';
-    this.doc.text(idRespuesta, 80, y);
-    y += 15;
+    try {
+      // Agregar textos sin imagen de fondo
+      this.addTexts();
+      this.addQRCode();
+    } catch (error) {
+      console.error('Error en PDF de respaldo, creando PDF básico:', error);
+      
+      // Crear un PDF completamente nuevo si hay errores
+      this.doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      this.doc.setFontSize(16);
+      this.doc.setFont('helvetica', 'bold');
+      this.doc.text('MANIFIESTO ELECTRÓNICO DE CARGA', 148.5, 30, { align: 'center' });
+      
+      this.doc.setFontSize(12);
+      this.doc.text('TRANSPORTEMIRA S.A.S', 148.5, 45, { align: 'center' });
+      
+      this.doc.setFontSize(10);
+      this.doc.setFont('helvetica', 'normal');
+      let y = 70;
+      
+      this.doc.setFont('helvetica', 'bold');
+      this.doc.setFontSize(12);
+      this.doc.text('CONSECUTIVO:', 20, y);
+      this.doc.text(this.manifiesto.numero_manifiesto, 80, y);
+      y += 15;
+      
+      this.doc.text('ID RESPUESTA:', 20, y);
+      const idRespuesta = this.manifiesto.id ? this.manifiesto.id.toString() : '';
+      this.doc.text(idRespuesta, 80, y);
+      y += 15;
+    }
     
     this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(10);
