@@ -198,6 +198,9 @@ export class ManifiestoPDFHorizontalGenerator {
         this.doc.addImage(image, 'JPEG', 0, 0, 297, 210);
         this.addTexts();
         await this.addQRCode();
+        
+        // Agregar segunda página
+        await this.addSecondPage();
       } else {
         console.log('No se pudo cargar la imagen, generando PDF básico...');
         this.generateFallbackPDF();
@@ -644,6 +647,61 @@ export class ManifiestoPDFHorizontalGenerator {
         this.doc.setFontSize(14);
         this.doc.text('Error generando manifiesto', 20, 50);
       }
+    }
+  }
+
+  private async addSecondPage(): Promise<void> {
+    try {
+      console.log('Agregando segunda página del manifiesto...');
+      
+      // Agregar nueva página
+      this.doc.addPage();
+      
+      // Cargar imagen de la segunda página
+      const imagenSegundaPagina = `/@fs/home/runner/workspace/attached_assets/Manifiesto_PNG_Página_2.png`;
+      const image = await this.loadImageAsBase64(imagenSegundaPagina);
+      
+      if (image) {
+        console.log('Imagen de segunda página cargada correctamente');
+        this.doc.addImage(image, 'PNG', 0, 0, 297, 210);
+        
+        // Agregar campos duplicados en la segunda página
+        this.addSecondPageTexts();
+      } else {
+        console.log('No se pudo cargar la imagen de la segunda página');
+      }
+    } catch (error) {
+      console.error('Error agregando segunda página:', error);
+    }
+  }
+
+  private addSecondPageTexts(): void {
+    try {
+      console.log('Agregando textos a la segunda página...');
+      
+      this.doc.setFont('helvetica', 'normal');
+      this.doc.setFontSize(10);
+      this.doc.setTextColor(0, 0, 0);
+
+      // Coordenadas estimadas basadas en la imagen de la segunda página
+      // Placa del vehículo (en el campo "Placa Vehiculo")
+      if (this.manifiesto.placa) {
+        this.doc.text(this.manifiesto.placa, 85, 173);
+      }
+
+      // Nombre del conductor (en el campo "Nombre del Conductor")
+      if (this.datosCompletos?.conductor?.nombre_completo) {
+        this.doc.text(this.datosCompletos.conductor.nombre_completo, 290, 173);
+      }
+
+      // Identificación del conductor (en el campo "CC")
+      if (this.datosCompletos?.conductor?.numero_documento) {
+        this.doc.text(this.datosCompletos.conductor.numero_documento, 500, 173);
+      }
+
+      console.log('Textos de segunda página agregados correctamente');
+    } catch (error) {
+      console.error('Error agregando textos a la segunda página:', error);
     }
   }
 
