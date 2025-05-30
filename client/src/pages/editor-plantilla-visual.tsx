@@ -48,57 +48,13 @@ const EditorPlantillaVisual = () => {
         setImagenFondo(plantillaActiva.imagen_path);
       }
       
-      // Mapear coordenadas guardadas a los campos
-      const camposConCoordenadasGuardadas = [
-        { id: 'numeroManifiesto', name: 'numeroManifiesto', label: 'Número Manifiesto', 
-          x: coordenadas.numeroManifiesto?.x || 1076, y: coordenadas.numeroManifiesto?.y || 170, isDragging: false },
-        { id: 'idRespuesta', name: 'idRespuesta', label: 'ID Respuesta', 
-          x: coordenadas.idRespuesta?.x || 1101, y: coordenadas.idRespuesta?.y || 213, isDragging: false },
-        { id: 'fechaExpedicion', name: 'fechaExpedicion', label: 'Fecha Expedición', 
-          x: coordenadas.fechaExpedicion?.x || 200, y: coordenadas.fechaExpedicion?.y || 300, isDragging: false },
-        { id: 'origenViaje', name: 'origenViaje', label: 'Origen Viaje', 
-          x: coordenadas.origenViaje?.x || 500, y: coordenadas.origenViaje?.y || 300, isDragging: false },
-        { id: 'destinoViaje', name: 'destinoViaje', label: 'Destino Viaje', 
-          x: coordenadas.destinoViaje?.x || 800, y: coordenadas.destinoViaje?.y || 300, isDragging: false },
-        { id: 'placa', name: 'placa', label: 'Placa', 
-          x: coordenadas.placa?.x || 200, y: coordenadas.placa?.y || 400, isDragging: false },
-        { id: 'titularManifiesto', name: 'titularManifiesto', label: 'Titular Manifiesto', 
-          x: coordenadas.titularManifiesto?.x || 150, y: coordenadas.titularManifiesto?.y || 500, isDragging: false },
-        { id: 'docTitular', name: 'docTitular', label: 'Doc. Titular', 
-          x: coordenadas.docTitular?.x || 150, y: coordenadas.docTitular?.y || 530, isDragging: false },
-        { id: 'direccionTitular', name: 'direccionTitular', label: 'Dirección Titular', 
-          x: coordenadas.direccionTitular?.x || 150, y: coordenadas.direccionTitular?.y || 560, isDragging: false },
-        { id: 'telefonoTitular', name: 'telefonoTitular', label: 'Teléfono Titular', 
-          x: coordenadas.telefonoTitular?.x || 150, y: coordenadas.telefonoTitular?.y || 590, isDragging: false },
-        { id: 'ciudadTitular', name: 'ciudadTitular', label: 'Ciudad Titular', 
-          x: coordenadas.ciudadTitular?.x || 150, y: coordenadas.ciudadTitular?.y || 620, isDragging: false },
-        { id: 'tenedorManifiesto', name: 'tenedorManifiesto', label: 'Tenedor Manifiesto', 
-          x: coordenadas.tenedorManifiesto?.x || 350, y: coordenadas.tenedorManifiesto?.y || 500, isDragging: false },
-        { id: 'docTenedor', name: 'docTenedor', label: 'Doc. Tenedor', 
-          x: coordenadas.docTenedor?.x || 350, y: coordenadas.docTenedor?.y || 530, isDragging: false },
-        { id: 'direccionTenedor', name: 'direccionTenedor', label: 'Dirección Tenedor', 
-          x: coordenadas.direccionTenedor?.x || 350, y: coordenadas.direccionTenedor?.y || 560, isDragging: false },
-        { id: 'telefonoTenedor', name: 'telefonoTenedor', label: 'Teléfono Tenedor', 
-          x: coordenadas.telefonoTenedor?.x || 350, y: coordenadas.telefonoTenedor?.y || 590, isDragging: false },
-        { id: 'ciudadTenedor', name: 'ciudadTenedor', label: 'Ciudad Tenedor', 
-          x: coordenadas.ciudadTenedor?.x || 350, y: coordenadas.ciudadTenedor?.y || 620, isDragging: false },
-        { id: 'conductor', name: 'conductor', label: 'Conductor', 
-          x: coordenadas.conductor?.x || 550, y: coordenadas.conductor?.y || 500, isDragging: false },
-        { id: 'docConductor', name: 'docConductor', label: 'Doc. Conductor', 
-          x: coordenadas.docConductor?.x || 550, y: coordenadas.docConductor?.y || 530, isDragging: false },
-        { id: 'direccionConductor', name: 'direccionConductor', label: 'Dirección Conductor', 
-          x: coordenadas.direccionConductor?.x || 550, y: coordenadas.direccionConductor?.y || 560, isDragging: false },
-        { id: 'telefonoConductor', name: 'telefonoConductor', label: 'Teléfono Conductor', 
-          x: coordenadas.telefonoConductor?.x || 550, y: coordenadas.telefonoConductor?.y || 590, isDragging: false },
-        { id: 'ciudadConductor', name: 'ciudadConductor', label: 'Ciudad Conductor', 
-          x: coordenadas.ciudadConductor?.x || 550, y: coordenadas.ciudadConductor?.y || 620, isDragging: false },
-        { id: 'valorViaje', name: 'valorViaje', label: 'Valor Viaje', 
-          x: coordenadas.valorViaje?.x || 750, y: coordenadas.valorViaje?.y || 500, isDragging: false },
-        { id: 'valorEnLetras', name: 'valorEnLetras', label: 'Valor en Letras', 
-          x: coordenadas.valorEnLetras?.x || 750, y: coordenadas.valorEnLetras?.y || 530, isDragging: false },
-      ];
+      // Actualizar solo las coordenadas de los campos existentes
+      setCampos(prev => prev.map(campo => ({
+        ...campo,
+        x: coordenadas[campo.name]?.x || campo.x,
+        y: coordenadas[campo.name]?.y || campo.y
+      })));
       
-      setCampos(camposConCoordenadasGuardadas);
       setPlantillaCargada(true);
     }
   }, [plantillaActiva, plantillaCargada]);
