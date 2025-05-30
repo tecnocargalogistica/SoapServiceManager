@@ -19,7 +19,7 @@ interface DraggableField {
 }
 
 const EditorPlantillaVisual = () => {
-  const [imagenFondo, setImagenFondo] = useState<string>("");
+  const [imagenFondo, setImagenFondo] = useState<string>("PLANTILLA_REAL1_Página_1.jpg");
   const [subiendoImagen, setSubiendoImagen] = useState(false);
   const [draggedField, setDraggedField] = useState<string | null>(null);
   const [scale, setScale] = useState(1);
