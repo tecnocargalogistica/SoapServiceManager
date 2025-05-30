@@ -342,7 +342,7 @@ export class ManifiestoPDFHorizontalGenerator {
     
     // Valor en letras (convertir $765.684 a letras en mayúsculas)
     const valorEnLetras = this.numeroALetras(765684) + ' PESOS';
-    this.doc.text(valorEnLetras, this.pixelToMM(campos.valorEnLetras?.x || 50), this.pixelToMM(campos.valorEnLetras?.y || 180, false));
+    this.doc.text(valorEnLetras, this.pixelToMM(campos.valorEnLetras.x), this.pixelToMM(campos.valorEnLetras.y, false));
     
     // === ID DE CONFIRMACIÓN RNDC ===
     
