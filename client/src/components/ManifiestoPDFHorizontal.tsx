@@ -650,7 +650,10 @@ export class ManifiestoPDFHorizontalGenerator {
   async save(): Promise<void> {
     console.log('PDF generado exitosamente');
     await this.generate();
-    this.doc.save(`manifiesto-${this.manifiesto.numero_manifiesto}.pdf`);
+    
+    // Usar la placa del vehículo como nombre del archivo
+    const placa = this.manifiesto.placa || this.manifiesto.numero_manifiesto;
+    this.doc.save(`${placa}.pdf`);
   }
 
   async getBlob(): Promise<Blob> {
