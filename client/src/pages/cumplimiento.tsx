@@ -39,6 +39,7 @@ export default function CumplimientoPage() {
   const [selectedManifiestoDate, setSelectedManifiestoDate] = useState<Date>();
   const [selectedRemesa, setSelectedRemesa] = useState<string | null>(null);
   const [selectedManifiesto, setSelectedManifiesto] = useState<string | null>(null);
+  const [rndcResponse, setRndcResponse] = useState<any>(null);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -65,16 +66,23 @@ export default function CumplimientoPage() {
         body: JSON.stringify(data)
       });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Respuesta completa del RNDC:", data);
+      setRndcResponse(data);
+      
       toast({
-        title: "✅ Remesa cumplida",
-        description: "La remesa ha sido cumplida exitosamente en el RNDC",
+        title: data.success ? "✅ Remesa cumplida" : "❌ Error en cumplimiento",
+        description: data.mensaje || (data.success ? "La remesa ha sido cumplida exitosamente en el RNDC" : "Error en el proceso de cumplimiento"),
+        variant: data.success ? "default" : "destructive",
       });
       queryClient.invalidateQueries({ queryKey: ['/api/remesas'] });
       setSelectedRemesa(null);
       setSelectedRemesaDate(undefined);
     },
     onError: (error: any) => {
+      console.log("Error en la solicitud:", error);
+      setRndcResponse({ success: false, error: error.message });
+      
       toast({
         title: "❌ Error al cumplir remesa",
         description: error.message || "Error en el proceso de cumplimiento",
@@ -348,6 +356,52 @@ export default function CumplimientoPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Respuesta del RNDC */}
+      {rndcResponse && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Package className="h-5 w-5 text-blue-600" />
+              <span>Respuesta del RNDC</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Badge variant={rndcResponse.success ? "default" : "destructive"}>
+                  {rndcResponse.success ? "Exitoso" : "Error"}
+                </Badge>
+                {rndcResponse.consecutivo && (
+                  <span className="text-sm text-gray-600">Remesa: {rndcResponse.consecutivo}</span>
+                )}
+              </div>
+              
+              {rndcResponse.mensaje && (
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="font-medium text-sm">Mensaje:</div>
+                  <div className="text-sm">{rndcResponse.mensaje}</div>
+                </div>
+              )}
+              
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="font-medium text-sm">Respuesta completa:</div>
+                <pre className="text-xs mt-2 overflow-x-auto whitespace-pre-wrap">
+                  {JSON.stringify(rndcResponse, null, 2)}
+                </pre>
+              </div>
+              
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setRndcResponse(null)}
+              >
+                Cerrar
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Información sobre el proceso */}
       <Card>
