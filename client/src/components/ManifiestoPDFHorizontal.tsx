@@ -398,9 +398,18 @@ export class ManifiestoPDFHorizontalGenerator {
       this.doc.text('8600588314 ALBATEQ-ALBATEQ', this.pixelToMM(campos.informacionRemitente.x), this.pixelToMM(campos.informacionRemitente.y, false));
     }
     
-    // Información Remitente2: VIA FUNZA COTA KILOMETRO 2, FUNZA - CUNDINAMARCA
+    // Información Remitente2: VIA FUNZA COTA KILOMETRO 2, FUNZA - CUNDINAMARCA (dividido en 2 líneas)
     if (campos.informacionRemitente2) {
-      this.doc.text('VIA FUNZA COTA KILOMETRO 2, FUNZA - CUNDINAMARCA', this.pixelToMM(campos.informacionRemitente2.x), this.pixelToMM(campos.informacionRemitente2.y, false));
+      const textoCompleto = 'VIA FUNZA COTA KILOMETRO 2, FUNZA - CUNDINAMARCA';
+      const partes = textoCompleto.split(', ');
+      
+      // Primera línea: "VIA FUNZA COTA KILOMETRO 2"
+      this.doc.text(partes[0], this.pixelToMM(campos.informacionRemitente2.x), this.pixelToMM(campos.informacionRemitente2.y, false));
+      
+      // Segunda línea: "FUNZA - CUNDINAMARCA" (4mm más abajo)
+      if (partes[1]) {
+        this.doc.text(partes[1], this.pixelToMM(campos.informacionRemitente2.x), this.pixelToMM(campos.informacionRemitente2.y, false) + 4);
+      }
     }
     
     // === INFORMACIÓN DESTINATARIO ===
