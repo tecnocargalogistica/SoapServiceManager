@@ -42,6 +42,10 @@ export class ManifiestoPDFHorizontalGenerator {
       placa: { x: 200, y: 400 },
       numeroRemesa: { x: 200, y: 600 },
       
+      // Información del vehículo
+      marcaVehiculo: { x: 200, y: 373 },
+      configuracionVehiculo: { x: 400, y: 373 },
+      
       // Titular del manifiesto
       titularManifiesto: { x: 100, y: 450 },
       docIdentificacionTitular: { x: 100, y: 470 },
