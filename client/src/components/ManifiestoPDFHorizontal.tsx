@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { FileImage } from "lucide-react";
-import manifestoImagePath from "@assets/Manifiesto_PNG_Página_1.jpg";
+import manifestoImagePath from "@assets/PLANTILLA_REAL1_Página_1.jpg";
 import QRCode from 'qrcode';
 
 interface ManifiestoPDFHorizontalProps {
