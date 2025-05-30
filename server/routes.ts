@@ -1714,16 +1714,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Remesa asociada no encontrada" });
       }
 
-      const cumplimientoData = {
-        consecutivoRemesa: manifiesto.consecutivo_remesa,
-        fechaCumplimiento: fecha,
-        cantidadCargada: remesaData.toneladas,
-        horaCitaCargue: "08:00",
-        horaCitaDescargue: "13:00",
+      const cumplimientoManifiestoData = {
+        numeroManifiesto,
+        fechaExpedicion: manifiesto.fecha_expedicion?.toISOString().split('T')[0] || fecha,
         config
       };
 
-      const xml = xmlGenerator.generateCumplimientoXML(cumplimientoData);
+      const xml = xmlGenerator.generateCumplimientoManifiestoXML(cumplimientoManifiestoData);
       
       console.log(`📋 === XML CUMPLIMIENTO MANIFIESTO ${numeroManifiesto} ===`);
       console.log(xml);

@@ -1,0 +1,24 @@
+📋 === FIN XML CUMPLIMIENTO MANIFIESTO 79824058 ===
+Intentando envío a endpoint: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+🎯 Usando endpoint personalizado: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+📡 Enviando SOAP a: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+Respuesta recibida de http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices: <?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:NS1="urn:BPMServicesIntf-IBPMServices"><NS1:AtenderMensajeRNDCResponse><return xsi:type="xsd:string">&lt;?xml version="1.0" encoding="ISO-8859-1" ?&gt;
+&lt;root&gt;
+&lt;ErrorMSG&gt;Se presentó un error al validar la variable FECHALLEGADACARGUE
+'2025-05-30' is not a valid date Valor:2025-05-30  Tipo Dato:7&lt;/ErrorMSG&gt;
+&lt;/root&gt;
+</return></NS1:AtenderMensajeRNDCResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>
+
+8:51:32 AM [express] POST /api/cumplimiento/manifiesto 200 in 1521ms :: {"success":null,"numeroManif…
+Intentando envío a endpoint: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+🎯 Usando endpoint personalizado: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+📡 Enviando SOAP a: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+Respuesta recibida de http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices: <?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:NS1="urn:BPMServicesIntf-IBPMServices"><NS1:AtenderMensajeRNDCResponse><return xsi:type="xsd:string">&lt;?xml version="1.0" encoding="ISO-8859-1" ?&gt;
+&lt;root&gt;
+&lt;ErrorMSG&gt;Error RNDC01: Falta información en el xml para el acceso.&lt;/ErrorMSG&gt;
+&lt;/root&gt;
+</return></NS1:AtenderMensajeRNDCResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>
+
+8:51:56 AM [express] GET /api/rndc/test 200 in 6297ms :: {"connected":true,"endpoint":"http://rndcws…
