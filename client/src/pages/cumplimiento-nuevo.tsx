@@ -168,10 +168,55 @@ export default function CumplimientoNuevo() {
   });
 
   const handleEnviarCumplimiento = () => {
-    if (xmlPreview) {
-      enviarMutation.mutate(xmlPreview);
+    if (selectedRemesa) {
+      cumplirRemesaMutation.mutate({
+        consecutivo: selectedRemesa,
+        fecha: new Date().toISOString().split('T')[0]
+      });
     }
   };
+
+  // Mutación para cumplir remesa directamente
+  const cumplirRemesaMutation = useMutation({
+    mutationFn: async (data: { consecutivo: string; fecha: string }) => {
+      const response = await fetch(`/api/cumplimiento/remesa`, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      console.log("Respuesta completa del RNDC:", data);
+      setRndcResponse(data);
+      
+      if (data.success) {
+        toast({
+          title: "Cumplimiento exitoso",
+          description: "La remesa ha sido cumplida correctamente en el RNDC",
+        });
+        setShowXmlModal(false);
+        setXmlPreview("");
+        queryClient.invalidateQueries({ queryKey: ["/api/remesas/exitosas"] });
+      } else {
+        toast({
+          title: "Error en cumplimiento",
+          description: data.mensaje || "Error al cumplir remesa en el RNDC",
+          variant: "destructive",
+        });
+      }
+    },
+    onError: (error: any) => {
+      console.log("Error en la solicitud:", error);
+      setRndcResponse({ success: false, error: error.message });
+      
+      toast({
+        title: "Error de conexión",
+        description: error.message || "Error al conectar con el RNDC",
+        variant: "destructive",
+      });
+    }
+  });
 
   // Procesamiento en lotes
   const procesarLoteMutation = useMutation({
