@@ -683,27 +683,27 @@ export class ManifiestoPDFHorizontalGenerator {
       this.doc.setFontSize(9);
       this.doc.setTextColor(0, 0, 0);
 
-      // Coordenadas directas en milímetros para la segunda página
+      // Coordenadas exactas en milímetros para la segunda página
       // Placa del vehículo (campo "Placa Vehiculo")
       if (this.manifiesto.placa) {
         const placaX = 35; // mm
-        const placaY = 46; // mm
+        const placaY = 52; // mm
         console.log(`PLACA SEGUNDA PÁGINA: ${this.manifiesto.placa} en coordenadas directas (${placaX}mm, ${placaY}mm)`);
         this.doc.text(this.manifiesto.placa, placaX, placaY);
       }
 
       // Nombre del conductor (campo "Nombre del Conductor")
       if (this.datosCompletos?.conductor?.nombre_completo) {
-        const nombreX = 120; // mm - ajustar según necesidad
-        const nombreY = 46; // mm - misma línea que la placa
+        const nombreX = 90; // mm
+        const nombreY = 52; // mm
         console.log(`NOMBRE CONDUCTOR SEGUNDA PÁGINA: ${this.datosCompletos.conductor.nombre_completo} en coordenadas directas (${nombreX}mm, ${nombreY}mm)`);
         this.doc.text(this.datosCompletos.conductor.nombre_completo, nombreX, nombreY);
       }
 
       // Identificación del conductor (campo "CC")
       if (this.datosCompletos?.conductor?.numero_documento) {
-        const idX = 200; // mm - ajustar según necesidad
-        const idY = 46; // mm - misma línea que los otros campos
+        const idX = 136; // mm
+        const idY = 52; // mm
         console.log(`IDENTIFICACIÓN SEGUNDA PÁGINA: ${this.datosCompletos.conductor.numero_documento} en coordenadas directas (${idX}mm, ${idY}mm)`);
         this.doc.text(this.datosCompletos.conductor.numero_documento, idX, idY);
       }
