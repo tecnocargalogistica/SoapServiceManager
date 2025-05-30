@@ -270,7 +270,7 @@ export class ManifiestoPDFHorizontalGenerator {
     // ID RESPUESTA (EN NEGRITA Y TAMAÑO MAYOR)
     console.log('ID RESPUESTA: píxeles(' + campos.idRespuesta.x + ', ' + campos.idRespuesta.y + ') → mm(' + this.pixelToMM(campos.idRespuesta.x) + ', ' + this.pixelToMM(campos.idRespuesta.y, false) + ')');
     this.doc.setFont('helvetica', 'bold');
-    this.doc.setFontSize(16);
+    this.doc.setFontSize(14);
     const idRespuesta = this.manifiesto.id ? this.manifiesto.id.toString() : '';
     this.doc.text(idRespuesta, this.pixelToMM(campos.idRespuesta.x), this.pixelToMM(campos.idRespuesta.y, false));
     
@@ -480,7 +480,7 @@ export class ManifiestoPDFHorizontalGenerator {
     
     // ID de Ingreso RNDC: 104518661 (EN NEGRITA Y TAMAÑO MAYOR)
     this.doc.setFont('helvetica', 'bold');
-    this.doc.setFontSize(16);
+    this.doc.setFontSize(14);
     const ingresoId = this.manifiesto.ingreso_id ? this.manifiesto.ingreso_id.toString() : '104518661';
     this.doc.text(ingresoId, this.pixelToMM(campos.ingresoId.x), this.pixelToMM(campos.ingresoId.y, false));
     
