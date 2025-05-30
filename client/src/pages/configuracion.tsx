@@ -489,26 +489,19 @@ export default function Configuracion() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <FileText className="h-5 w-5" />
-                  <span>Editor Visual de Plantillas</span>
+                  <span>Configuración de Plantillas</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-gray-600">
-                  Configura visualmente las coordenadas de los campos en tus plantillas PDF usando el editor drag-and-drop.
+                  Configura las coordenadas exactas de los campos en tus plantillas PDF.
                 </p>
                 
                 <div className="space-y-3">
-                  <Link href="/editor-plantilla-visual">
-                    <Button className="w-full justify-start">
-                      <Edit className="h-4 w-4 mr-2" />
-                      Editor Visual de Coordenadas
-                    </Button>
-                  </Link>
-                  
                   <Link href="/test-pdf-plantilla">
-                    <Button variant="outline" className="w-full justify-start">
-                      <FileText className="h-4 w-4 mr-2" />
-                      Editor Manual de Coordenadas
+                    <Button className="w-full justify-start">
+                      <Settings className="h-4 w-4 mr-2" />
+                      Configurar Coordenadas
                     </Button>
                   </Link>
                 </div>
@@ -516,7 +509,7 @@ export default function Configuracion() {
                 <div className="bg-blue-50 p-4 rounded-lg">
                   <h4 className="font-medium text-blue-800 mb-2">Funcionalidades:</h4>
                   <div className="text-sm text-blue-700 space-y-1">
-                    <p>• Arrastra y posiciona campos visualmente</p>
+                    <p>• Configura posición exacta de cada campo</p>
                     <p>• Sube imágenes de plantillas personalizadas</p>
                     <p>• Previsualiza resultados en tiempo real</p>
                     <p>• Guarda configuraciones automáticamente</p>
