@@ -393,6 +393,9 @@ export class ManifiestoPDFHorizontalGenerator {
     
     // === INFORMACIÓN REMITENTE ===
     
+    // Cambiar a fuente más pequeña para información de remitente
+    this.doc.setFontSize(8);
+    
     // Información Remitente: 8600588314 ALBATEQ-ALBATEQ
     if (campos.informacionRemitente) {
       this.doc.text('8600588314 ALBATEQ-ALBATEQ', this.pixelToMM(campos.informacionRemitente.x), this.pixelToMM(campos.informacionRemitente.y, false));
@@ -432,6 +435,9 @@ export class ManifiestoPDFHorizontalGenerator {
         this.doc.text(partes[1], this.pixelToMM(campos.informacionDestinatario2.x), this.pixelToMM(campos.informacionDestinatario2.y, false) + 4);
       }
     }
+    
+    // Restaurar fuente normal para el resto de campos
+    this.doc.setFontSize(this.campos.fontSize?.normal || 10);
     
     // === VALORES ECONÓMICOS ===
     
