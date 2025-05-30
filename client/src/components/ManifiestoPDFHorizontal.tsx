@@ -16,12 +16,12 @@ export class ManifiestoPDFHorizontalGenerator {
   private manifiesto: Manifiesto;
   public campos: any;
 
-  constructor(manifiesto: Manifiesto) {
+  constructor(manifiesto: Manifiesto, coordenadas?: any) {
     this.manifiesto = manifiesto;
     this.doc = new jsPDF('landscape', 'mm', 'a4');
     
-    // Coordenadas por defecto (sincronizadas con el panel de ajuste)
-    this.campos = {
+    // Usar coordenadas pasadas como parámetro o coordenadas por defecto
+    this.campos = coordenadas || {
       numeroManifiesto: { x: 1076, y: 170 },
       idRespuesta: { x: 1101, y: 213 },
       fechaExpedicion: { x: 200, y: 300 },

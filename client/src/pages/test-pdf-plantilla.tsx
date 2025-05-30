@@ -177,11 +177,8 @@ const TestPDFPlantilla = () => {
   const generarPDFConCoordenadas = async () => {
     if (!manifiestoEjemplo) return;
 
-    // Crear una versión temporal del generador con las coordenadas ajustadas
-    const generator = new ManifiestoPDFHorizontalGenerator(manifiestoEjemplo);
-    
-    // Actualizar las coordenadas dinámicamente
-    generator.campos = {
+    // Crear el generador pasando las coordenadas como parámetro
+    const coordinadasCompletas = {
       ...coordenadas,
       fontSize: {
         normal: 9,
@@ -189,6 +186,7 @@ const TestPDFPlantilla = () => {
         large: 11
       }
     };
+    const generator = new ManifiestoPDFHorizontalGenerator(manifiestoEjemplo, coordinadasCompletas);
 
     await generator.save();
   };
