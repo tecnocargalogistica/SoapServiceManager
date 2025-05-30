@@ -710,10 +710,14 @@ export class ManifiestoPDFHorizontalGenerator {
 
       // Número de Manifiesto duplicado
       if (this.manifiesto.numero_manifiesto) {
-        const manifestoX = 234; // mm
+        // Cambiar tamaño de fuente para el número de manifiesto
+        this.doc.setFontSize(12);
+        const manifestoX = 244; // mm
         const manifestoY = 40; // mm
-        console.log(`NÚMERO MANIFIESTO SEGUNDA PÁGINA: ${this.manifiesto.numero_manifiesto} en coordenadas directas (${manifestoX}mm, ${manifestoY}mm)`);
+        console.log(`NÚMERO MANIFIESTO SEGUNDA PÁGINA: ${this.manifiesto.numero_manifiesto} en coordenadas directas (${manifestoX}mm, ${manifestoY}mm) con tamaño 12`);
         this.doc.text(this.manifiesto.numero_manifiesto, manifestoX, manifestoY);
+        // Restaurar tamaño de fuente original
+        this.doc.setFontSize(7);
       }
 
       console.log('Textos de segunda página agregados correctamente');
