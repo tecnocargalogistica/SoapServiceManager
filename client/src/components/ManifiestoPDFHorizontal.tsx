@@ -720,6 +720,19 @@ export class ManifiestoPDFHorizontalGenerator {
         this.doc.setFontSize(7);
       }
 
+      // Ingreso Id duplicado
+      const ingresoId = this.manifiesto.ingreso_id ? this.manifiesto.ingreso_id.toString() : '104518661';
+      if (ingresoId) {
+        // Cambiar tamaño de fuente para el ingreso id
+        this.doc.setFontSize(12);
+        const ingresoX = 244; // mm
+        const ingresoY = 44; // mm
+        console.log(`INGRESO ID SEGUNDA PÁGINA: ${ingresoId} en coordenadas directas (${ingresoX}mm, ${ingresoY}mm) con tamaño 12`);
+        this.doc.text(ingresoId, ingresoX, ingresoY);
+        // Restaurar tamaño de fuente original
+        this.doc.setFontSize(7);
+      }
+
       console.log('Textos de segunda página agregados correctamente');
     } catch (error) {
       console.error('Error agregando textos a la segunda página:', error);
