@@ -61,6 +61,9 @@ const TestPDFPlantilla = () => {
     valorNetoViaje: { x: 1000, y: 670 },
     saldoPagar: { x: 1000, y: 690 },
     
+    // Código QR del RNDC
+    codigoQR: { x: 1200, y: 100, size: 80 },
+    
     // ID de confirmación RNDC
     ingresoId: { x: 200, y: 200 }
   });

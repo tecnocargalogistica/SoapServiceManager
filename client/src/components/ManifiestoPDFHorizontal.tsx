@@ -68,6 +68,9 @@ export class ManifiestoPDFHorizontalGenerator {
     valorNetoViaje: { x: 1000, y: 670 },
     saldoPagar: { x: 1000, y: 690 },
     
+    // Código QR del RNDC
+    codigoQR: { x: 1200, y: 100, size: 80 },
+    
     fontSize: {
       normal: 9,
       small: 8,
@@ -424,20 +427,15 @@ export class ManifiestoPDFHorizontalGenerator {
         }
       });
       
-      // Posición del QR (parte superior derecha según especificación RNDC)
-      // 3x3 cm = ~30mm x 30mm
-      const qrSize = 30; // 3 cm en mm
-      const rightMargin = 10; // 1 cm del margen derecho
-      const topMargin = 10; // 1 cm del margen superior
+      // Usar coordenadas configurables del QR
+      const qrX = this.pixelToMM(this.campos.codigoQR.x);
+      const qrY = this.pixelToMM(this.campos.codigoQR.y, false);
+      const qrSize = this.pixelToMM(this.campos.codigoQR.size);
       
-      const pageWidth = this.doc.internal.pageSize.getWidth();
-      const qrX = pageWidth - qrSize - rightMargin;
-      const qrY = topMargin;
-      
-      // Agregar QR al PDF
+      // Agregar QR al PDF con coordenadas configurables
       this.doc.addImage(qrImage, 'PNG', qrX, qrY, qrSize, qrSize);
       
-      console.log('Código QR agregado exitosamente');
+      console.log(`Código QR agregado en coordenadas: x=${qrX}mm, y=${qrY}mm, tamaño=${qrSize}mm`);
     } catch (error) {
       console.error('Error generando código QR:', error);
     }
