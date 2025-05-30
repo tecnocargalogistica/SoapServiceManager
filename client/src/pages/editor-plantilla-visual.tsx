@@ -33,11 +33,31 @@ const EditorPlantillaVisual = () => {
   });
 
   const [campos, setCampos] = useState<DraggableField[]>([
-    { id: 'campo1', name: 'campo1', label: 'Nombre', x: 20, y: 60, isDragging: false },
-    { id: 'campo2', name: 'campo2', label: 'Documento', x: 20, y: 90, isDragging: false },
-    { id: 'campo3', name: 'campo3', label: 'Fecha', x: 20, y: 120, isDragging: false },
-    { id: 'campo4', name: 'campo4', label: 'Ciudad', x: 20, y: 150, isDragging: false },
-    { id: 'campo5', name: 'campo5', label: 'Email', x: 20, y: 180, isDragging: false }
+    { id: 'numeroManifiesto', name: 'numeroManifiesto', label: 'Número Manifiesto', x: 1076, y: 170, isDragging: false },
+    { id: 'idRespuesta', name: 'idRespuesta', label: 'ID Respuesta', x: 1101, y: 213, isDragging: false },
+    { id: 'fechaExpedicion', name: 'fechaExpedicion', label: 'Fecha Expedición', x: 200, y: 300, isDragging: false },
+    { id: 'origenViaje', name: 'origenViaje', label: 'Origen Viaje', x: 500, y: 300, isDragging: false },
+    { id: 'destinoViaje', name: 'destinoViaje', label: 'Destino Viaje', x: 800, y: 300, isDragging: false },
+    { id: 'placa', name: 'placa', label: 'Placa', x: 200, y: 400, isDragging: false },
+    { id: 'numeroRemesa', name: 'numeroRemesa', label: 'Número Remesa', x: 200, y: 600, isDragging: false },
+    { id: 'titularManifiesto', name: 'titularManifiesto', label: 'Titular Manifiesto', x: 100, y: 450, isDragging: false },
+    { id: 'docIdentificacionTitular', name: 'docIdentificacionTitular', label: 'Doc. Titular', x: 100, y: 470, isDragging: false },
+    { id: 'direccionTitular', name: 'direccionTitular', label: 'Dirección Titular', x: 100, y: 490, isDragging: false },
+    { id: 'telefonoTitular', name: 'telefonoTitular', label: 'Teléfono Titular', x: 100, y: 510, isDragging: false },
+    { id: 'ciudadTitular', name: 'ciudadTitular', label: 'Ciudad Titular', x: 100, y: 530, isDragging: false },
+    { id: 'tenedorManifiesto', name: 'tenedorManifiesto', label: 'Tenedor Manifiesto', x: 300, y: 450, isDragging: false },
+    { id: 'docIdentificacionTenedor', name: 'docIdentificacionTenedor', label: 'Doc. Tenedor', x: 300, y: 470, isDragging: false },
+    { id: 'direccionTenedor', name: 'direccionTenedor', label: 'Dirección Tenedor', x: 300, y: 490, isDragging: false },
+    { id: 'telefonoTenedor', name: 'telefonoTenedor', label: 'Teléfono Tenedor', x: 300, y: 510, isDragging: false },
+    { id: 'ciudadTenedor', name: 'ciudadTenedor', label: 'Ciudad Tenedor', x: 300, y: 530, isDragging: false },
+    { id: 'conductor', name: 'conductor', label: 'Conductor', x: 500, y: 450, isDragging: false },
+    { id: 'docIdentificacionConductor', name: 'docIdentificacionConductor', label: 'Doc. Conductor', x: 500, y: 470, isDragging: false },
+    { id: 'direccionConductor', name: 'direccionConductor', label: 'Dirección Conductor', x: 500, y: 490, isDragging: false },
+    { id: 'telefonoConductor', name: 'telefonoConductor', label: 'Teléfono Conductor', x: 500, y: 510, isDragging: false },
+    { id: 'ciudadConductor', name: 'ciudadConductor', label: 'Ciudad Conductor', x: 500, y: 530, isDragging: false },
+    { id: 'valorViaje', name: 'valorViaje', label: 'Valor Viaje', x: 700, y: 450, isDragging: false },
+    { id: 'valorEnLetras', name: 'valorEnLetras', label: 'Valor en Letras', x: 700, y: 470, isDragging: false },
+    { id: 'codigoQR', name: 'codigoQR', label: 'Código QR', x: 1200, y: 100, isDragging: false }
   ]);
 
   const subirImagenFondo = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,57 +121,26 @@ const EditorPlantillaVisual = () => {
   };
 
   const generarPDFPreview = async () => {
-    const { jsPDF } = await import('jspdf');
-    
-    // Crear PDF vertical formato carta (216 x 279 mm)
-    const doc = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'letter'
-    });
+    if (!manifiestoEjemplo) return;
 
-    // Título
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.text('FORMULARIO BÁSICO', 20, 30);
+    const coordinadasCompletas = campos.reduce((acc, campo) => {
+      acc[campo.name] = { x: campo.x, y: campo.y };
+      return acc;
+    }, {} as any);
 
-    // Agregar los 5 campos usando las coordenadas del editor
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
+    coordinadasCompletas.fontSize = {
+      normal: 9,
+      small: 8,
+      large: 11
+    };
 
-    const valoresEjemplo = [
-      'Juan Pérez García',
-      '12345678-9', 
-      '30/05/2025',
-      'Bogotá, Colombia',
-      'juan.perez@ejemplo.com'
-    ];
+    const generator = new ManifiestoPDFHorizontalGenerator(
+      manifiestoEjemplo, 
+      coordinadasCompletas, 
+      imagenFondo
+    );
 
-    campos.forEach((campo, index) => {
-      // Convertir coordenadas de píxeles a mm (aprox)
-      const xMm = campo.x * 0.264583; // conversión píxel a mm
-      const yMm = campo.y * 0.264583;
-      
-      // Etiqueta del campo
-      doc.setFont('helvetica', 'bold');
-      doc.text(`${campo.label}:`, xMm, yMm);
-      
-      // Valor del campo
-      doc.setFont('helvetica', 'normal');
-      doc.text(valoresEjemplo[index] || 'Valor de ejemplo', xMm + 30, yMm);
-    });
-
-    // Línea de firma
-    doc.line(20, 200, 120, 200);
-    doc.text('Firma:', 20, 215);
-
-    // Fecha de generación
-    const fechaActual = new Date().toLocaleDateString('es-CO');
-    doc.setFontSize(10);
-    doc.text(`Generado el: ${fechaActual}`, 20, 250);
-
-    // Guardar PDF
-    doc.save('formulario-basico.pdf');
+    await generator.save();
   };
 
   const guardarPlantilla = async () => {
@@ -210,7 +199,22 @@ const EditorPlantillaVisual = () => {
               <CardTitle>Herramientas</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-
+              {/* Subir imagen */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Imagen de Fondo</Label>
+                <Input
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png"
+                  onChange={subirImagenFondo}
+                  disabled={subiendoImagen}
+                  className="text-xs"
+                />
+                {imagenFondo && (
+                  <p className="text-xs text-green-600">
+                    ✓ {imagenFondo}
+                  </p>
+                )}
+              </div>
 
               {/* Control de zoom */}
               <div className="space-y-2">
@@ -286,19 +290,21 @@ const EditorPlantillaVisual = () => {
                   height: `${279 * scale}px` // Alto carta (279mm)
                 }}
               >
-                {/* Área de trabajo carta vertical */}
+                {/* Área de trabajo horizontal con imagen de fondo */}
                 <div 
                   ref={imageRef}
                   className="absolute inset-0 bg-white border border-gray-400"
                   style={{
-                    width: '216px', // Formato carta
-                    height: '279px',
+                    width: '837px', // Formato horizontal (279mm)
+                    height: '648px', // (216mm)
                     transform: `scale(${scale})`,
-                    transformOrigin: 'top left'
+                    transformOrigin: 'top left',
+                    backgroundImage: imagenFondo ? `url(/api/plantillas-pdf/imagen/${imagenFondo})` : 'none',
+                    backgroundSize: 'cover',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center'
                   }}
                 >
-                  {/* Líneas guía opcionales */}
-                  <div className="absolute top-8 left-4 text-xs text-gray-400">FORMULARIO BÁSICO</div>
                 </div>
                 
                 {/* Campos arrastrables superpuestos */}
