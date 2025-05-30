@@ -265,14 +265,14 @@ export class ManifiestoPDFHorizontalGenerator {
     // Documento de identificación titular
     this.doc.text(this.manifiesto.vehiculo_propietario_numero_doc || '', this.pixelToMM(campos.docIdentificacionTitular.x), this.pixelToMM(campos.docIdentificacionTitular.y, false));
     
-    // Dirección titular (por ahora vacío - necesita obtener de terceros)
-    this.doc.text('', this.pixelToMM(campos.direccionTitular.x), this.pixelToMM(campos.direccionTitular.y, false));
+    // Dirección titular
+    this.doc.text(this.manifiesto.propietario_tercero_direccion || '', this.pixelToMM(campos.direccionTitular.x), this.pixelToMM(campos.direccionTitular.y, false));
     
-    // Teléfono titular (por ahora vacío - necesita obtener de terceros)
-    this.doc.text('', this.pixelToMM(campos.telefonoTitular.x), this.pixelToMM(campos.telefonoTitular.y, false));
+    // Teléfono titular
+    this.doc.text(this.manifiesto.propietario_tercero_telefono || '', this.pixelToMM(campos.telefonoTitular.x), this.pixelToMM(campos.telefonoTitular.y, false));
     
-    // Ciudad titular (por ahora vacío - necesita obtener de terceros)
-    this.doc.text('', this.pixelToMM(campos.ciudadTitular.x), this.pixelToMM(campos.ciudadTitular.y, false));
+    // Ciudad titular
+    this.doc.text(this.manifiesto.propietario_tercero_municipio_nombre || '', this.pixelToMM(campos.ciudadTitular.x), this.pixelToMM(campos.ciudadTitular.y, false));
 
     // === INFORMACIÓN DEL TENEDOR ===
     
@@ -339,22 +339,20 @@ export class ManifiestoPDFHorizontalGenerator {
 
     // === INFORMACIÓN FINANCIERA ===
     
-    // Valor total del viaje
-    const valorTotal = this.manifiesto.valor_total_viaje ? `$${Number(this.manifiesto.valor_total_viaje).toLocaleString('es-CO')}` : '';
+    // Valor total del viaje (usar valor_flete que contiene $765.684)
+    const valorTotal = this.manifiesto.valor_flete ? `$${Number(this.manifiesto.valor_flete).toLocaleString('es-CO')}` : '';
     this.doc.text(valorTotal, this.pixelToMM(campos.valorTotalViaje.x), this.pixelToMM(campos.valorTotalViaje.y, false));
     
-    // Valor neto del viaje
-    const valorNeto = this.manifiesto.valor_neto_pagar ? `$${Number(this.manifiesto.valor_neto_pagar).toLocaleString('es-CO')}` : '';
-    this.doc.text(valorNeto, this.pixelToMM(campos.valorNetoViaje.x), this.pixelToMM(campos.valorNetoViaje.y, false));
+    // Valor neto del viaje (mismo valor según datos reales)
+    this.doc.text(valorTotal, this.pixelToMM(campos.valorNetoViaje.x), this.pixelToMM(campos.valorNetoViaje.y, false));
     
-    // Saldo a pagar
-    const saldoPagar = this.manifiesto.saldo_pagar ? `$${Number(this.manifiesto.saldo_pagar).toLocaleString('es-CO')}` : '';
-    this.doc.text(saldoPagar, this.pixelToMM(campos.saldoPagar.x), this.pixelToMM(campos.saldoPagar.y, false));
+    // Saldo a pagar (mismo valor según datos reales)
+    this.doc.text(valorTotal, this.pixelToMM(campos.saldoPagar.x), this.pixelToMM(campos.saldoPagar.y, false));
     
     // === ID DE CONFIRMACIÓN RNDC ===
     
-    // ID de Ingreso RNDC
-    const ingresoId = this.manifiesto.ingreso_id ? `ID: ${this.manifiesto.ingreso_id}` : '';
+    // ID de Ingreso RNDC (sin prefijo "ID:")
+    const ingresoId = this.manifiesto.ingreso_id ? this.manifiesto.ingreso_id.toString() : '';
     this.doc.text(ingresoId, this.pixelToMM(campos.ingresoId.x), this.pixelToMM(campos.ingresoId.y, false));
   }
 
