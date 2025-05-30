@@ -67,13 +67,9 @@ export class ManifiestoPDFHorizontalGenerator {
     valorTotalViaje: { x: 1000, y: 650 },
     valorNetoViaje: { x: 1000, y: 670 },
     saldoPagar: { x: 1000, y: 690 },
-    valorEnLetras: { x: 280, y: 827 },
-    
-    // ID de confirmación RNDC
-    ingresoId: { x: 200, y: 200 },
     
     // Código QR del RNDC
-    codigoQR: { x: 1200, y: 100, size: 228 },
+    codigoQR: { x: 1200, y: 100, size: 80 },
     
     fontSize: {
       normal: 9,
@@ -84,10 +80,10 @@ export class ManifiestoPDFHorizontalGenerator {
 
   // Método para convertir píxeles a mm (basado en el tamaño de tu imagen)
   private pixelToMM(pixelValue: number, isX: boolean = true): number {
-    // Tu imagen es 1650x1181 píxeles
+    // Tu imagen es 1635x1050 píxeles
     // PDF A4 horizontal es 297x210 mm
-    const imageWidth = 1650;
-    const imageHeight = 1181;
+    const imageWidth = 1635;
+    const imageHeight = 1050;
     const pdfWidth = 297;
     const pdfHeight = 210;
     
