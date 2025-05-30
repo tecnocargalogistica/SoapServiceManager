@@ -485,7 +485,7 @@ export class ManifiestoPDFHorizontalGenerator {
       // Usar coordenadas configurables del QR
       const qrX = this.pixelToMM(this.campos.codigoQR.x);
       const qrY = this.pixelToMM(this.campos.codigoQR.y, false);
-      const qrSize = this.pixelToMM(this.campos.codigoQR.size);
+      const qrSize = this.pixelToMM(this.campos.codigoQR.size || 228);
       
       // Agregar QR al PDF con coordenadas configurables
       this.doc.addImage(qrImage, 'PNG', qrX, qrY, qrSize, qrSize);
