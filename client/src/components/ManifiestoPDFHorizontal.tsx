@@ -252,13 +252,14 @@ export class ManifiestoPDFHorizontalGenerator {
   private addTexts(): void {
     console.log('Agregando textos al PDF...');
     
-    this.doc.setFont('helvetica', 'normal');
-    this.doc.setFontSize(this.campos.fontSize.normal);
-    this.doc.setTextColor(0, 0, 0);
-    
-    const campos = this.campos;
+    try {
+      this.doc.setFont('helvetica', 'normal');
+      this.doc.setFontSize(this.campos.fontSize?.normal || 10);
+      this.doc.setTextColor(0, 0, 0);
+      
+      const campos = this.campos;
 
-    // === CAMPOS PRINCIPALES ===
+      // === CAMPOS PRINCIPALES ===
     
     // CONSECUTIVO
     console.log('CONSECUTIVO: píxeles(' + campos.numeroManifiesto.x + ', ' + campos.numeroManifiesto.y + ') → mm(' + this.pixelToMM(campos.numeroManifiesto.x) + ', ' + this.pixelToMM(campos.numeroManifiesto.y, false) + ')');
@@ -454,6 +455,11 @@ export class ManifiestoPDFHorizontalGenerator {
     // ID de Ingreso RNDC: 104518661
     const ingresoId = this.manifiesto.ingreso_id ? this.manifiesto.ingreso_id.toString() : '104518661';
     this.doc.text(ingresoId, this.pixelToMM(campos.ingresoId.x), this.pixelToMM(campos.ingresoId.y, false));
+    
+    } catch (error) {
+      console.error('Error en addTexts:', error);
+      throw error;
+    }
   }
 
   private async addQRCode(): Promise<void> {
