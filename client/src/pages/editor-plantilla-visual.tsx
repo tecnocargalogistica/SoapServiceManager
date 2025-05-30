@@ -33,11 +33,11 @@ const EditorPlantillaVisual = () => {
   });
 
   const [campos, setCampos] = useState<DraggableField[]>([
-    { id: 'campo1', name: 'campo1', label: 'Nombre', x: 50, y: 100, isDragging: false },
-    { id: 'campo2', name: 'campo2', label: 'Documento', x: 50, y: 150, isDragging: false },
-    { id: 'campo3', name: 'campo3', label: 'Fecha', x: 50, y: 200, isDragging: false },
-    { id: 'campo4', name: 'campo4', label: 'Ciudad', x: 50, y: 250, isDragging: false },
-    { id: 'campo5', name: 'campo5', label: 'Email', x: 50, y: 300, isDragging: false }
+    { id: 'campo1', name: 'campo1', label: 'Nombre', x: 20, y: 60, isDragging: false },
+    { id: 'campo2', name: 'campo2', label: 'Documento', x: 20, y: 90, isDragging: false },
+    { id: 'campo3', name: 'campo3', label: 'Fecha', x: 20, y: 120, isDragging: false },
+    { id: 'campo4', name: 'campo4', label: 'Ciudad', x: 20, y: 150, isDragging: false },
+    { id: 'campo5', name: 'campo5', label: 'Email', x: 20, y: 180, isDragging: false }
   ]);
 
   const subirImagenFondo = async (event: React.ChangeEvent<HTMLInputElement>) => {
