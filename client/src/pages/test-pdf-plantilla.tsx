@@ -90,13 +90,19 @@ const TestPDFPlantilla = () => {
 
   // Cargar automáticamente las coordenadas de la plantilla activa
   useEffect(() => {
-    if (plantillaActiva && plantillaActiva.coordenadas) {
-      try {
-        const coordenadasGuardadas = JSON.parse(plantillaActiva.coordenadas);
-        setCoordenadas(coordenadasGuardadas);
-        console.log('✅ Plantilla activa cargada automáticamente:', plantillaActiva.nombre);
-      } catch (error) {
-        console.error('Error al cargar coordenadas de la plantilla activa:', error);
+    if (plantillaActiva) {
+      console.log('Plantilla activa recibida:', plantillaActiva);
+      if (plantillaActiva.coordenadas) {
+        try {
+          const coordenadasGuardadas = JSON.parse(plantillaActiva.coordenadas);
+          console.log('Coordenadas parseadas:', coordenadasGuardadas);
+          setCoordenadas(coordenadasGuardadas);
+          console.log('✅ Plantilla activa cargada automáticamente:', plantillaActiva.nombre);
+        } catch (error) {
+          console.error('Error al cargar coordenadas de la plantilla activa:', error);
+        }
+      } else {
+        console.log('⚠️ La plantilla activa no tiene coordenadas guardadas');
       }
     }
   }, [plantillaActiva]);
