@@ -75,6 +75,10 @@ const TestPDFPlantilla = () => {
     queryKey: ['/api/manifiestos/completos'],
   });
 
+  const { data: plantillaActiva } = useQuery({
+    queryKey: ["/api/plantillas-pdf/activa"]
+  });
+
   const manifiestoEjemplo = manifiestos?.[0];
   
   // Estados para el QR
@@ -83,6 +87,19 @@ const TestPDFPlantilla = () => {
   
   // Para mostrar los datos del manifiesto seleccionado
   const selectedManifiesto = manifiestoEjemplo;
+
+  // Cargar automáticamente las coordenadas de la plantilla activa
+  useEffect(() => {
+    if (plantillaActiva && plantillaActiva.coordenadas) {
+      try {
+        const coordenadasGuardadas = JSON.parse(plantillaActiva.coordenadas);
+        setCoordenadas(coordenadasGuardadas);
+        console.log('✅ Plantilla activa cargada automáticamente:', plantillaActiva.nombre);
+      } catch (error) {
+        console.error('Error al cargar coordenadas de la plantilla activa:', error);
+      }
+    }
+  }, [plantillaActiva]);
 
   // Función para generar el contenido del QR con datos reales del manifiesto almacenado
   const generateQRContent = (manifiesto: any): string => {
