@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { FileImage } from "lucide-react";
-import manifestoImagePath from "@assets/Manifiesto.jpg";
+import manifestoImagePath from "@assets/Manifiesto_PNG_Página_1.jpg";
 import QRCode from 'qrcode';
 
 interface ManifiestoPDFHorizontalProps {
@@ -15,10 +15,12 @@ export class ManifiestoPDFHorizontalGenerator {
   private doc: jsPDF;
   private manifiesto: Manifiesto;
   public campos: any;
+  private usarCoordenadasPersonalizadas: boolean;
 
   constructor(manifiesto: Manifiesto, coordenadas?: any) {
     this.manifiesto = manifiesto;
     this.doc = new jsPDF('landscape', 'mm', 'a4');
+    this.usarCoordenadasPersonalizadas = !!coordenadas;
     
     // Usar coordenadas pasadas como parámetro o coordenadas por defecto
     this.campos = coordenadas || {
@@ -95,8 +97,13 @@ export class ManifiestoPDFHorizontalGenerator {
     }
   }
 
-  // Cargar coordenadas desde plantilla guardada
-  async loadPlantillaCoords(): Promise<void> {
+  // Cargar coordenadas desde plantilla guardada solo si no se pasaron coordenadas al constructor
+  async loadPlantillaCoords(usarPlantilla: boolean = true): Promise<void> {
+    if (!usarPlantilla) {
+      console.log('Usando coordenadas del panel de ajuste');
+      return;
+    }
+    
     try {
       const response = await fetch('/api/plantillas-pdf/activa');
       if (response.ok) {
@@ -167,7 +174,8 @@ export class ManifiestoPDFHorizontalGenerator {
   async generate(): Promise<void> {
     console.log('Iniciando generación de PDF horizontal...');
     
-    await this.loadPlantillaCoords();
+    // Solo cargar coordenadas de plantilla si no se pasaron coordenadas personalizadas
+    await this.loadPlantillaCoords(!this.usarCoordenadasPersonalizadas);
     
     try {
       const image = await this.loadImageAsBase64(manifestoImagePath);
