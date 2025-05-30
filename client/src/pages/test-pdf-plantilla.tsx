@@ -73,7 +73,18 @@ const TestPDFPlantilla = () => {
     queryKey: ['/api/manifiestos/completos'],
   });
 
+  const { data: plantillaActiva } = useQuery<any>({
+    queryKey: ['/api/plantillas-pdf/activa'],
+  });
+
   const manifiestoEjemplo = manifiestos?.[0];
+
+  // Cargar coordenadas desde la plantilla activa
+  useEffect(() => {
+    if (plantillaActiva && plantillaActiva.coordenadas) {
+      setCoordenadas(plantillaActiva.coordenadas);
+    }
+  }, [plantillaActiva]);
   
   // Estados para el QR
   const [qrContent, setQrContent] = useState<string>('');
