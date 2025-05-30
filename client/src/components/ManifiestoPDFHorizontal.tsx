@@ -310,41 +310,44 @@ export class ManifiestoPDFHorizontalGenerator {
     // === INFORMACIÓN DE CARGA ===
     
     // Cantidad (Kg)
-    const cantidad = this.manifiesto.valor_flete_pactado_viaje ? this.manifiesto.valor_flete_pactado_viaje.toString() + ' Kg' : '';
+    const cantidad = this.manifiesto.mercancia_cantidad ? this.manifiesto.mercancia_cantidad.toString() + ' Kg' : '';
     this.doc.text(cantidad, this.pixelToMM(campos.cantidad.x), this.pixelToMM(campos.cantidad.y, false));
     
-    // Cantidad cargada (mismo valor)
-    this.doc.text(cantidad, this.pixelToMM(campos.cantidadCargada.x), this.pixelToMM(campos.cantidadCargada.y, false));
+    // Cantidad cargada 
+    const cantidadCargada = this.manifiesto.remesa_cantidad_cargada ? this.manifiesto.remesa_cantidad_cargada.toString() + ' Kg' : '';
+    this.doc.text(cantidadCargada, this.pixelToMM(campos.cantidadCargada.x), this.pixelToMM(campos.cantidadCargada.y, false));
 
     // === INFORMACIÓN DE REMITENTE Y DESTINATARIO ===
     
-    // Información remitente (de sede origen)
-    const remitenteInfo = `${this.manifiesto.sede_origen_nit || ''} - ${this.manifiesto.sede_origen_nombre || ''}`;
+    // Información remitente (usar los datos auténticos del manifiesto)
+    const remitenteInfo = this.manifiesto.mercancia_informacion_remitente || '';
     this.doc.text(remitenteInfo, this.pixelToMM(campos.informacionRemitente.x), this.pixelToMM(campos.informacionRemitente.y, false));
     
-    // Información remitente 2 (dirección sede origen)
-    const remitenteInfo2 = `${this.manifiesto.sede_origen_direccion || ''} - ${this.manifiesto.municipio_origen || ''}`;
+    // Información remitente 2 (dirección del remitente)
+    const remitenteInfo2 = this.manifiesto.mercancia_informacion_remitente_2 || '';
     this.doc.text(remitenteInfo2, this.pixelToMM(campos.informacionRemitente2.x), this.pixelToMM(campos.informacionRemitente2.y, false));
     
-    // Información destinatario (de sede destino)
-    const destinatarioInfo = `${this.manifiesto.sede_destino_nit || ''} - ${this.manifiesto.sede_destino_nombre || ''}`;
+    // Información destinatario (usar los datos auténticos del manifiesto)
+    const destinatarioInfo = this.manifiesto.mercancia_informacion_destinatario || '';
     this.doc.text(destinatarioInfo, this.pixelToMM(campos.informacionDestinatario.x), this.pixelToMM(campos.informacionDestinatario.y, false));
     
-    // Información destinatario 2 (dirección sede destino)
-    const destinatarioInfo2 = `${this.manifiesto.sede_destino_direccion || ''} - ${this.manifiesto.municipio_destino || ''}`;
+    // Información destinatario 2 (dirección del destinatario)
+    const destinatarioInfo2 = this.manifiesto.mercancia_informacion_destinatario_2 || '';
     this.doc.text(destinatarioInfo2, this.pixelToMM(campos.informacionDestinatario2.x), this.pixelToMM(campos.informacionDestinatario2.y, false));
 
     // === INFORMACIÓN FINANCIERA ===
     
     // Valor total del viaje
-    const valorTotal = this.manifiesto.valor_flete ? `$${this.manifiesto.valor_flete.toLocaleString()}` : '';
+    const valorTotal = this.manifiesto.valor_total_viaje ? `$${Number(this.manifiesto.valor_total_viaje).toLocaleString('es-CO')}` : '';
     this.doc.text(valorTotal, this.pixelToMM(campos.valorTotalViaje.x), this.pixelToMM(campos.valorTotalViaje.y, false));
     
     // Valor neto del viaje
-    this.doc.text(valorTotal, this.pixelToMM(campos.valorNetoViaje.x), this.pixelToMM(campos.valorNetoViaje.y, false));
+    const valorNeto = this.manifiesto.valor_neto_pagar ? `$${Number(this.manifiesto.valor_neto_pagar).toLocaleString('es-CO')}` : '';
+    this.doc.text(valorNeto, this.pixelToMM(campos.valorNetoViaje.x), this.pixelToMM(campos.valorNetoViaje.y, false));
     
     // Saldo a pagar
-    this.doc.text(valorTotal, this.pixelToMM(campos.saldoPagar.x), this.pixelToMM(campos.saldoPagar.y, false));
+    const saldoPagar = this.manifiesto.saldo_pagar ? `$${Number(this.manifiesto.saldo_pagar).toLocaleString('es-CO')}` : '';
+    this.doc.text(saldoPagar, this.pixelToMM(campos.saldoPagar.x), this.pixelToMM(campos.saldoPagar.y, false));
     
     // === ID DE CONFIRMACIÓN RNDC ===
     
