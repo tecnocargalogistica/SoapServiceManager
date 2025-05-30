@@ -712,7 +712,7 @@ export class ManifiestoPDFHorizontalGenerator {
       if (this.manifiesto.numero_manifiesto) {
         // Cambiar tamaño de fuente para el número de manifiesto
         this.doc.setFontSize(12);
-        const manifestoX = 244; // mm
+        const manifestoX = 247; // mm
         const manifestoY = 40; // mm
         console.log(`NÚMERO MANIFIESTO SEGUNDA PÁGINA: ${this.manifiesto.numero_manifiesto} en coordenadas directas (${manifestoX}mm, ${manifestoY}mm) con tamaño 12`);
         this.doc.text(this.manifiesto.numero_manifiesto, manifestoX, manifestoY);
