@@ -1623,11 +1623,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Configuración del sistema no encontrada" });
       }
 
+      // Buscar la remesa en la base de datos para obtener datos completos
+      const remesaData = await storage.getRemesaByConsecutivo(consecutivo);
+      if (!remesaData) {
+        return res.status(404).json({ error: "Remesa no encontrada" });
+      }
+
       const soapProxy = new SOAPProxy(config.endpoint_primary, config.endpoint_backup, config.timeout);
 
       const cumplimientoData = {
         consecutivoRemesa: consecutivo,
         fechaCumplimiento: fecha,
+        cantidadCargada: parseFloat(remesaData.cantidad_cargada?.toString() || "7000"),
+        fechaCitaCargue: remesaData.fecha_cita_cargue ? new Date(remesaData.fecha_cita_cargue).toISOString().split('T')[0].split('-').reverse().join('/') : fecha,
+        fechaCitaDescargue: remesaData.fecha_cita_descargue ? new Date(remesaData.fecha_cita_descargue).toISOString().split('T')[0].split('-').reverse().join('/') : fecha,
+        horaCitaCargue: "08:00",
+        horaCitaDescargue: "13:00",
         config
       };
 
@@ -1641,9 +1652,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const wasSuccessful = soapResponse && soapResponse.success && soapResponse.data?.ingresoId;
 
       // Actualizar estado de la remesa
-      const remesa = await storage.getRemesaByConsecutivo(consecutivo);
-      if (remesa) {
-        await storage.updateRemesa(remesa.id, {
+      if (remesaData) {
+        await storage.updateRemesa(remesaData.id, {
           estado: wasSuccessful ? "cumplido" : "error_cumplimiento"
         });
       }
