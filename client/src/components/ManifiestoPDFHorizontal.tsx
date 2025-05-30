@@ -708,6 +708,14 @@ export class ManifiestoPDFHorizontalGenerator {
         this.doc.text(this.datosCompletos.conductor.numero_documento, idX, idY);
       }
 
+      // Número de Manifiesto duplicado
+      if (this.manifiesto.numero_manifiesto) {
+        const manifestoX = 234; // mm
+        const manifestoY = 40; // mm
+        console.log(`NÚMERO MANIFIESTO SEGUNDA PÁGINA: ${this.manifiesto.numero_manifiesto} en coordenadas directas (${manifestoX}mm, ${manifestoY}mm)`);
+        this.doc.text(this.manifiesto.numero_manifiesto, manifestoX, manifestoY);
+      }
+
       console.log('Textos de segunda página agregados correctamente');
     } catch (error) {
       console.error('Error agregando textos a la segunda página:', error);
