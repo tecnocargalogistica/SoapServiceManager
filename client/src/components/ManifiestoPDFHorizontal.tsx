@@ -393,8 +393,8 @@ export class ManifiestoPDFHorizontalGenerator {
     
     // === INFORMACIÓN REMITENTE ===
     
-    // Cambiar a fuente más pequeña para información de remitente
-    this.doc.setFontSize(8);
+    // Cambiar a fuente más pequeña para información de remitente y destinatario
+    this.doc.setFontSize(7);
     
     // Información Remitente: 8600588314 ALBATEQ-ALBATEQ
     if (campos.informacionRemitente) {
