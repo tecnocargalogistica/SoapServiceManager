@@ -80,10 +80,10 @@ export class ManifiestoPDFHorizontalGenerator {
 
   // Método para convertir píxeles a mm (basado en el tamaño de tu imagen)
   private pixelToMM(pixelValue: number, isX: boolean = true): number {
-    // Tu imagen es 1635x1050 píxeles
+    // Tu imagen es 1650x1181 píxeles
     // PDF A4 horizontal es 297x210 mm
-    const imageWidth = 1635;
-    const imageHeight = 1050;
+    const imageWidth = 1650;
+    const imageHeight = 1181;
     const pdfWidth = 297;
     const pdfHeight = 210;
     
