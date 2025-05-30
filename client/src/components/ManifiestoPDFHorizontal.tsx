@@ -725,8 +725,8 @@ export class ManifiestoPDFHorizontalGenerator {
       if (ingresoId) {
         // Cambiar tamaño de fuente para el ingreso id
         this.doc.setFontSize(12);
-        const ingresoX = 244; // mm
-        const ingresoY = 44; // mm
+        const ingresoX = 247; // mm
+        const ingresoY = 49; // mm
         console.log(`INGRESO ID SEGUNDA PÁGINA: ${ingresoId} en coordenadas directas (${ingresoX}mm, ${ingresoY}mm) con tamaño 12`);
         this.doc.text(ingresoId, ingresoX, ingresoY);
         // Restaurar tamaño de fuente original
