@@ -338,7 +338,7 @@ export class ManifiestoPDFHorizontalGenerator {
     
     // Compañía de seguros (texto más pequeño)
     if (campos.companiaSeguro && this.datosCompletos?.vehiculo?.aseguradora) {
-      this.doc.setFontSize(8); // Tamaño más pequeño para la aseguradora
+      this.doc.setFontSize(6); // Tamaño aún más pequeño para la aseguradora
       this.doc.text(this.datosCompletos.vehiculo.aseguradora, this.pixelToMM(campos.companiaSeguro.x), this.pixelToMM(campos.companiaSeguro.y, false));
       this.doc.setFontSize(this.campos.fontSize?.normal || 10); // Restaurar tamaño normal
     }
