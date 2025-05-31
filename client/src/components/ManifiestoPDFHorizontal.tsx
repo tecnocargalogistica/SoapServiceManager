@@ -336,9 +336,11 @@ export class ManifiestoPDFHorizontalGenerator {
       this.doc.text(`${this.datosCompletos.vehiculo.peso_vacio_kg} kg`, this.pixelToMM(campos.pesoVacio.x), this.pixelToMM(campos.pesoVacio.y, false));
     }
     
-    // Compañía de seguros
+    // Compañía de seguros (texto más pequeño)
     if (campos.companiaSeguro && this.datosCompletos?.vehiculo?.aseguradora) {
+      this.doc.setFontSize(8); // Tamaño más pequeño para la aseguradora
       this.doc.text(this.datosCompletos.vehiculo.aseguradora, this.pixelToMM(campos.companiaSeguro.x), this.pixelToMM(campos.companiaSeguro.y, false));
+      this.doc.setFontSize(this.campos.fontSize?.normal || 10); // Restaurar tamaño normal
     }
     
     // Número de póliza (solo 6 primeros números)
