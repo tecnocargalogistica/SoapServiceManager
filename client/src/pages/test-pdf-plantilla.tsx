@@ -27,8 +27,8 @@ const TestPDFPlantilla = () => {
     
     // Información del vehículo
     marcaVehiculo: { x: 200, y: 373 },
-    configuracionVehiculo: { x: 400, y: 373 },
-    pesoVacio: { x: 600, y: 373 },
+    configuracionVehiculo: { x: 700, y: 373 },
+    pesoVacio: { x: 900, y: 373 },
     numeroPoliza: { x: 1310, y: 373 },
     companiaSeguro: { x: 1000, y: 373 },
     vencimientoSoat: { x: 1420, y: 373 },
