@@ -34,7 +34,7 @@ const TestPDFPlantilla = () => {
     vencimientoSoat: { x: 1420, y: 373 },
     
     // Información del conductor
-    numeroDocumentoConductor: { x: 400, y: 410 },
+    numeroDocumentoConductor: { x: 410, y: 410 },
     
     // Información del propietario/titular del vehículo
     titularManifiesto: { x: 100, y: 450 },
