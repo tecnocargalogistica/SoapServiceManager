@@ -20,6 +20,7 @@ import TestPDFPlantilla from "@/pages/test-pdf-plantilla";
 import Configuracion from "@/pages/configuracion";
 import GestionDatos from "@/pages/gestion-datos";
 import SOAPCliente from "@/pages/soap-cliente";
+import Logs from "@/pages/logs";
 import NotFound from "@/pages/not-found";
 
 import Sidebar from "@/components/layout/sidebar";
@@ -48,6 +49,7 @@ function Router() {
 
             <Route path="/gestion-datos" component={GestionDatos} />
             <Route path="/soap-cliente" component={SOAPCliente} />
+            <Route path="/logs" component={Logs} />
             <Route path="/configuracion" component={Configuracion} />
             <Route component={NotFound} />
           </Switch>
