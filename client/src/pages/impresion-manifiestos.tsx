@@ -130,16 +130,30 @@ export default function ImpresionManifiestos() {
     setSelectedManifiestos(new Set());
   };
 
-  // Función auxiliar para generar PDF usando la misma lógica del componente ManifiestoPDFHorizontal
-  const generateManifiestoPDF = async (datosCompletos: any): Promise<Blob> => {
-    // Importar la clase ManifiestoPDFHorizontalGenerator desde el archivo
-    const ManifiestoPDFHorizontalModule = await import('@/components/ManifiestoPDFHorizontal');
-    
-    // Crear una instancia del generador
-    const generator = new (ManifiestoPDFHorizontalModule as any).ManifiestoPDFHorizontalGenerator(datosCompletos);
-    
-    // Usar el método getBlob() para obtener el PDF como Blob
-    return await generator.getBlob();
+  // Función auxiliar para generar PDF de 2 páginas con la placa del vehículo
+  const generateManifiestoPDF = async (numeroManifiesto: string): Promise<{ blob: Blob, placa: string }> => {
+    try {
+      // Obtener datos completos del manifiesto
+      const response = await fetch(`/api/manifiestos/datos-completos/${numeroManifiesto}`);
+      const datosCompletos = await response.json();
+      
+      // Importar la clase ManifiestoPDFHorizontalGenerator
+      const ManifiestoPDFHorizontalModule = await import('@/components/ManifiestoPDFHorizontal');
+      
+      // Crear una instancia del generador con los datos completos
+      const generator = new (ManifiestoPDFHorizontalModule as any).ManifiestoPDFHorizontalGenerator(datosCompletos);
+      
+      // Generar el PDF de 2 páginas
+      const blob = await generator.getBlob();
+      
+      return {
+        blob: blob,
+        placa: datosCompletos.manifiesto.placa || numeroManifiesto
+      };
+    } catch (error) {
+      console.error(`Error generando PDF para manifiesto ${numeroManifiesto}:`, error);
+      throw error;
+    }
   };
 
   // Descargar múltiples manifiestos como ZIP
@@ -161,18 +175,14 @@ export default function ImpresionManifiestos() {
         selectedManifiestos.has(m.numero_manifiesto)
       );
 
-      // Generar PDFs horizontales para cada manifiesto seleccionado
+      // Generar PDFs horizontales de 2 páginas para cada manifiesto seleccionado
       for (const manifiesto of selectedManifiestosArray) {
         try {
-          // Obtener datos completos del manifiesto
-          const response = await fetch(`/api/manifiestos/datos-completos/${manifiesto.numero_manifiesto}`);
-          const datosCompletos = await response.json();
+          // Generar el PDF de 2 páginas con la placa del vehículo
+          const pdfResult = await generateManifiestoPDF(manifiesto.numero_manifiesto);
           
-          // Generar el PDF usando una función auxiliar
-          const pdfBlob = await generateManifiestoPDF(datosCompletos);
-          
-          // Agregar al ZIP con el nombre de la placa
-          zip.file(`manifiesto_${manifiesto.placa}_${manifiesto.numero_manifiesto}.pdf`, pdfBlob);
+          // Agregar al ZIP con el nombre de la placa (mismo formato que el botón PDF Horizontal)
+          zip.file(`${pdfResult.placa}.pdf`, pdfResult.blob);
         } catch (error) {
           console.error(`Error generando PDF para manifiesto ${manifiesto.numero_manifiesto}:`, error);
           // Continúar con los demás manifiestos
