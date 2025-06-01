@@ -114,7 +114,7 @@ export default function Configuracion() {
       // Crear un enlace temporal para descargar el respaldo
       const link = document.createElement('a');
       link.href = '/api/database/backup';
-      link.download = `backup-transpetromira-${new Date().toISOString().substring(0, 10)}.json`;
+      link.download = `backup-transpetromira-${new Date().toISOString().substring(0, 10)}.sql`;
       
       // Agregar al DOM temporalmente y hacer clic
       document.body.appendChild(link);

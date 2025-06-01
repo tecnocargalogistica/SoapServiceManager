@@ -1957,82 +1957,116 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Endpoint para crear respaldo de base de datos
+  // Endpoint para crear respaldo completo de base de datos (esquema + datos)
   app.get('/api/database/backup', async (req: Request, res: Response) => {
     try {
-      console.log('🚀 Iniciando respaldo de base de datos...');
+      console.log('🚀 Iniciando respaldo completo de base de datos...');
       
-      // Obtener todos los datos usando el storage
-      const [
-        configuraciones,
-        consecutivos,
-        documentos,
-        logActividades,
-        manifiestos,
-        municipios,
-        remesas,
-        sedes,
-        terceros,
-        vehiculos,
-        plantillasPdf
-      ] = await Promise.all([
-        storage.getConfiguraciones(),
-        storage.getConsecutivos(),
-        storage.getDocumentos(),
-        storage.getLogActividades(),
-        storage.getManifiestos(),
-        storage.getMunicipios(),
-        storage.getRemesas(),
-        storage.getSedes(),
-        storage.getTerceros(),
-        storage.getVehiculos(),
-        storage.getPlantillasPdf()
-      ]);
+      const { spawn } = require('child_process');
+      const fs = require('fs');
+      const path = require('path');
 
-      // Crear objeto de respaldo
-      const backup = {
-        timestamp: new Date().toISOString(),
-        version: '1.0.0',
-        data: {
-          configuraciones,
-          consecutivos,
-          documentos,
-          log_actividades: logActividades,
-          manifiestos,
-          municipios,
-          remesas,
-          sedes,
-          terceros,
-          vehiculos,
-          plantillas_pdf: plantillasPdf
-        }
+      // Usar variables de entorno de PostgreSQL
+      const dbConfig = {
+        host: process.env.PGHOST || 'localhost',
+        port: process.env.PGPORT || '5432',
+        database: process.env.PGDATABASE,
+        user: process.env.PGUSER,
+        password: process.env.PGPASSWORD
       };
+
+      console.log(`📊 Configuración de conexión:`);
+      console.log(`   - Host: ${dbConfig.host}`);
+      console.log(`   - Puerto: ${dbConfig.port}`);
+      console.log(`   - Base de datos: ${dbConfig.database}`);
+      console.log(`   - Usuario: ${dbConfig.user}`);
 
       // Generar nombre de archivo con timestamp
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
-      const filename = `backup-transpetromira-${timestamp}.json`;
+      const filename = `backup-transpetromira-${timestamp}.sql`;
+      const tempFilePath = path.join('/tmp', filename);
 
-      // Configurar headers para descarga
-      res.setHeader('Content-Type', 'application/json');
-      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      // Crear comando pg_dump
+      const pgDumpArgs = [
+        '-h', dbConfig.host,
+        '-p', dbConfig.port,
+        '-U', dbConfig.user,
+        '-d', dbConfig.database,
+        '--no-password',
+        '--verbose',
+        '--clean',
+        '--create',
+        '--if-exists',
+        '--inserts',
+        '--column-inserts',
+        '-f', tempFilePath
+      ];
 
-      // Enviar respaldo
-      res.json(backup);
+      console.log('🔧 Ejecutando pg_dump...');
 
-      console.log('✅ Respaldo de base de datos enviado');
-      console.log(`📁 Archivo: ${filename}`);
-      console.log('📊 Estadísticas del respaldo:');
-      console.log(`   - Configuraciones: ${configuraciones.length}`);
-      console.log(`   - Consecutivos: ${consecutivos.length}`);
-      console.log(`   - Documentos: ${documentos.length}`);
-      console.log(`   - Log Actividades: ${logActividades.length}`);
-      console.log(`   - Manifiestos: ${manifiestos.length}`);
-      console.log(`   - Municipios: ${municipios.length}`);
-      console.log(`   - Remesas: ${remesas.length}`);
-      console.log(`   - Sedes: ${sedes.length}`);
-      console.log(`   - Terceros: ${terceros.length}`);
-      console.log(`   - Vehículos: ${vehiculos.length}`);
-      console.log(`   - Plantillas PDF: ${plantillasPdf.length}`);
+      // Ejecutar pg_dump
+      const pgDump = spawn('pg_dump', pgDumpArgs, {
+        env: { 
+          ...process.env, 
+          PGPASSWORD: dbConfig.password 
+        }
+      });
+
+      let stderr = '';
+      
+      pgDump.stderr.on('data', (data) => {
+        stderr += data.toString();
+        console.log(`pg_dump: ${data.toString().trim()}`);
+      });
+
+      pgDump.on('close', (code) => {
+        if (code === 0) {
+          console.log('✅ pg_dump completado exitosamente');
+          
+          // Leer el archivo generado
+          fs.readFile(tempFilePath, 'utf8', (err, data) => {
+            if (err) {
+              console.error('❌ Error leyendo archivo de respaldo:', err);
+              res.status(500).json({ error: 'Error leyendo archivo de respaldo' });
+              return;
+            }
+
+            // Configurar headers para descarga
+            res.setHeader('Content-Type', 'application/sql');
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+            // Enviar archivo
+            res.send(data);
+
+            // Limpiar archivo temporal
+            fs.unlink(tempFilePath, (unlinkErr) => {
+              if (unlinkErr) {
+                console.warn('⚠️ No se pudo eliminar archivo temporal:', unlinkErr);
+              }
+            });
+
+            console.log('✅ Respaldo completo enviado');
+            console.log(`📁 Archivo: ${filename}`);
+            console.log('📊 Incluye: Esquema completo + Datos + Secuencias + Índices');
+          });
+        } else {
+          console.error('❌ pg_dump falló con código:', code);
+          console.error('❌ Error stderr:', stderr);
+          res.status(500).json({ 
+            error: 'Error ejecutando pg_dump', 
+            details: stderr,
+            code: code 
+          });
+        }
+      });
+
+      pgDump.on('error', (error) => {
+        console.error('❌ Error iniciando pg_dump:', error);
+        res.status(500).json({ 
+          error: 'Error iniciando pg_dump', 
+          details: error.message 
+        });
+      });
 
     } catch (error) {
       console.error('❌ Error creando respaldo de base de datos:', error);
