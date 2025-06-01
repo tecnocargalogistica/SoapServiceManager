@@ -51,7 +51,7 @@ export class ManifiestoPDFHorizontalGenerator {
       vencimientoSoat: { x: 1200, y: 373 },
       
       // Información del conductor
-      numeroDocumentoConductor: { x: 400, y: 450 },
+      numeroDocumentoConductor: { x: 400, y: 373 },
       
       // Titular del manifiesto
       titularManifiesto: { x: 100, y: 450 },
