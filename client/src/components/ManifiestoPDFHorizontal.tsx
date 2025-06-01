@@ -260,12 +260,15 @@ export class ManifiestoPDFHorizontalGenerator {
             const ctx = canvas.getContext('2d');
             
             if (ctx) {
-              canvas.width = img.width;
-              canvas.height = img.height;
-              ctx.drawImage(img, 0, 0);
+              // Reducir resolución para archivos más pequeños
+              const scaleFactor = 0.7; // Reducir tamaño al 70%
+              canvas.width = img.width * scaleFactor;
+              canvas.height = img.height * scaleFactor;
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
               
-              const base64 = canvas.toDataURL('image/jpeg', 0.9);
-              console.log('Imagen convertida a base64 exitosamente');
+              // Reducir calidad JPEG a 0.6 (60%) para archivos más pequeños
+              const base64 = canvas.toDataURL('image/jpeg', 0.6);
+              console.log('Imagen convertida a base64 con compresión optimizada');
               resolve(base64);
             } else {
               resolve(null);
