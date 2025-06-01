@@ -33,6 +33,9 @@ const TestPDFPlantilla = () => {
     companiaSeguro: { x: 1000, y: 373 },
     vencimientoSoat: { x: 1420, y: 373 },
     
+    // Información del conductor
+    numeroDocumentoConductor: { x: 500, y: 373 },
+    
     // Información del propietario/titular del vehículo
     titularManifiesto: { x: 100, y: 450 },
     docIdentificacionTitular: { x: 100, y: 470 },

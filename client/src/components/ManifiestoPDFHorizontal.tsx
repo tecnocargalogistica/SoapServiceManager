@@ -50,6 +50,9 @@ export class ManifiestoPDFHorizontalGenerator {
       companiaSeguro: { x: 1000, y: 373 },
       vencimientoSoat: { x: 1200, y: 373 },
       
+      // Información del conductor
+      numeroDocumentoConductor: { x: 500, y: 373 },
+      
       // Titular del manifiesto
       titularManifiesto: { x: 100, y: 450 },
       docIdentificacionTitular: { x: 100, y: 470 },
@@ -353,6 +356,11 @@ export class ManifiestoPDFHorizontalGenerator {
     if (campos.vencimientoSoat && this.datosCompletos?.vehiculo?.vence_soat) {
       const fechaVencimiento = format(new Date(this.datosCompletos.vehiculo.vence_soat), 'dd/MM/yyyy', { locale: es });
       this.doc.text(fechaVencimiento, this.pixelToMM(campos.vencimientoSoat.x), this.pixelToMM(campos.vencimientoSoat.y, false));
+    }
+    
+    // Número de documento del conductor
+    if (campos.numeroDocumentoConductor && this.datosCompletos?.conductor?.numero_documento) {
+      this.doc.text(this.datosCompletos.conductor.numero_documento, this.pixelToMM(campos.numeroDocumentoConductor.x), this.pixelToMM(campos.numeroDocumentoConductor.y, false));
     }
     
     // === TITULAR DEL MANIFIESTO (PROPIETARIO) ===
