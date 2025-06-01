@@ -1962,9 +1962,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log('🚀 Iniciando respaldo completo de base de datos...');
       
-      const { spawn } = require('child_process');
-      const fs = require('fs');
-      const path = require('path');
+      const { spawn } = await import('child_process');
+      const fs = await import('fs');
+      const path = await import('path');
 
       // Usar variables de entorno de PostgreSQL
       const dbConfig = {
