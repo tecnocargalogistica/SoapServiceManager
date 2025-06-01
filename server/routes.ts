@@ -1957,5 +1957,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint para crear respaldo de base de datos
+  app.get('/api/database/backup', async (req: Request, res: Response) => {
+    try {
+      console.log('🚀 Iniciando respaldo de base de datos...');
+      
+      // Obtener todos los datos usando el storage
+      const [
+        configuraciones,
+        consecutivos,
+        documentos,
+        logActividades,
+        manifiestos,
+        municipios,
+        remesas,
+        sedes,
+        terceros,
+        vehiculos,
+        plantillasPdf
+      ] = await Promise.all([
+        storage.getConfiguraciones(),
+        storage.getConsecutivos(),
+        storage.getDocumentos(),
+        storage.getLogActividades(),
+        storage.getManifiestos(),
+        storage.getMunicipios(),
+        storage.getRemesas(),
+        storage.getSedes(),
+        storage.getTerceros(),
+        storage.getVehiculos(),
+        storage.getPlantillasPdf()
+      ]);
+
+      // Crear objeto de respaldo
+      const backup = {
+        timestamp: new Date().toISOString(),
+        version: '1.0.0',
+        data: {
+          configuraciones,
+          consecutivos,
+          documentos,
+          log_actividades: logActividades,
+          manifiestos,
+          municipios,
+          remesas,
+          sedes,
+          terceros,
+          vehiculos,
+          plantillas_pdf: plantillasPdf
+        }
+      };
+
+      // Generar nombre de archivo con timestamp
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+      const filename = `backup-transpetromira-${timestamp}.json`;
+
+      // Configurar headers para descarga
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+      // Enviar respaldo
+      res.json(backup);
+
+      console.log('✅ Respaldo de base de datos enviado');
+      console.log(`📁 Archivo: ${filename}`);
+      console.log('📊 Estadísticas del respaldo:');
+      console.log(`   - Configuraciones: ${configuraciones.length}`);
+      console.log(`   - Consecutivos: ${consecutivos.length}`);
+      console.log(`   - Documentos: ${documentos.length}`);
+      console.log(`   - Log Actividades: ${logActividades.length}`);
+      console.log(`   - Manifiestos: ${manifiestos.length}`);
+      console.log(`   - Municipios: ${municipios.length}`);
+      console.log(`   - Remesas: ${remesas.length}`);
+      console.log(`   - Sedes: ${sedes.length}`);
+      console.log(`   - Terceros: ${terceros.length}`);
+      console.log(`   - Vehículos: ${vehiculos.length}`);
+      console.log(`   - Plantillas PDF: ${plantillasPdf.length}`);
+
+    } catch (error) {
+      console.error('❌ Error creando respaldo de base de datos:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  });
+
   return httpServer;
 }

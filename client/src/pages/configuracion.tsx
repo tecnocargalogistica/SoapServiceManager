@@ -102,6 +102,37 @@ export default function Configuracion() {
       ...prev,
       [field]: value
     }));
+  }
+
+  const handleDatabaseBackup = async () => {
+    try {
+      toast({
+        title: "Iniciando respaldo",
+        description: "Generando archivo de respaldo de la base de datos...",
+      });
+
+      // Crear un enlace temporal para descargar el respaldo
+      const link = document.createElement('a');
+      link.href = '/api/database/backup';
+      link.download = `backup-transpetromira-${new Date().toISOString().substring(0, 10)}.json`;
+      
+      // Agregar al DOM temporalmente y hacer clic
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({
+        title: "Respaldo completado",
+        description: "El archivo de respaldo se ha descargado exitosamente",
+      });
+    } catch (error) {
+      console.error('Error generando respaldo:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo generar el respaldo de la base de datos",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSave = () => {
@@ -653,7 +684,11 @@ export default function Configuracion() {
                 <CardTitle>Acciones del Sistema</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={handleDatabaseBackup}
+                >
                   <Database className="h-4 w-4 mr-2" />
                   Respaldar Base de Datos
                 </Button>
