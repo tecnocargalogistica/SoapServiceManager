@@ -25,7 +25,7 @@ export class ManifiestoPDFHorizontalGenerator {
     this.usarCoordenadasPersonalizadas = !!coordenadas;
     
     // Inicializar la ruta de imagen por defecto
-    this.imagenPath = manifestoImagePath;
+    this.imagenPath = `/@fs/home/runner/workspace/attached_assets/PLANTILLA_REAL1_Página_1.jpg`;
     
     // Si se proporciona una imagen custom, usarla
     if (imagenCustom) {
