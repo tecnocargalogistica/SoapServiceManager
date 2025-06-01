@@ -687,12 +687,12 @@ export class ManifiestoPDFHorizontalGenerator {
       this.doc.addPage();
       
       // Cargar imagen de la segunda página
-      const imagenSegundaPagina = `/@fs/home/runner/workspace/attached_assets/Manifiesto_PNG_Página_2.png`;
+      const imagenSegundaPagina = `/@fs/home/runner/workspace/attached_assets/Manifiesto_PNG_Página_2.jpg`;
       const image = await this.loadImageAsBase64(imagenSegundaPagina);
       
       if (image) {
         console.log('Imagen de segunda página cargada correctamente');
-        this.doc.addImage(image, 'PNG', 0, 0, 297, 210);
+        this.doc.addImage(image, 'JPEG', 0, 0, 297, 210);
         
         // Agregar campos duplicados en la segunda página
         this.addSecondPageTexts();
