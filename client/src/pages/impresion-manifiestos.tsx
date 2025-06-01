@@ -130,82 +130,16 @@ export default function ImpresionManifiestos() {
     setSelectedManifiestos(new Set());
   };
 
-  // Función auxiliar para generar PDF
+  // Función auxiliar para generar PDF usando la misma lógica del componente ManifiestoPDFHorizontal
   const generateManifiestoPDF = async (datosCompletos: any): Promise<Blob> => {
-    // Importar jsPDF y QRCode dinámicamente
-    const [{ jsPDF }, QRCode] = await Promise.all([
-      import('jspdf'),
-      import('qrcode')
-    ]);
-
-    const doc = new jsPDF({
-      orientation: 'landscape',
-      unit: 'mm',
-      format: 'a4'
-    });
-
-    try {
-      // Obtener plantilla activa
-      const plantillaResponse = await fetch('/api/plantillas-pdf/activa');
-      const plantilla = await plantillaResponse.json();
-      
-      if (plantilla && plantilla.coordenadas) {
-        const coordenadas = JSON.parse(plantilla.coordenadas);
-        
-        // Cargar imagen de fondo
-        const imagenUrl = `/@fs/home/runner/workspace/attached_assets/PLANTILLA_REAL1_Página_1.jpg`;
-        const response = await fetch(imagenUrl);
-        const blob = await response.blob();
-        
-        const reader = new FileReader();
-        const imageBase64 = await new Promise<string>((resolve) => {
-          reader.onload = () => resolve(reader.result as string);
-          reader.readAsDataURL(blob);
-        });
-        
-        // Agregar imagen de fondo
-        doc.addImage(imageBase64, 'JPEG', 0, 0, 297, 210);
-        
-        // Agregar textos usando coordenadas
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(8);
-        doc.setTextColor(0, 0, 0);
-        
-        // Campos principales
-        const pixelToMM = (pixels: number) => (pixels * 25.4) / 96;
-        
-        if (coordenadas.consecutivo) {
-          doc.text(datosCompletos.manifiesto.numero_manifiesto, 
-                   pixelToMM(coordenadas.consecutivo.x), 
-                   pixelToMM(coordenadas.consecutivo.y));
-        }
-        
-        // Generar código QR
-        const qrContent = `MEC:${datosCompletos.manifiesto.ingreso_id || '104518661'}\nFecha:2025/05/29\nPlaca:${datosCompletos.manifiesto.placa}`;
-        const qrDataURL = await QRCode.toDataURL(qrContent, {
-          width: 228,
-          margin: 1,
-          color: { dark: '#000000', light: '#FFFFFF' }
-        });
-        
-        if (coordenadas.codigoQR) {
-          doc.addImage(qrDataURL, 'PNG', 
-                       pixelToMM(coordenadas.codigoQR.x), 
-                       pixelToMM(coordenadas.codigoQR.y), 
-                       41.4, 41.4);
-        }
-      }
-    } catch (error) {
-      console.error('Error generando PDF:', error);
-      // PDF básico en caso de error
-      doc.setFontSize(14);
-      doc.text('Manifiesto de Carga', 20, 30);
-      doc.setFontSize(12);
-      doc.text(`Número: ${datosCompletos.manifiesto.numero_manifiesto}`, 20, 50);
-      doc.text(`Placa: ${datosCompletos.manifiesto.placa}`, 20, 70);
-    }
+    // Importar la clase ManifiestoPDFHorizontalGenerator desde el archivo
+    const ManifiestoPDFHorizontalModule = await import('@/components/ManifiestoPDFHorizontal');
     
-    return doc.output('blob');
+    // Crear una instancia del generador
+    const generator = new (ManifiestoPDFHorizontalModule as any).ManifiestoPDFHorizontalGenerator(datosCompletos);
+    
+    // Usar el método getBlob() para obtener el PDF como Blob
+    return await generator.getBlob();
   };
 
   // Descargar múltiples manifiestos como ZIP
