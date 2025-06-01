@@ -412,9 +412,9 @@ export class ManifiestoPDFHorizontalGenerator {
       this.doc.text('300000000', this.pixelToMM(campos.telefonoTenedor.x), this.pixelToMM(campos.telefonoTenedor.y, false));
     }
     
-    // Ciudad: 25286000
-    if (campos.ciudadTenedor) {
-      this.doc.text('25286000', this.pixelToMM(campos.ciudadTenedor.x), this.pixelToMM(campos.ciudadTenedor.y, false));
+    // Ciudad: nombre del municipio origen
+    if (campos.ciudadTenedor && this.datosCompletos?.municipios?.origen) {
+      this.doc.text(this.datosCompletos.municipios.origen, this.pixelToMM(campos.ciudadTenedor.x), this.pixelToMM(campos.ciudadTenedor.y, false));
     }
     
     // === CONDUCTOR ===
