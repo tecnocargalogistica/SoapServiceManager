@@ -178,13 +178,20 @@ export default function ImpresionManifiestos() {
       // Generar PDFs horizontales de 2 páginas para cada manifiesto seleccionado
       for (const manifiesto of selectedManifiestosArray) {
         try {
+          console.log('Procesando manifiesto:', manifiesto);
+          
+          if (!manifiesto || !manifiesto.numero_manifiesto) {
+            console.error('Manifiesto inválido:', manifiesto);
+            continue;
+          }
+          
           // Generar el PDF de 2 páginas con la placa del vehículo
           const pdfResult = await generateManifiestoPDF(manifiesto.numero_manifiesto);
           
           // Agregar al ZIP con el nombre de la placa (mismo formato que el botón PDF Horizontal)
           zip.file(`${pdfResult.placa}.pdf`, pdfResult.blob);
         } catch (error) {
-          console.error(`Error generando PDF para manifiesto ${manifiesto.numero_manifiesto}:`, error);
+          console.error(`Error generando PDF para manifiesto ${manifiesto?.numero_manifiesto || 'desconocido'}:`, error);
           // Continúar con los demás manifiestos
         }
       }
