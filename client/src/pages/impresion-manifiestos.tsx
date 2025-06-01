@@ -190,9 +190,16 @@ export default function ImpresionManifiestos() {
             continue;
           }
           
-          // Usar la misma función que el botón individual "PDF Horizontal"
-          const pdfResult = await generateManifiestoPDF(manifiesto.numero_manifiesto);
-          const { blob, placa } = pdfResult;
+          // Usar exactamente la misma lógica que el botón "PDF Horizontal" exitoso
+          const response = await fetch(`/api/manifiestos/datos-completos/${manifiesto.numero_manifiesto}`);
+          const datosCompletos = await response.json();
+          
+          // Importar y usar la clase exactamente como en el botón individual
+          const { ManifiestoPDFHorizontalGenerator } = await import('@/components/ManifiestoPDFHorizontal');
+          const generator = new ManifiestoPDFHorizontalGenerator(datosCompletos.manifiesto);
+          await generator.generate();
+          const blob = await generator.getBlob();
+          const placa = datosCompletos.manifiesto?.placa || manifiesto.numero_manifiesto;
           
           // Almacenar en cache temporal
           pdfCache[manifiesto.numero_manifiesto] = { blob, placa };
