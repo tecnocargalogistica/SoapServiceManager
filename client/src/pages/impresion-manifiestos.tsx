@@ -175,25 +175,59 @@ export default function ImpresionManifiestos() {
         selectedManifiestos.has(m.numero_manifiesto)
       );
 
-      // Generar PDFs horizontales de 2 páginas para cada manifiesto seleccionado
+      console.log(`🚀 Iniciando generación de ${selectedManifiestosArray.length} PDFs...`);
+      
+      // PASO 1: Generar todos los PDFs y almacenarlos en memoria
+      const pdfCache: { [key: string]: { blob: Blob, placa: string } } = {};
+      let generatedCount = 0;
+      
       for (const manifiesto of selectedManifiestosArray) {
         try {
-          console.log('Procesando manifiesto:', manifiesto);
+          console.log(`📄 Generando PDF ${generatedCount + 1}/${selectedManifiestosArray.length}: ${manifiesto.numero_manifiesto}`);
           
           if (!manifiesto || !manifiesto.numero_manifiesto) {
             console.error('Manifiesto inválido:', manifiesto);
             continue;
           }
           
-          // Generar el PDF de 2 páginas con la placa del vehículo
-          const pdfResult = await generateManifiestoPDF(manifiesto.numero_manifiesto);
+          // Obtener datos completos del manifiesto
+          const response = await fetch(`/api/manifiestos/datos-completos/${manifiesto.numero_manifiesto}`);
+          if (!response.ok) {
+            console.error(`No se pudieron obtener datos para manifiesto ${manifiesto.numero_manifiesto}`);
+            continue;
+          }
+          const datosCompletos = await response.json();
           
-          // Agregar al ZIP con el nombre de la placa (mismo formato que el botón PDF Horizontal)
-          zip.file(`${pdfResult.placa}.pdf`, pdfResult.blob);
+          // Generar PDF horizontal de 2 páginas (igual que el botón individual)
+          const generator = new ManifiestoPDFHorizontalGenerator(datosCompletos.manifiesto);
+          await generator.generate();
+          const blob = await generator.getBlob();
+          
+          const placa = datosCompletos.manifiesto.placa || manifiesto.numero_manifiesto;
+          
+          // Almacenar en cache temporal
+          pdfCache[manifiesto.numero_manifiesto] = { blob, placa };
+          generatedCount++;
+          
+          console.log(`✅ PDF generado: ${placa}.pdf`);
+          
         } catch (error) {
-          console.error(`Error generando PDF para manifiesto ${manifiesto?.numero_manifiesto || 'desconocido'}:`, error);
-          // Continúar con los demás manifiestos
+          console.error(`❌ Error generando PDF para manifiesto ${manifiesto?.numero_manifiesto || 'desconocido'}:`, error);
+          // Continuar con los demás manifiestos
         }
+      }
+      
+      console.log(`📦 Total PDFs generados: ${generatedCount}/${selectedManifiestosArray.length}`);
+      
+      if (generatedCount === 0) {
+        throw new Error('No se pudo generar ningún PDF');
+      }
+      
+      // PASO 2: Agregar todos los PDFs generados al ZIP
+      console.log('🗜️ Creando archivo ZIP...');
+      for (const [numeroManifiesto, pdfData] of Object.entries(pdfCache)) {
+        zip.file(`${pdfData.placa}.pdf`, pdfData.blob);
+        console.log(`📁 Agregado al ZIP: ${pdfData.placa}.pdf`);
       }
 
       // Generar el archivo ZIP
@@ -212,7 +246,7 @@ export default function ImpresionManifiestos() {
 
       toast({
         title: "Descarga exitosa",
-        description: `${selectedManifiestos.size} manifiestos PDF descargados en ZIP`,
+        description: `${generatedCount} manifiestos PDF descargados en ZIP`,
       });
 
       // Limpiar selección
