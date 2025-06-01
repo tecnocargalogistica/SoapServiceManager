@@ -190,20 +190,9 @@ export default function ImpresionManifiestos() {
             continue;
           }
           
-          // Obtener datos completos del manifiesto
-          const response = await fetch(`/api/manifiestos/datos-completos/${manifiesto.numero_manifiesto}`);
-          if (!response.ok) {
-            console.error(`No se pudieron obtener datos para manifiesto ${manifiesto.numero_manifiesto}`);
-            continue;
-          }
-          const datosCompletos = await response.json();
-          
-          // Generar PDF horizontal de 2 páginas (igual que el botón individual)
-          const generator = new ManifiestoPDFHorizontalGenerator(datosCompletos.manifiesto);
-          await generator.generate();
-          const blob = await generator.getBlob();
-          
-          const placa = datosCompletos.manifiesto.placa || manifiesto.numero_manifiesto;
+          // Usar la misma función que el botón individual "PDF Horizontal"
+          const pdfResult = await generateManifiestoPDF(manifiesto.numero_manifiesto);
+          const { blob, placa } = pdfResult;
           
           // Almacenar en cache temporal
           pdfCache[manifiesto.numero_manifiesto] = { blob, placa };
