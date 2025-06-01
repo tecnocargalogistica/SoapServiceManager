@@ -1938,7 +1938,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
         propietario: propietario ? {
           ...propietario,
-          nombre_completo: propietario.nombre || vehiculo.propietario_nombre
+          nombre_completo: propietario.razon_social || `${propietario.nombre} ${propietario.apellido || ''}`.trim() || vehiculo.propietario_nombre
         } : {
           nombre_completo: vehiculo.propietario_nombre,
           numero_documento: vehiculo.propietario_numero_doc
