@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Printer, 
   Eye, 
@@ -14,13 +15,17 @@ import {
   MapPin,
   Truck,
   User,
-  Palette
+  Palette,
+  Archive,
+  CheckCircle,
+  Filter
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import ManifiestoCargaTailwind from "@/components/ManifiestoCargaTailwind";
 import ManifiestoPDFHorizontal from "@/components/ManifiestoPDFHorizontal";
+import JSZip from "jszip";
 
 interface Manifiesto {
   id: number;
@@ -42,6 +47,9 @@ export default function ImpresionManifiestos() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedManifiesto, setSelectedManifiesto] = useState<Manifiesto | null>(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [selectedManifiestos, setSelectedManifiestos] = useState<Set<string>>(new Set());
+  const [filterToday, setFilterToday] = useState(false);
+  const [isDownloadingZip, setIsDownloadingZip] = useState(false);
   const { toast } = useToast();
 
   // Obtener todos los manifiestos
@@ -49,12 +57,23 @@ export default function ImpresionManifiestos() {
     queryKey: ["/api/manifiestos"],
   });
 
-  // Filtrar manifiestos según el término de búsqueda
-  const filteredManifiestos = manifiestos?.filter((m: Manifiesto) =>
-    m.numero_manifiesto.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    m.placa.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    m.conductor_id.includes(searchTerm)
-  ) || [];
+  // Función para verificar si una fecha es hoy
+  const isToday = (dateString: string | Date) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  };
+
+  // Filtrar manifiestos según el término de búsqueda y filtro de fecha
+  const filteredManifiestos = manifiestos?.filter((m: Manifiesto) => {
+    const matchesSearch = m.numero_manifiesto.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.placa.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.conductor_id.includes(searchTerm);
+    
+    const matchesDate = !filterToday || isToday(m.fecha_expedicion);
+    
+    return matchesSearch && matchesDate;
+  }) || [];
 
   const handlePreviewManifiesto = (manifiesto: Manifiesto) => {
     setSelectedManifiesto(manifiesto);
@@ -89,6 +108,85 @@ export default function ImpresionManifiestos() {
       title: "Descarga exitosa",
       description: `Manifiesto ${manifiesto.numero_manifiesto} descargado`,
     });
+  };
+
+  // Manejar selección de manifiestos
+  const handleManifiestoSelection = (numeroManifiesto: string, checked: boolean) => {
+    const newSelection = new Set(selectedManifiestos);
+    if (checked) {
+      newSelection.add(numeroManifiesto);
+    } else {
+      newSelection.delete(numeroManifiesto);
+    }
+    setSelectedManifiestos(newSelection);
+  };
+
+  // Seleccionar todos los manifiestos filtrados
+  const handleSelectAll = () => {
+    const allNumbers = new Set(filteredManifiestos.map(m => m.numero_manifiesto));
+    setSelectedManifiestos(allNumbers);
+  };
+
+  // Deseleccionar todos
+  const handleDeselectAll = () => {
+    setSelectedManifiestos(new Set());
+  };
+
+  // Descargar múltiples manifiestos como ZIP
+  const handleDownloadZip = async () => {
+    if (selectedManifiestos.size === 0) {
+      toast({
+        title: "Sin selección",
+        description: "Selecciona al menos un manifiesto para descargar",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsDownloadingZip(true);
+
+    try {
+      const zip = new JSZip();
+      const selectedManifiestosArray = filteredManifiestos.filter(m => 
+        selectedManifiestos.has(m.numero_manifiesto)
+      );
+
+      // Generar PDFs para cada manifiesto seleccionado
+      for (const manifiesto of selectedManifiestosArray) {
+        const htmlContent = generateManifiestoPrintHTML(manifiesto);
+        zip.file(`manifiesto_${manifiesto.numero_manifiesto}.html`, htmlContent);
+      }
+
+      // Generar el archivo ZIP
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      
+      // Descargar el ZIP
+      const url = URL.createObjectURL(zipBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      const today = format(new Date(), 'yyyy-MM-dd');
+      a.download = `manifiestos_${today}_${selectedManifiestos.size}_documentos.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast({
+        title: "Descarga exitosa",
+        description: `${selectedManifiestos.size} manifiestos descargados en ZIP`,
+      });
+
+      // Limpiar selección
+      setSelectedManifiestos(new Set());
+    } catch (error) {
+      toast({
+        title: "Error en descarga",
+        description: "Error al generar el archivo ZIP",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDownloadingZip(false);
+    }
   };
 
   const generateManifiestoPrintHTML = (manifiesto: Manifiesto) => {
@@ -564,7 +662,7 @@ export default function ImpresionManifiestos() {
           </p>
         </div>
 
-        {/* Búsqueda */}
+        {/* Búsqueda y Filtros */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -572,7 +670,7 @@ export default function ImpresionManifiestos() {
               Buscar Manifiestos
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="flex gap-4">
               <Input
                 placeholder="Buscar por número de manifiesto, placa o conductor..."
@@ -580,11 +678,57 @@ export default function ImpresionManifiestos() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="flex-1"
               />
-              <Button variant="outline">
-                <Search className="h-4 w-4 mr-2" />
-                Buscar
+              <Button 
+                variant={filterToday ? "default" : "outline"}
+                onClick={() => setFilterToday(!filterToday)}
+                className="flex items-center gap-2"
+              >
+                <Calendar className="h-4 w-4" />
+                HOY
+                {filterToday && <CheckCircle className="h-4 w-4" />}
               </Button>
             </div>
+            
+            {/* Controles de selección múltiple */}
+            {filteredManifiestos.length > 0 && (
+              <div className="flex items-center justify-between pt-4 border-t">
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-muted-foreground">
+                    {selectedManifiestos.size} de {filteredManifiestos.length} seleccionados
+                  </span>
+                  <div className="flex gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={handleSelectAll}
+                      disabled={selectedManifiestos.size === filteredManifiestos.length}
+                    >
+                      <CheckCircle className="h-4 w-4 mr-1" />
+                      Seleccionar Todos
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={handleDeselectAll}
+                      disabled={selectedManifiestos.size === 0}
+                    >
+                      Deseleccionar Todos
+                    </Button>
+                  </div>
+                </div>
+                
+                {selectedManifiestos.size > 0 && (
+                  <Button 
+                    onClick={handleDownloadZip}
+                    disabled={isDownloadingZip}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    <Archive className="h-4 w-4 mr-2" />
+                    {isDownloadingZip ? 'Generando ZIP...' : `Descargar ${selectedManifiestos.size} en ZIP`}
+                  </Button>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -613,7 +757,15 @@ export default function ImpresionManifiestos() {
                     key={manifiesto.id}
                     className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
                   >
-                    <div className="space-y-2">
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        checked={selectedManifiestos.has(manifiesto.numero_manifiesto)}
+                        onCheckedChange={(checked) => 
+                          handleManifiestoSelection(manifiesto.numero_manifiesto, checked as boolean)
+                        }
+                        className="mt-1"
+                      />
+                      <div className="space-y-2">
                       <div className="flex items-center gap-3">
                         <span className="font-semibold text-lg">
                           Manifiesto {manifiesto.numero_manifiesto}
