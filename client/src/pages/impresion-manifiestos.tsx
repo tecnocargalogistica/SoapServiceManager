@@ -149,10 +149,26 @@ export default function ImpresionManifiestos() {
         selectedManifiestos.has(m.numero_manifiesto)
       );
 
-      // Generar PDFs para cada manifiesto seleccionado
+      // Generar PDFs horizontales para cada manifiesto seleccionado
       for (const manifiesto of selectedManifiestosArray) {
-        const htmlContent = generateManifiestoPrintHTML(manifiesto);
-        zip.file(`manifiesto_${manifiesto.numero_manifiesto}.html`, htmlContent);
+        try {
+          // Obtener datos completos del manifiesto
+          const response = await fetch(`/api/manifiestos/datos-completos/${manifiesto.numero_manifiesto}`);
+          const datosCompletos = await response.json();
+          
+          // Crear instancia del generador de PDF horizontal
+          const { ManifiestoPDFHorizontalGenerator } = await import('@/components/ManifiestoPDFHorizontal');
+          const pdfGenerator = new ManifiestoPDFHorizontalGenerator();
+          
+          // Generar el PDF
+          const pdfBlob = await pdfGenerator.generatePDF(datosCompletos);
+          
+          // Agregar al ZIP con el nombre de la placa
+          zip.file(`manifiesto_${manifiesto.placa}_${manifiesto.numero_manifiesto}.pdf`, pdfBlob);
+        } catch (error) {
+          console.error(`Error generando PDF para manifiesto ${manifiesto.numero_manifiesto}:`, error);
+          // Continúar con los demás manifiestos
+        }
       }
 
       // Generar el archivo ZIP
@@ -163,7 +179,7 @@ export default function ImpresionManifiestos() {
       const a = document.createElement('a');
       a.href = url;
       const today = format(new Date(), 'yyyy-MM-dd');
-      a.download = `manifiestos_${today}_${selectedManifiestos.size}_documentos.zip`;
+      a.download = `manifiestos_${today}_${selectedManifiestos.size}_PDFs.zip`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -171,7 +187,7 @@ export default function ImpresionManifiestos() {
 
       toast({
         title: "Descarga exitosa",
-        description: `${selectedManifiestos.size} manifiestos descargados en ZIP`,
+        description: `${selectedManifiestos.size} manifiestos PDF descargados en ZIP`,
       });
 
       // Limpiar selección
@@ -179,7 +195,7 @@ export default function ImpresionManifiestos() {
     } catch (error) {
       toast({
         title: "Error en descarga",
-        description: "Error al generar el archivo ZIP",
+        description: "Error al generar el archivo ZIP con PDFs",
         variant: "destructive"
       });
     } finally {
