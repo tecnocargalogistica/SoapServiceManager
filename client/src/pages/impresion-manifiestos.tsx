@@ -222,8 +222,10 @@ export default function ImpresionManifiestos() {
       // PASO 2: Agregar todos los PDFs generados al ZIP
       console.log('🗜️ Creando archivo ZIP...');
       for (const [numeroManifiesto, pdfData] of Object.entries(pdfCache)) {
-        zip.file(`${pdfData.placa}.pdf`, pdfData.blob);
-        console.log(`📁 Agregado al ZIP: ${pdfData.placa}.pdf`);
+        // Usar número de manifiesto para garantizar nombres únicos
+        const fileName = `${pdfData.placa}_${numeroManifiesto}.pdf`;
+        zip.file(fileName, pdfData.blob);
+        console.log(`📁 Agregado al ZIP: ${fileName}`);
       }
 
       // Generar el archivo ZIP
