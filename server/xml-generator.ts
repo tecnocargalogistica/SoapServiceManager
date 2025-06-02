@@ -52,6 +52,12 @@ export interface CumplimientoManifiestoXMLData {
   config: Configuracion;
 }
 
+export interface ConsultaManifiestoXMLData {
+  numeroManifiesto: string;
+  fechaIngreso?: string;
+  config: Configuracion;
+}
+
 export class XMLGenerator {
 
   generateRemesaXML(data: RemesaXMLData): string {
@@ -262,6 +268,38 @@ export class XMLGenerator {
     
     const newHour = (hour + hours) % 24;
     return `${newHour.toString().padStart(2, '0')}:${minuteStr}`;
+  }
+
+  generateConsultaManifiestoXML(data: ConsultaManifiestoXMLData): string {
+    // Si no se proporciona fecha de ingreso, usar fecha actual
+    const fechaIngreso = data.fechaIngreso || new Date().toISOString().split('T')[0];
+
+    return `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:BPMServicesIntf-IBPMServices">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <urn:AtenderMensajeRNDC>
+            <Request>
+                <root>
+                    <acceso>
+                        <username>${data.config.usuario}</username>
+                        <password>${data.config.password}</password>
+                    </acceso>
+                    <solicitud>
+                        <tipo>3</tipo>
+                        <procesoid>4</procesoid>
+                    </solicitud>
+                    <variables>
+                        <FECHAING>${this.formatDate(fechaIngreso)}</FECHAING>
+                    </variables>
+                    <documento>
+                        <NUMNITEMPRESATRANSPORTE>${data.config.empresa_nit}</NUMNITEMPRESATRANSPORTE>
+                        <NUMMANIFIESTOCARGA>${data.numeroManifiesto}</NUMMANIFIESTOCARGA>
+                    </documento>
+                </root>
+            </Request>
+        </urn:AtenderMensajeRNDC>
+    </soapenv:Body>
+</soapenv:Envelope>`;
   }
 }
 

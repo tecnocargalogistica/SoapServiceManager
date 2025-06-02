@@ -2074,5 +2074,112 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== CONSULTAS ROUTES =====
+  
+  // Preview XML de consulta de manifiesto
+  app.post("/api/consultas/preview", async (req, res) => {
+    try {
+      const { numeroManifiesto, fechaIngreso } = req.body;
+      
+      if (!numeroManifiesto) {
+        return res.status(400).json({ error: "Número de manifiesto es requerido" });
+      }
+
+      const config = await storage.getConfiguracionActiva();
+      if (!config) {
+        return res.status(400).json({ error: "Configuración del sistema no encontrada" });
+      }
+
+      const consultaData = {
+        numeroManifiesto,
+        fechaIngreso,
+        config
+      };
+
+      const xml = xmlGenerator.generateConsultaManifiestoXML(consultaData);
+      
+      console.log(`📋 === XML CONSULTA PREVIEW ${numeroManifiesto} ===`);
+      console.log(xml);
+      console.log(`📋 === FIN XML CONSULTA PREVIEW ${numeroManifiesto} ===`);
+
+      res.json({
+        success: true,
+        numeroManifiesto,
+        xml,
+        data: consultaData
+      });
+
+    } catch (error) {
+      console.error("Error al generar preview XML consulta:", error);
+      res.status(500).json({ error: "Error al generar vista previa del XML de consulta" });
+    }
+  });
+
+  // Consultar manifiesto en RNDC
+  app.post("/api/consultas/manifiesto", async (req, res) => {
+    try {
+      const { numeroManifiesto, fechaIngreso } = req.body;
+      
+      if (!numeroManifiesto) {
+        return res.status(400).json({ error: "Número de manifiesto es requerido" });
+      }
+
+      const config = await storage.getConfiguracionActiva();
+      if (!config) {
+        return res.status(400).json({ error: "Configuración del sistema no encontrada" });
+      }
+
+      const soapProxy = new SOAPProxy(config.endpoint_primary, config.endpoint_backup, config.timeout);
+
+      const consultaData = {
+        numeroManifiesto,
+        fechaIngreso,
+        config
+      };
+
+      const xml = xmlGenerator.generateConsultaManifiestoXML(consultaData);
+      
+      console.log(`📋 === XML CONSULTA MANIFIESTO ${numeroManifiesto} ===`);
+      console.log(xml);
+      console.log(`📋 === FIN XML CONSULTA MANIFIESTO ${numeroManifiesto} ===`);
+
+      const soapResponse = await soapProxy.sendSOAPRequest(xml);
+      
+      // Log de actividad
+      await storage.createLogActividad({
+        tipo: soapResponse.success ? "success" : "error",
+        modulo: "consulta-manifiesto",
+        descripcion: `Consulta de manifiesto ${numeroManifiesto}: ${soapResponse.success ? "exitosa" : "fallida"}`,
+        detalles: JSON.stringify({
+          numeroManifiesto,
+          fechaIngreso,
+          respuesta: soapResponse
+        })
+      });
+
+      res.json({
+        success: soapResponse.success,
+        numeroManifiesto,
+        fechaIngreso,
+        mensaje: soapResponse.success ? "Consulta realizada exitosamente" : (soapResponse.mensaje || "Error en la consulta"),
+        data: soapResponse.data,
+        respuesta_xml: soapResponse.data?.rawResponse
+      });
+
+    } catch (error) {
+      console.error("Error al consultar manifiesto:", error);
+      
+      // Log de error
+      await storage.createLogActividad({
+        tipo: "error",
+        modulo: "consulta-manifiesto",
+        descripcion: `Error al consultar manifiesto: ${error}`,
+        detalles: JSON.stringify({ error: error instanceof Error ? error.message : String(error) })
+      });
+      
+      res.status(500).json({ error: "Error al procesar consulta de manifiesto" });
+    }
+  });
+
   return httpServer;
 }
