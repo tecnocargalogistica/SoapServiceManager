@@ -35,6 +35,7 @@ const navigation = [
     section: "Gestión de Datos",
     items: [
       { name: "Gestión de Datos", href: "/gestion-datos", icon: Building },
+      { name: "Carga de Vehículos", href: "/carga-vehiculos", icon: Truck },
     ]
   },
   {

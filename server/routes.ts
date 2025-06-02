@@ -2182,7 +2182,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ===== ENDPOINT PARA CARGA MASIVA DE VEHÍCULOS =====
-  app.post('/api/vehiculos/carga-masiva', upload.single('archivo'), async (req: Request, res: Response) => {
+  app.post('/api/vehiculos/carga-masiva', upload.single('archivo'), async (req: any, res: any) => {
     try {
       if (!req.file) {
         return res.status(400).json({ error: 'No se ha subido ningún archivo' });
@@ -2193,8 +2193,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('📁 Procesando archivo de vehículos:', filename);
 
+      // Importar el procesador de vehículos
+      const { vehiculosProcessor } = await import('./vehiculos-processor.js');
+      
       // Procesar el archivo Excel/CSV
-      const vehiculosData = excelProcessor.parseVehiculosExcel(buffer, filename);
+      const vehiculosData = vehiculosProcessor.parseArchivo(buffer, filename);
       console.log(`📊 ${vehiculosData.length} vehículos encontrados en el archivo`);
 
       const resultados = [];
@@ -2204,42 +2207,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (let i = 0; i < vehiculosData.length; i++) {
         const vehiculo = vehiculosData[i];
         try {
-          // Validar campos requeridos
-          if (!vehiculo.PLACA || !vehiculo.CAPACIDAD_CARGA || !vehiculo.PROPIETARIO_NUMERO_DOC || !vehiculo.PROPIETARIO_NOMBRE) {
-            throw new Error('Campos requeridos faltantes: PLACA, CAPACIDAD_CARGA, PROPIETARIO_NUMERO_DOC, PROPIETARIO_NOMBRE');
+          // Validar vehículo
+          const erroresValidacion = vehiculosProcessor.validarVehiculo(vehiculo);
+          if (erroresValidacion.length > 0) {
+            throw new Error(erroresValidacion.join(', '));
           }
 
-          // Crear objeto para insertar en la base de datos
-          const nuevoVehiculo = {
-            placa: vehiculo.PLACA.toUpperCase().trim(),
-            configuracion: vehiculo.CONFIGURACION || null,
-            clase: vehiculo.CLASE || null,
-            marca: vehiculo.MARCA || null,
-            servicio: vehiculo.SERVICIO || null,
-            numero_ejes: vehiculo.NUMERO_EJES ? parseInt(vehiculo.NUMERO_EJES.toString()) : null,
-            carroceria: vehiculo.CARROCERIA || null,
-            modalidad: vehiculo.MODALIDAD || null,
-            linea: vehiculo.LINEA || null,
-            tipo_combustible: vehiculo.TIPO_COMBUSTIBLE || null,
-            capacidad_carga: parseInt(vehiculo.CAPACIDAD_CARGA.toString()),
-            peso_vacio: vehiculo.PESO_VACIO ? parseInt(vehiculo.PESO_VACIO.toString()) : null,
-            fecha_matricula: vehiculo.FECHA_MATRICULA || null,
-            modelo_año: vehiculo.MODELO_AÑO ? parseInt(vehiculo.MODELO_AÑO.toString()) : null,
-            peso_bruto_vehicular: vehiculo.PESO_BRUTO_VEHICULAR ? parseInt(vehiculo.PESO_BRUTO_VEHICULAR.toString()) : null,
-            unidad_medida: 'Kilogramos',
-            numero_poliza: vehiculo.NUMERO_POLIZA || null,
-            aseguradora: vehiculo.ASEGURADORA || null,
-            nit_aseguradora: vehiculo.NIT_ASEGURADORA || null,
-            vence_soat: vehiculo.VENCE_SOAT || null,
-            vence_revision_tecnomecanica: vehiculo.VENCE_REVISION_TECNOMECANICA || null,
-            propietario_tipo_doc: vehiculo.PROPIETARIO_TIPO_DOC || 'N',
-            propietario_numero_doc: vehiculo.PROPIETARIO_NUMERO_DOC.toString(),
-            propietario_nombre: vehiculo.PROPIETARIO_NOMBRE,
-            tenedor_tipo_doc: vehiculo.TENEDOR_TIPO_DOC || vehiculo.PROPIETARIO_TIPO_DOC || 'N',
-            tenedor_numero_doc: vehiculo.TENEDOR_NUMERO_DOC || vehiculo.PROPIETARIO_NUMERO_DOC,
-            tenedor_nombre: vehiculo.TENEDOR_NOMBRE || vehiculo.PROPIETARIO_NOMBRE,
-            activo: true
-          };
+          // Mapear vehículo para la base de datos
+          const nuevoVehiculo = vehiculosProcessor.mapearVehiculo(vehiculo);
 
           // Intentar crear el vehículo
           const vehiculoCreado = await storage.createVehiculo(nuevoVehiculo);
