@@ -262,20 +262,20 @@ export class ManifiestoPDFHorizontalGenerator {
         const result = await response.json();
         console.log('🔍 Respuesta completa de consulta RNDC:', result);
         
-        if (result.success && result.respuesta_xml) {
-          // Extraer fechaing del XML de respuesta
-          const fechaIngMatch = result.respuesta_xml.match(/<fechaing>(.*?)<\/fechaing>/);
+        if (result.success && result.data && result.data.rawResponse) {
+          // Extraer fechaing del XML interno decodificado
+          const fechaIngMatch = result.data.rawResponse.match(/&lt;fechaing&gt;(.*?)&lt;\/fechaing&gt;/);
           if (fechaIngMatch && fechaIngMatch[1]) {
             // Mostrar la fecha completa sin formato
             this.fechaIngresoRNDC = fechaIngMatch[1];
             console.log('✅ Fecha de ingreso RNDC obtenida:', this.fechaIngresoRNDC);
           } else {
-            console.log('⚠️ No se encontró fechaing en la respuesta del RNDC');
-            console.log('📄 XML de respuesta:', result.respuesta_xml);
+            console.log('⚠️ No se encontró fechaing en el rawResponse');
+            console.log('📄 Raw Response:', result.data.rawResponse);
             this.fechaIngresoRNDC = null;
           }
         } else {
-          console.log('⚠️ Consulta RNDC no exitosa');
+          console.log('⚠️ Consulta RNDC no exitosa o sin rawResponse');
           this.fechaIngresoRNDC = null;
         }
       } else {
@@ -371,14 +371,13 @@ export class ManifiestoPDFHorizontalGenerator {
     const fecha = `${dia}/${mes}/${año}`;
     console.log('FECHA formateada para PDF (UTC):', fecha);
     
-    // Mostrar fecha de expedición
-    this.doc.text(`Expedición: ${fecha}`, this.pixelToMM(campos.fechaExpedicion.x), this.pixelToMM(campos.fechaExpedicion.y, false));
-    
-    // Mostrar fecha de ingreso RNDC si está disponible
+    // Mostrar fecha de expedición y fecha RNDC en la misma línea
+    let textoFecha = `Expedición: ${fecha}`;
     if (this.fechaIngresoRNDC) {
-      this.doc.text(`RNDC: ${this.fechaIngresoRNDC}`, this.pixelToMM(campos.fechaExpedicion.x), this.pixelToMM(campos.fechaExpedicion.y + 15, false));
+      textoFecha += `    RNDC: ${this.fechaIngresoRNDC}`;
       console.log('FECHA INGRESO RNDC agregada al PDF:', this.fechaIngresoRNDC);
     }
+    this.doc.text(textoFecha, this.pixelToMM(campos.fechaExpedicion.x), this.pixelToMM(campos.fechaExpedicion.y, false));
     
     // Origen y destino con nombres completos de municipios
     if (this.datosCompletos?.municipios) {
