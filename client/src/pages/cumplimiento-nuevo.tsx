@@ -231,22 +231,16 @@ export default function CumplimientoNuevo() {
         setBatchProgress(prev => ({ ...prev, current: i + 1 }));
         
         try {
-          // Generar XML
-          const previewResponse = await fetch(`/api/cumplimiento/preview/${consecutivo}`);
-          const previewData = await previewResponse.json();
-          
-          if (!previewData.success) {
-            results.push({ consecutivo, success: false, message: previewData.error });
-            continue;
-          }
-          
-          // Enviar al RNDC
-          const sendResponse = await fetch("/api/rndc/send", {
-            method: "POST",
+          // Usar el mismo endpoint que funciona en envío individual
+          const response = await fetch(`/api/cumplimiento/remesa`, {
+            method: 'POST',
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ xmlContent: previewData.xml }),
+            body: JSON.stringify({ 
+              consecutivo: consecutivo, 
+              fecha: new Date().toISOString().split('T')[0] 
+            }),
           });
-          const sendData = await sendResponse.json();
+          const sendData = await response.json();
           
           results.push({ 
             consecutivo, 
