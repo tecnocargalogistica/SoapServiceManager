@@ -678,10 +678,33 @@ export default function CumplimientoNuevo() {
           <TabsContent value="manifiestos" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Manifiestos Exitosos</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Manifiestos que han sido enviados exitosamente al RNDC
-                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Manifiestos Exitosos</CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Manifiestos que han sido enviados exitosamente al RNDC
+                    </p>
+                  </div>
+                  {manifiestosPendientes.length > 0 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={selectAllManifiestos}
+                    >
+                      {selectedManifiestos.length === manifiestosPendientes.length ? (
+                        <>
+                          <CheckSquare className="h-4 w-4 mr-2" />
+                          Deseleccionar Todos
+                        </>
+                      ) : (
+                        <>
+                          <Square className="h-4 w-4 mr-2" />
+                          Seleccionar Todos
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
               </CardHeader>
               <CardContent>
                 {loadingManifiestos ? (
@@ -735,6 +758,30 @@ export default function CumplimientoNuevo() {
                         </div>
                       </div>
                     ))}
+                  </div>
+                )}
+                
+                {/* Botón de procesamiento masivo para manifiestos */}
+                {selectedManifiestos.length > 0 && (
+                  <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-blue-900">
+                          {selectedManifiestos.length} manifiesto{selectedManifiestos.length > 1 ? 's' : ''} seleccionado{selectedManifiestos.length > 1 ? 's' : ''}
+                        </p>
+                        <p className="text-sm text-blue-700">
+                          Enviar cumplimiento al RNDC para todos los manifiestos seleccionados
+                        </p>
+                      </div>
+                      <Button
+                        onClick={handleProcesarLoteManifiestos}
+                        disabled={procesarLoteManifiestosMutation.isPending}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        <Send className="h-4 w-4 mr-2" />
+                        Procesar Lote
+                      </Button>
+                    </div>
                   </div>
                 )}
               </CardContent>
