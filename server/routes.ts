@@ -2149,7 +2149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.createLogActividad({
         tipo: soapResponse.success ? "success" : "error",
         modulo: "consulta-manifiesto",
-        descripcion: `Consulta de manifiesto ${numeroManifiesto}: ${soapResponse.success ? "exitosa" : "fallida"}`,
+        mensaje: `Consulta de manifiesto ${numeroManifiesto}: ${soapResponse.success ? "exitosa" : "fallida"}`,
         detalles: JSON.stringify({
           numeroManifiesto,
           fechaIngreso,
@@ -2173,7 +2173,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.createLogActividad({
         tipo: "error",
         modulo: "consulta-manifiesto",
-        descripcion: `Error al consultar manifiesto: ${error}`,
+        mensaje: `Error al consultar manifiesto: ${error}`,
         detalles: JSON.stringify({ error: error instanceof Error ? error.message : String(error) })
       });
       

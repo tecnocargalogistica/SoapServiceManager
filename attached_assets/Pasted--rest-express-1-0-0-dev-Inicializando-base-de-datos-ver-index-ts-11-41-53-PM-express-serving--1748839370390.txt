@@ -1,0 +1,143 @@
+> rest-express@1.0.0 dev
+Inicializando base de datos...ver/index.ts
+11:41:53 PM [express] serving on port 5000
+✅ Base de datos ya inicializada
+11:41:53 PM [express] ✅ Base de datos inicializada correctamente
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+🚗 Obteniendo vehículos directamente de PostgreSQL...
+Intentando envío a endpoint: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+🎯 Usando endpoint personalizado: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+📡 Enviando SOAP a: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+11:41:58 PM [express] GET /api/terceros 304 in 237ms :: [{"id":4,"tipo_documento":"N","numero_documen…
+✅ Vehículos obtenidos: 1
+11:41:58 PM [express] GET /api/vehiculos 304 in 241ms :: [{"id":10,"placa":"GIT990","tipo_vehiculo":n…
+11:41:58 PM [express] GET /api/manifiestos 304 in 243ms :: [{"id":12,"numero_manifiesto":"79824071","…
+11:41:58 PM [express] GET /api/remesas 304 in 268ms :: [{"id":23,"consecutivo":"79824071","codigo_sed…
+11:41:58 PM [express] GET /api/logs 304 in 288ms :: [{"id":164,"tipo":"success","modulo":"cumplimient…
+Respuesta recibida de http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices: <?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:NS1="urn:BPMServicesIntf-IBPMServices"><NS1:AtenderMensajeRNDCResponse><return xsi:type="xsd:string">&lt;?xml version="1.0" encoding="ISO-8859-1" ?&gt;
+&lt;root&gt;
+&lt;ErrorMSG&gt;Error RNDC01: Falta información en el xml para el acceso.&lt;/ErrorMSG&gt;
+&lt;/root&gt;
+</return></NS1:AtenderMensajeRNDCResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>
+
+11:42:04 PM [express] GET /api/rndc/test 200 in 6290ms :: {"connected":true,"endpoint":"http://rndcws…
+11:42:04 PM [express] GET /api/remesas/exitosas 304 in 60ms :: []
+11:42:05 PM [express] GET /api/configuracion 304 in 42ms :: {"id":1,"usuario":"TRANSPORTES@739","pass…
+📋 === XML CONSULTA PREVIEW 79824071 ===
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:BPMServicesIntf-IBPMServices">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <urn:AtenderMensajeRNDC>
+            <Request>
+                <root>
+ <acceso>
+  <username>TRANSPORTES@739</username>
+  <password>Alejandro_1971</password>
+ </acceso>
+ <solicitud>
+  <tipo>3</tipo>
+  <procesoid>4</procesoid>
+ </solicitud>
+ <variables>
+FECHAING
+ </variables>
+ <documento>
+  <NUMNITEMPRESATRANSPORTE>9013690938</NUMNITEMPRESATRANSPORTE>
+  <NUMMANIFIESTOCARGA>79824071</NUMMANIFIESTOCARGA>
+ </documento>
+</root>
+            </Request>
+        </urn:AtenderMensajeRNDC>
+    </soapenv:Body>
+</soapenv:Envelope>
+📋 === FIN XML CONSULTA PREVIEW 79824071 ===
+11:42:08 PM [express] POST /api/consultas/preview 200 in 48ms :: {"success":true,"numeroManifiesto":"…
+📋 === XML CONSULTA MANIFIESTO 79824071 ===
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:BPMServicesIntf-IBPMServices">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <urn:AtenderMensajeRNDC>
+            <Request>
+                <root>
+ <acceso>
+  <username>TRANSPORTES@739</username>
+  <password>Alejandro_1971</password>
+ </acceso>
+ <solicitud>
+  <tipo>3</tipo>
+  <procesoid>4</procesoid>
+ </solicitud>
+ <variables>
+FECHAING
+ </variables>
+ <documento>
+  <NUMNITEMPRESATRANSPORTE>9013690938</NUMNITEMPRESATRANSPORTE>
+  <NUMMANIFIESTOCARGA>79824071</NUMMANIFIESTOCARGA>
+ </documento>
+</root>
+            </Request>
+        </urn:AtenderMensajeRNDC>
+    </soapenv:Body>
+</soapenv:Envelope>
+📋 === FIN XML CONSULTA MANIFIESTO 79824071 ===
+Intentando envío a endpoint: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+🎯 Usando endpoint personalizado: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+📡 Enviando SOAP a: http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices
+Respuesta recibida de http://rndcws2.mintransporte.gov.co:8080/soap/IBPMServices: <?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:NS1="urn:BPMServicesIntf-IBPMServices"><NS1:AtenderMensajeRNDCResponse><return xsi:type="xsd:string">&lt;?xml version="1.0" encoding="ISO-8859-1" ?&gt;
+&lt;root&gt;
+&lt;documento&gt;
+&lt;fechaing&gt;31/05/2025 10:46:57 p. m.&lt;/fechaing&gt;
+&lt;/documento&gt;
+&lt;/root&gt;
+</return></NS1:AtenderMensajeRNDCResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>
+
+Error al consultar manifiesto: PostgresError: null value in column "mensaje" of relation "log_actividades" violates not-null constraint
+    at ErrorResponse (file:///home/runner/workspace/node_modules/postgres/src/connection.js:794:26)
+    at handle (file:///home/runner/workspace/node_modules/postgres/src/connection.js:480:6)
+    at TLSSocket.data (file:///home/runner/workspace/node_modules/postgres/src/connection.js:315:9)
+    at TLSSocket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:191:23) {
+  severity_local: 'ERROR',
+  severity: 'ERROR',
+  code: '23502',
+  detail: 'Failing row contains (171, success, consulta-manifiesto, null, "{\\"numeroManifiesto\\":\\"79824071\\",\\"fechaIngreso\\":\\"\\",\\"resp..., null, 2025-06-02 04:42:21.594535).',
+  schema_name: 'public',
+  table_name: 'log_actividades',
+  column_name: 'mensaje',
+  file: 'execMain.c',
+  line: '2006',
+  routine: 'ExecConstraints'
+}
+node:internal/process/promises:391
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+PostgresError: null value in column "mensaje" of relation "log_actividades" violates not-null constraint
+    at ErrorResponse (file:///home/runner/workspace/node_modules/postgres/src/connection.js:794:26)
+    at handle (file:///home/runner/workspace/node_modules/postgres/src/connection.js:480:6)
+    at TLSSocket.data (file:///home/runner/workspace/node_modules/postgres/src/connection.js:315:9)
+    at TLSSocket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:191:23) {
+  severity_local: 'ERROR',
+  severity: 'ERROR',
+  code: '23502',
+  detail: 'Failing row contains (172, error, consulta-manifiesto, null, "{\\"error\\":\\"null value in column \\\\\\"mensaje\\\\\\" of relation \\..., null, 2025-06-02 04:42:21.640507).',
+  schema_name: 'public',
+  table_name: 'log_actividades',
+  column_name: 'mensaje',
+  file: 'execMain.c',
+  line: '2006',
+  routine: 'ExecConstraints'
+}
+
+Node.js v20.18.1
