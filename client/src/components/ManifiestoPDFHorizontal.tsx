@@ -309,11 +309,17 @@ export class ManifiestoPDFHorizontalGenerator {
     
     // === DATOS DEL MANIFIESTO ===
     
-    // Fecha de expedición
+    // Fecha de expedición (mantener fecha UTC sin conversión de zona horaria)
     console.log('FECHA RAW desde DB:', this.manifiesto.fecha_expedicion);
-    console.log('FECHA parseada:', new Date(this.manifiesto.fecha_expedicion));
-    const fecha = format(new Date(this.manifiesto.fecha_expedicion), 'dd/MM/yyyy', { locale: es });
-    console.log('FECHA formateada para PDF:', fecha);
+    const fechaUTC = new Date(this.manifiesto.fecha_expedicion);
+    console.log('FECHA parseada UTC:', fechaUTC);
+    
+    // Usar formateo manual para mantener la fecha UTC original
+    const dia = String(fechaUTC.getUTCDate()).padStart(2, '0');
+    const mes = String(fechaUTC.getUTCMonth() + 1).padStart(2, '0');
+    const año = fechaUTC.getUTCFullYear();
+    const fecha = `${dia}/${mes}/${año}`;
+    console.log('FECHA formateada para PDF (UTC):', fecha);
     this.doc.text(fecha, this.pixelToMM(campos.fechaExpedicion.x), this.pixelToMM(campos.fechaExpedicion.y, false));
     
     // Origen y destino con nombres completos de municipios

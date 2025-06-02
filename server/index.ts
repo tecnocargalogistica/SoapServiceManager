@@ -3,6 +3,9 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { initializeDatabase } from "./db";
 
+// Configurar zona horaria de Colombia (GMT-5)
+process.env.TZ = 'America/Bogota';
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
