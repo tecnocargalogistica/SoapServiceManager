@@ -15,7 +15,8 @@ import {
   User,
   LogOut,
   Code2,
-  Printer
+  Printer,
+  Search
 } from "lucide-react";
 
 const navigation = [
@@ -26,6 +27,7 @@ const navigation = [
       { name: "Generar Remesas", href: "/generar-remesas", icon: FileText },
       { name: "Generar Manifiestos", href: "/generar-manifiestos", icon: ClipboardList },
       { name: "Cumplimiento RNDC", href: "/cumplimiento-nuevo", icon: CheckCircle },
+      { name: "Consultas RNDC", href: "/consultas", icon: Search },
       { name: "Impresión Manifiestos", href: "/impresion-manifiestos", icon: Printer },
     ]
   },
