@@ -260,14 +260,18 @@ export class ManifiestoPDFHorizontalGenerator {
 
       if (response.ok) {
         const result = await response.json();
-        if (result.success && result.data && result.respuesta_xml) {
+        console.log('🔍 Respuesta completa de consulta RNDC:', result);
+        
+        if (result.success && result.respuesta_xml) {
           // Extraer fechaing del XML de respuesta
           const fechaIngMatch = result.respuesta_xml.match(/<fechaing>(.*?)<\/fechaing>/);
           if (fechaIngMatch && fechaIngMatch[1]) {
+            // Mostrar la fecha completa sin formato
             this.fechaIngresoRNDC = fechaIngMatch[1];
             console.log('✅ Fecha de ingreso RNDC obtenida:', this.fechaIngresoRNDC);
           } else {
             console.log('⚠️ No se encontró fechaing en la respuesta del RNDC');
+            console.log('📄 XML de respuesta:', result.respuesta_xml);
             this.fechaIngresoRNDC = null;
           }
         } else {
