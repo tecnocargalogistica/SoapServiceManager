@@ -371,10 +371,10 @@ export class ManifiestoPDFHorizontalGenerator {
     const fecha = `${dia}/${mes}/${año}`;
     console.log('FECHA formateada para PDF (UTC):', fecha);
     
-    // Mostrar fecha de expedición y fecha RNDC en la misma línea
-    let textoFecha = `Expedición: ${fecha}`;
+    // Mostrar fecha de expedición y fecha RNDC en la misma línea sin etiquetas
+    let textoFecha = fecha;
     if (this.fechaIngresoRNDC) {
-      textoFecha += `    RNDC: ${this.fechaIngresoRNDC}`;
+      textoFecha += `    ${this.fechaIngresoRNDC}`;
       console.log('FECHA INGRESO RNDC agregada al PDF:', this.fechaIngresoRNDC);
     }
     this.doc.text(textoFecha, this.pixelToMM(campos.fechaExpedicion.x), this.pixelToMM(campos.fechaExpedicion.y, false));

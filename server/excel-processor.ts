@@ -309,6 +309,51 @@ export class ExcelProcessor {
     
     return `${day}/${month}/${year}`;
   }
+
+  parseVehiculosExcel(buffer: Buffer, filename: string): Array<any> {
+    try {
+      let data: any;
+      
+      if (filename.toLowerCase().endsWith('.csv')) {
+        // Procesar CSV
+        const csvContent = buffer.toString('utf-8');
+        const lines = csvContent.split('\n').filter((line: string) => line.trim() !== '');
+        
+        if (lines.length < 2) {
+          throw new Error('El archivo CSV debe contener al menos un encabezado y una fila de datos');
+        }
+        
+        const headers = lines[0].split(',').map((h: string) => h.trim().replace(/"/g, ''));
+        const vehiculos = [];
+        
+        for (let i = 1; i < lines.length; i++) {
+          const values = lines[i].split(',').map((v: string) => v.trim().replace(/"/g, ''));
+          const vehiculo: any = {};
+          
+          headers.forEach((header: string, index: number) => {
+            vehiculo[header] = values[index] || '';
+          });
+          
+          vehiculos.push(vehiculo);
+        }
+        
+        return vehiculos;
+      } else {
+        // Procesar Excel
+        const workbook = XLSX.read(buffer, { type: 'buffer' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        data = XLSX.utils.sheet_to_json(worksheet);
+      }
+      
+      console.log(`📊 Procesando ${data.length} vehículos desde ${filename}`);
+      return data;
+      
+    } catch (error) {
+      console.error('Error procesando archivo de vehículos:', error);
+      throw new Error(`Error procesando archivo de vehículos: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
 }
 
 export const excelProcessor = new ExcelProcessor();

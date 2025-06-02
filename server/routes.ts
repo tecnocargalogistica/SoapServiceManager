@@ -2181,5 +2181,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== ENDPOINT PARA CARGA MASIVA DE VEHÍCULOS =====
+  app.post('/api/vehiculos/carga-masiva', upload.single('archivo'), async (req: Request, res: Response) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No se ha subido ningún archivo' });
+      }
+
+      const buffer = req.file.buffer;
+      const filename = req.file.originalname;
+
+      console.log('📁 Procesando archivo de vehículos:', filename);
+
+      // Procesar el archivo Excel/CSV
+      const vehiculosData = excelProcessor.parseVehiculosExcel(buffer, filename);
+      console.log(`📊 ${vehiculosData.length} vehículos encontrados en el archivo`);
+
+      const resultados = [];
+      let exitosos = 0;
+      let errores = 0;
+
+      for (let i = 0; i < vehiculosData.length; i++) {
+        const vehiculo = vehiculosData[i];
+        try {
+          // Validar campos requeridos
+          if (!vehiculo.PLACA || !vehiculo.CAPACIDAD_CARGA || !vehiculo.PROPIETARIO_NUMERO_DOC || !vehiculo.PROPIETARIO_NOMBRE) {
+            throw new Error('Campos requeridos faltantes: PLACA, CAPACIDAD_CARGA, PROPIETARIO_NUMERO_DOC, PROPIETARIO_NOMBRE');
+          }
+
+          // Crear objeto para insertar en la base de datos
+          const nuevoVehiculo = {
+            placa: vehiculo.PLACA.toUpperCase().trim(),
+            configuracion: vehiculo.CONFIGURACION || null,
+            clase: vehiculo.CLASE || null,
+            marca: vehiculo.MARCA || null,
+            servicio: vehiculo.SERVICIO || null,
+            numero_ejes: vehiculo.NUMERO_EJES ? parseInt(vehiculo.NUMERO_EJES.toString()) : null,
+            carroceria: vehiculo.CARROCERIA || null,
+            modalidad: vehiculo.MODALIDAD || null,
+            linea: vehiculo.LINEA || null,
+            tipo_combustible: vehiculo.TIPO_COMBUSTIBLE || null,
+            capacidad_carga: parseInt(vehiculo.CAPACIDAD_CARGA.toString()),
+            peso_vacio: vehiculo.PESO_VACIO ? parseInt(vehiculo.PESO_VACIO.toString()) : null,
+            fecha_matricula: vehiculo.FECHA_MATRICULA || null,
+            modelo_año: vehiculo.MODELO_AÑO ? parseInt(vehiculo.MODELO_AÑO.toString()) : null,
+            peso_bruto_vehicular: vehiculo.PESO_BRUTO_VEHICULAR ? parseInt(vehiculo.PESO_BRUTO_VEHICULAR.toString()) : null,
+            unidad_medida: 'Kilogramos',
+            numero_poliza: vehiculo.NUMERO_POLIZA || null,
+            aseguradora: vehiculo.ASEGURADORA || null,
+            nit_aseguradora: vehiculo.NIT_ASEGURADORA || null,
+            vence_soat: vehiculo.VENCE_SOAT || null,
+            vence_revision_tecnomecanica: vehiculo.VENCE_REVISION_TECNOMECANICA || null,
+            propietario_tipo_doc: vehiculo.PROPIETARIO_TIPO_DOC || 'N',
+            propietario_numero_doc: vehiculo.PROPIETARIO_NUMERO_DOC.toString(),
+            propietario_nombre: vehiculo.PROPIETARIO_NOMBRE,
+            tenedor_tipo_doc: vehiculo.TENEDOR_TIPO_DOC || vehiculo.PROPIETARIO_TIPO_DOC || 'N',
+            tenedor_numero_doc: vehiculo.TENEDOR_NUMERO_DOC || vehiculo.PROPIETARIO_NUMERO_DOC,
+            tenedor_nombre: vehiculo.TENEDOR_NOMBRE || vehiculo.PROPIETARIO_NOMBRE,
+            activo: true
+          };
+
+          // Intentar crear el vehículo
+          const vehiculoCreado = await storage.createVehiculo(nuevoVehiculo);
+          resultados.push({
+            fila: i + 2,
+            placa: vehiculo.PLACA,
+            estado: 'exitoso',
+            mensaje: 'Vehículo creado correctamente',
+            id: vehiculoCreado.id
+          });
+          exitosos++;
+
+        } catch (error: any) {
+          console.error(`Error procesando vehículo fila ${i + 2}:`, error);
+          resultados.push({
+            fila: i + 2,
+            placa: vehiculo.PLACA || 'N/A',
+            estado: 'error',
+            mensaje: error.message
+          });
+          errores++;
+        }
+      }
+
+      // Crear log de actividad
+      await storage.createLogActividad({
+        tipo: 'info',
+        modulo: 'carga-vehiculos',
+        mensaje: `Carga masiva de vehículos completada: ${exitosos} exitosos, ${errores} errores`,
+        detalles: { archivo: filename, total: vehiculosData.length, exitosos, errores }
+      });
+
+      res.json({
+        success: true,
+        mensaje: `Procesamiento completado: ${exitosos} vehículos creados, ${errores} errores`,
+        resumen: { total: vehiculosData.length, exitosos, errores },
+        resultados
+      });
+
+    } catch (error: any) {
+      console.error('Error en carga masiva de vehículos:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Error procesando archivo de vehículos',
+        detalles: error.message
+      });
+    }
+  });
+
+  // ===== ENDPOINT PARA DESCARGA DE PLANTILLA DE VEHÍCULOS =====
+  app.get('/api/vehiculos/plantilla', (req: Request, res: Response) => {
+    const plantillaCSV = `PLACA,CONFIGURACION,CLASE,MARCA,SERVICIO,NUMERO_EJES,CARROCERIA,MODALIDAD,LINEA,TIPO_COMBUSTIBLE,CAPACIDAD_CARGA,PESO_VACIO,FECHA_MATRICULA,MODELO_AÑO,PESO_BRUTO_VEHICULAR,NUMERO_POLIZA,ASEGURADORA,NIT_ASEGURADORA,VENCE_SOAT,VENCE_REVISION_TECNOMECANICA,PROPIETARIO_TIPO_DOC,PROPIETARIO_NUMERO_DOC,PROPIETARIO_NOMBRE,TENEDOR_TIPO_DOC,TENEDOR_NUMERO_DOC,TENEDOR_NOMBRE
+ABC123,CAMIÓN RÍGIDO DE 2 EJES,CAMION,CHEVROLET,PÚBLICO,2,ESTACAS,CARGA,NPR,DIESEL,5000,2500,2020-01-15,2020,7500,123456789,SEGUROS BOLÍVAR,890903407,2025-12-31,2025-06-30,N,12345678,JUAN PÉREZ TRANSPORTES S.A.S.,N,12345678,JUAN PÉREZ TRANSPORTES S.A.S.
+DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIESEL,8000,3500,2019-05-20,2019,11500,987654321,SEGUROS SURA,890999999,2025-11-15,2025-05-15,N,87654321,TRANSPORTES LA MONTAÑA LTDA,N,87654321,TRANSPORTES LA MONTAÑA LTDA`;
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=plantilla_vehiculos.csv');
+    res.send(plantillaCSV);
+  });
+
   return httpServer;
 }
