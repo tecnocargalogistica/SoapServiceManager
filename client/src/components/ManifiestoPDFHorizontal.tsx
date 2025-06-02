@@ -18,11 +18,13 @@ export class ManifiestoPDFHorizontalGenerator {
   private usarCoordenadasPersonalizadas: boolean;
   private imagenPath: string;
   private datosCompletos: any;
+  private fechaIngresoRNDC: string | null;
 
   constructor(manifiesto: Manifiesto, coordenadas?: any, imagenCustom?: string) {
     this.manifiesto = manifiesto;
     this.doc = new jsPDF('landscape', 'mm', 'a4');
     this.usarCoordenadasPersonalizadas = !!coordenadas;
+    this.fechaIngresoRNDC = null;
     
     // Inicializar la ruta de imagen por defecto
     this.imagenPath = `/@fs/home/runner/workspace/attached_assets/PLANTILLA_REAL1_Página_1.jpg`;
@@ -201,6 +203,9 @@ export class ManifiestoPDFHorizontalGenerator {
     // Solo cargar coordenadas de plantilla si no se pasaron coordenadas personalizadas
     await this.loadPlantillaCoords(!this.usarCoordenadasPersonalizadas);
     
+    // Consultar fecha de ingreso RNDC
+    await this.consultarFechaIngresoRNDC();
+    
     try {
       const image = await this.loadImageAsBase64(this.imagenPath);
       
@@ -235,6 +240,47 @@ export class ManifiestoPDFHorizontalGenerator {
     } catch (error) {
       console.error('Error al cargar datos completos:', error);
       this.datosCompletos = null;
+    }
+  }
+
+  private async consultarFechaIngresoRNDC(): Promise<void> {
+    try {
+      console.log('🔍 Consultando fecha de ingreso RNDC para manifiesto:', this.manifiesto.numero_manifiesto);
+      
+      const response = await fetch('/api/consultas/manifiesto', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          numeroManifiesto: this.manifiesto.numero_manifiesto,
+          fechaIngreso: ''
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.data && result.respuesta_xml) {
+          // Extraer fechaing del XML de respuesta
+          const fechaIngMatch = result.respuesta_xml.match(/<fechaing>(.*?)<\/fechaing>/);
+          if (fechaIngMatch && fechaIngMatch[1]) {
+            this.fechaIngresoRNDC = fechaIngMatch[1];
+            console.log('✅ Fecha de ingreso RNDC obtenida:', this.fechaIngresoRNDC);
+          } else {
+            console.log('⚠️ No se encontró fechaing en la respuesta del RNDC');
+            this.fechaIngresoRNDC = null;
+          }
+        } else {
+          console.log('⚠️ Consulta RNDC no exitosa');
+          this.fechaIngresoRNDC = null;
+        }
+      } else {
+        console.error('Error en la consulta RNDC:', response.status);
+        this.fechaIngresoRNDC = null;
+      }
+    } catch (error) {
+      console.error('Error al consultar fecha de ingreso RNDC:', error);
+      this.fechaIngresoRNDC = null;
     }
   }
 
@@ -320,7 +366,15 @@ export class ManifiestoPDFHorizontalGenerator {
     const año = fechaUTC.getUTCFullYear();
     const fecha = `${dia}/${mes}/${año}`;
     console.log('FECHA formateada para PDF (UTC):', fecha);
-    this.doc.text(fecha, this.pixelToMM(campos.fechaExpedicion.x), this.pixelToMM(campos.fechaExpedicion.y, false));
+    
+    // Mostrar fecha de expedición
+    this.doc.text(`Expedición: ${fecha}`, this.pixelToMM(campos.fechaExpedicion.x), this.pixelToMM(campos.fechaExpedicion.y, false));
+    
+    // Mostrar fecha de ingreso RNDC si está disponible
+    if (this.fechaIngresoRNDC) {
+      this.doc.text(`RNDC: ${this.fechaIngresoRNDC}`, this.pixelToMM(campos.fechaExpedicion.x), this.pixelToMM(campos.fechaExpedicion.y + 15, false));
+      console.log('FECHA INGRESO RNDC agregada al PDF:', this.fechaIngresoRNDC);
+    }
     
     // Origen y destino con nombres completos de municipios
     if (this.datosCompletos?.municipios) {
