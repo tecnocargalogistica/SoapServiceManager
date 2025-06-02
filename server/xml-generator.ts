@@ -271,31 +271,28 @@ export class XMLGenerator {
   }
 
   generateConsultaManifiestoXML(data: ConsultaManifiestoXMLData): string {
-    // Si no se proporciona fecha de ingreso, usar fecha actual
-    const fechaIngreso = data.fechaIngreso || new Date().toISOString().split('T')[0];
-
     return `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:BPMServicesIntf-IBPMServices">
     <soapenv:Header/>
     <soapenv:Body>
         <urn:AtenderMensajeRNDC>
             <Request>
                 <root>
-                    <acceso>
-                        <username>${data.config.usuario}</username>
-                        <password>${data.config.password}</password>
-                    </acceso>
-                    <solicitud>
-                        <tipo>3</tipo>
-                        <procesoid>4</procesoid>
-                    </solicitud>
-                    <variables>
-                        <FECHAING>${this.formatDate(fechaIngreso)}</FECHAING>
-                    </variables>
-                    <documento>
-                        <NUMNITEMPRESATRANSPORTE>${data.config.empresa_nit}</NUMNITEMPRESATRANSPORTE>
-                        <NUMMANIFIESTOCARGA>${data.numeroManifiesto}</NUMMANIFIESTOCARGA>
-                    </documento>
-                </root>
+ <acceso>
+  <username>${data.config.usuario}</username>
+  <password>${data.config.password}</password>
+ </acceso>
+ <solicitud>
+  <tipo>3</tipo>
+  <procesoid>4</procesoid>
+ </solicitud>
+ <variables>
+FECHAING
+ </variables>
+ <documento>
+  <NUMNITEMPRESATRANSPORTE>${data.config.empresa_nit}</NUMNITEMPRESATRANSPORTE>
+  <NUMMANIFIESTOCARGA>${data.numeroManifiesto}</NUMMANIFIESTOCARGA>
+ </documento>
+</root>
             </Request>
         </urn:AtenderMensajeRNDC>
     </soapenv:Body>
