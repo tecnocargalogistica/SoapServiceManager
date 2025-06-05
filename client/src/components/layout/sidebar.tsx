@@ -32,15 +32,10 @@ const navigation = [
     ]
   },
   {
-    section: "Gestión de Datos",
+    section: "Datos",
     items: [
       { name: "Gestión de Datos", href: "/gestion-datos", icon: Building },
       { name: "Carga de Vehículos", href: "/carga-vehiculos", icon: Truck },
-    ]
-  },
-  {
-    section: "Herramientas",
-    items: [
       { name: "Cliente SOAP", href: "/soap-cliente", icon: Code2 },
     ]
   },
