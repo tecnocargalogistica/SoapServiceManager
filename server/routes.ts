@@ -2287,11 +2287,8 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
 
       console.log('📁 Procesando archivo de sedes:', filename);
 
-      // Importar el procesador de vehículos para procesar sedes
-      const { vehiculosProcessor } = await import('./vehiculos-processor.js');
-      
-      // Procesar el archivo Excel/CSV
-      const sedesData = vehiculosProcessor.parseArchivo(buffer, filename);
+      // Usar el procesador de Excel que ya maneja punto y coma como delimitador
+      const sedesData = excelProcessor.parseVehiculosExcel(buffer, filename);
       console.log(`📊 ${sedesData.length} sedes encontradas en el archivo`);
 
       const resultados = [];
@@ -2371,10 +2368,10 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
 
   // ===== ENDPOINT PARA DESCARGA DE PLANTILLA DE SEDES =====
   app.get('/api/sedes/plantilla', (req: Request, res: Response) => {
-    const plantillaCSV = `codigo_sede,nombre,direccion,municipio_codigo,telefono,valor_tonelada,activo,created_at,tipo_sede,tercero_responsable_id,nit,responsable
-001,ALLIANCE,ARBELLAEZ CUNDINAMARCA,25030300,6017424952,69121,true,28/05/2025 2:19,granja,4,860058314,AVICOLA LOS CAMBUJOS S.A.
-002,ARCANGEL,ARBELLAEZ CUNDINAMARCA,25030300,6017424952,69121,true,28/05/2025 2:19,granja,4,860058314,AVICOLA LOS CAMBUJOS S.A.
-003,BUENOS AIRES,ARBELLAEZ CUNDINAMARCA,25030300,6017424952,71505,true,28/05/2025 2:19,granja,4,860058314,AVICOLA LOS CAMBUJOS S.A.`;
+    const plantillaCSV = `codigo_sede;nombre;direccion;municipio_codigo;telefono;valor_tonelada;activo;created_at;tipo_sede;tercero_responsable_id;nit;responsable
+001;ALLIANCE;ARBELLAEZ CUNDINAMARCA;25030300;6017424952;69121;true;28/05/2025 2:19;granja;4;860058314;AVICOLA LOS CAMBUJOS S.A.
+002;ARCANGEL;ARBELLAEZ CUNDINAMARCA;25030300;6017424952;69121;true;28/05/2025 2:19;granja;4;860058314;AVICOLA LOS CAMBUJOS S.A.
+003;BUENOS AIRES;ARBELLAEZ CUNDINAMARCA;25030300;6017424952;71505;true;28/05/2025 2:19;granja;4;860058314;AVICOLA LOS CAMBUJOS S.A.`;
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', 'attachment; filename=plantilla_sedes.csv');

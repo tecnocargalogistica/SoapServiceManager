@@ -43,11 +43,15 @@ export class VehiculosProcessor {
           throw new Error('El archivo CSV debe contener al menos un encabezado y una fila de datos');
         }
         
-        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+        // Detectar delimitador (coma o punto y coma)
+        const firstLine = lines[0];
+        const delimiter = firstLine.includes(';') ? ';' : ',';
+        
+        const headers = firstLine.split(delimiter).map(h => h.trim().replace(/"/g, ''));
         data = [];
         
         for (let i = 1; i < lines.length; i++) {
-          const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+          const values = lines[i].split(delimiter).map(v => v.trim().replace(/"/g, ''));
           const vehiculo: any = {};
           
           headers.forEach((header, index) => {

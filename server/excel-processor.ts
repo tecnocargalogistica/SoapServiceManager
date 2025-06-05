@@ -228,14 +228,17 @@ export class ExcelProcessor {
 
   parseCumplimientoExcel(csvContent: string): Array<{consecutivo: string, fecha?: string}> {
     const lines = csvContent.split('\n');
-    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+    const firstLine = lines[0];
+    const delimiter = firstLine.includes(';') ? ';' : ',';
+    
+    const headers = firstLine.split(delimiter).map(h => h.trim().replace(/"/g, ''));
     const rows: Array<{consecutivo: string, fecha?: string}> = [];
 
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
 
-      const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+      const values = line.split(delimiter).map(v => v.trim().replace(/"/g, ''));
       const row: any = {};
 
       headers.forEach((header, index) => {
@@ -323,11 +326,15 @@ export class ExcelProcessor {
           throw new Error('El archivo CSV debe contener al menos un encabezado y una fila de datos');
         }
         
-        const headers = lines[0].split(',').map((h: string) => h.trim().replace(/"/g, ''));
+        // Detectar delimitador (coma o punto y coma)
+        const firstLine = lines[0];
+        const delimiter = firstLine.includes(';') ? ';' : ',';
+        
+        const headers = firstLine.split(delimiter).map((h: string) => h.trim().replace(/"/g, ''));
         const vehiculos = [];
         
         for (let i = 1; i < lines.length; i++) {
-          const values = lines[i].split(',').map((v: string) => v.trim().replace(/"/g, ''));
+          const values = lines[i].split(delimiter).map((v: string) => v.trim().replace(/"/g, ''));
           const vehiculo: any = {};
           
           headers.forEach((header: string, index: number) => {
