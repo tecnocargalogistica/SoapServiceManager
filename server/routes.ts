@@ -2275,5 +2275,207 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
     res.send(plantillaCSV);
   });
 
+  // ===== ENDPOINT PARA CARGA MASIVA DE SEDES =====
+  app.post('/api/sedes/carga-masiva', upload.single('archivo'), async (req: any, res: any) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No se ha subido ningún archivo' });
+      }
+
+      const buffer = req.file.buffer;
+      const filename = req.file.originalname;
+
+      console.log('📁 Procesando archivo de sedes:', filename);
+
+      // Importar el procesador de vehículos para procesar sedes
+      const { vehiculosProcessor } = await import('./vehiculos-processor.js');
+      
+      // Procesar el archivo Excel/CSV
+      const sedesData = vehiculosProcessor.parseArchivo(buffer, filename);
+      console.log(`📊 ${sedesData.length} sedes encontradas en el archivo`);
+
+      const resultados = [];
+      let exitosos = 0;
+      let errores = 0;
+
+      for (let i = 0; i < sedesData.length; i++) {
+        const sede = sedesData[i];
+        try {
+          // Validar campos requeridos
+          if (!sede.CODIGO_SEDE || !sede.NOMBRE) {
+            throw new Error('Campos requeridos faltantes: CODIGO_SEDE, NOMBRE');
+          }
+
+          // Crear objeto para insertar en la base de datos
+          const nuevaSede = {
+            codigo_sede: sede.CODIGO_SEDE.toString().trim(),
+            nombre: sede.NOMBRE.toString().trim(),
+            direccion: sede.DIRECCION || null,
+            telefono: sede.TELEFONO || null,
+            contacto: sede.CONTACTO || null,
+            email: sede.EMAIL || null
+          };
+
+          // Intentar crear la sede
+          const sedeCreada = await storage.createSede(nuevaSede);
+          resultados.push({
+            fila: i + 2,
+            codigo: sede.CODIGO_SEDE,
+            estado: 'exitoso',
+            mensaje: 'Sede creada correctamente',
+            id: sedeCreada.id
+          });
+          exitosos++;
+
+        } catch (error: any) {
+          console.error(`Error procesando sede fila ${i + 2}:`, error);
+          resultados.push({
+            fila: i + 2,
+            codigo: sede.CODIGO_SEDE || 'N/A',
+            estado: 'error',
+            mensaje: error.message
+          });
+          errores++;
+        }
+      }
+
+      // Crear log de actividad
+      await storage.createLogActividad({
+        tipo: 'info',
+        modulo: 'carga-sedes',
+        mensaje: `Carga masiva de sedes completada: ${exitosos} exitosos, ${errores} errores`,
+        detalles: { archivo: filename, total: sedesData.length, exitosos, errores }
+      });
+
+      res.json({
+        success: true,
+        mensaje: `Procesamiento completado: ${exitosos} sedes creadas, ${errores} errores`,
+        resumen: { total: sedesData.length, exitosos, errores },
+        resultados
+      });
+
+    } catch (error: any) {
+      console.error('Error en carga masiva de sedes:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Error procesando archivo de sedes',
+        detalles: error.message
+      });
+    }
+  });
+
+  // ===== ENDPOINT PARA DESCARGA DE PLANTILLA DE SEDES =====
+  app.get('/api/sedes/plantilla', (req: Request, res: Response) => {
+    const plantillaCSV = `CODIGO_SEDE,NOMBRE,DIRECCION,TELEFONO,CONTACTO,EMAIL
+001,SEDE PRINCIPAL BOGOTÁ,CALLE 123 # 45-67,+57 1 234 5678,JUAN PÉREZ,contacto@empresa.com
+002,SUCURSAL MEDELLÍN,CARRERA 50 # 32-15,+57 4 123 4567,MARÍA GARCÍA,medellin@empresa.com`;
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=plantilla_sedes.csv');
+    res.send(plantillaCSV);
+  });
+
+  // ===== ENDPOINT PARA CARGA MASIVA DE TERCEROS =====
+  app.post('/api/terceros/carga-masiva', upload.single('archivo'), async (req: any, res: any) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No se ha subido ningún archivo' });
+      }
+
+      const buffer = req.file.buffer;
+      const filename = req.file.originalname;
+
+      console.log('📁 Procesando archivo de terceros:', filename);
+
+      // Importar el procesador de vehículos para procesar terceros
+      const { vehiculosProcessor } = await import('./vehiculos-processor.js');
+      
+      // Procesar el archivo Excel/CSV
+      const tercerosData = vehiculosProcessor.parseArchivo(buffer, filename);
+      console.log(`📊 ${tercerosData.length} terceros encontrados en el archivo`);
+
+      const resultados = [];
+      let exitosos = 0;
+      let errores = 0;
+
+      for (let i = 0; i < tercerosData.length; i++) {
+        const tercero = tercerosData[i];
+        try {
+          // Validar campos requeridos
+          if (!tercero.TIPO_DOCUMENTO || !tercero.NUMERO_DOCUMENTO || !tercero.RAZON_SOCIAL) {
+            throw new Error('Campos requeridos faltantes: TIPO_DOCUMENTO, NUMERO_DOCUMENTO, RAZON_SOCIAL');
+          }
+
+          // Crear objeto para insertar en la base de datos
+          const nuevoTercero = {
+            tipo_documento: tercero.TIPO_DOCUMENTO.toString().trim(),
+            numero_documento: tercero.NUMERO_DOCUMENTO.toString().trim(),
+            razon_social: tercero.RAZON_SOCIAL.toString().trim(),
+            direccion: tercero.DIRECCION || null,
+            telefono: tercero.TELEFONO || null,
+            email: tercero.EMAIL || null,
+            municipio_codigo: tercero.MUNICIPIO_CODIGO || null,
+            codigo_postal: tercero.CODIGO_POSTAL || null
+          };
+
+          // Intentar crear el tercero
+          const terceroCreado = await storage.createTercero(nuevoTercero);
+          resultados.push({
+            fila: i + 2,
+            documento: tercero.NUMERO_DOCUMENTO,
+            estado: 'exitoso',
+            mensaje: 'Tercero creado correctamente',
+            id: terceroCreado.id
+          });
+          exitosos++;
+
+        } catch (error: any) {
+          console.error(`Error procesando tercero fila ${i + 2}:`, error);
+          resultados.push({
+            fila: i + 2,
+            documento: tercero.NUMERO_DOCUMENTO || 'N/A',
+            estado: 'error',
+            mensaje: error.message
+          });
+          errores++;
+        }
+      }
+
+      // Crear log de actividad
+      await storage.createLogActividad({
+        tipo: 'info',
+        modulo: 'carga-terceros',
+        mensaje: `Carga masiva de terceros completada: ${exitosos} exitosos, ${errores} errores`,
+        detalles: { archivo: filename, total: tercerosData.length, exitosos, errores }
+      });
+
+      res.json({
+        success: true,
+        mensaje: `Procesamiento completado: ${exitosos} terceros creados, ${errores} errores`,
+        resumen: { total: tercerosData.length, exitosos, errores },
+        resultados
+      });
+
+    } catch (error: any) {
+      console.error('Error en carga masiva de terceros:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Error procesando archivo de terceros',
+        detalles: error.message
+      });
+    }
+  });
+
+  // ===== ENDPOINT PARA DESCARGA DE PLANTILLA DE TERCEROS =====
+  app.get('/api/terceros/plantilla', (req: Request, res: Response) => {
+    const plantillaCSV = `TIPO_DOCUMENTO,NUMERO_DOCUMENTO,RAZON_SOCIAL,DIRECCION,TELEFONO,EMAIL,MUNICIPIO_CODIGO,CODIGO_POSTAL
+N,900123456,TRANSPORTES EL ÁGUILA S.A.S.,CALLE 80 # 15-30,+57 1 555 1234,info@transportesaguila.com,11001000,110111
+C,12345678,JUAN CARLOS PÉREZ LÓPEZ,CARRERA 15 # 25-40,+57 300 123 4567,jperez@email.com,11001000,110111`;
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=plantilla_terceros.csv');
+    res.send(plantillaCSV);
+  });
+
   return httpServer;
 }

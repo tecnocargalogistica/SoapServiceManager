@@ -18,6 +18,8 @@ import TestPDFManifiesto from "@/pages/test-pdf-manifiesto";
 import TestPDFPlantilla from "@/pages/test-pdf-plantilla";
 import Consultas from "@/pages/consultas";
 import CargaVehiculos from "@/pages/carga-vehiculos";
+import CargaSedes from "@/pages/carga-sedes";
+import CargaTerceros from "@/pages/carga-terceros";
 
 import Configuracion from "@/pages/configuracion";
 import GestionDatos from "@/pages/gestion-datos";
@@ -50,6 +52,8 @@ function Router() {
         <Route path="/test-pdf-plantilla" component={TestPDFPlantilla} />
             <Route path="/consultas" component={Consultas} />
             <Route path="/carga-vehiculos" component={CargaVehiculos} />
+            <Route path="/carga-sedes" component={CargaSedes} />
+            <Route path="/carga-terceros" component={CargaTerceros} />
 
             <Route path="/gestion-datos" component={GestionDatos} />
             <Route path="/soap-cliente" component={SOAPCliente} />

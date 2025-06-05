@@ -16,7 +16,8 @@ import {
   LogOut,
   Code2,
   Printer,
-  Search
+  Search,
+  Home
 } from "lucide-react";
 
 const navigation = [
@@ -36,6 +37,8 @@ const navigation = [
     items: [
       { name: "Gestión de Datos", href: "/gestion-datos", icon: Building },
       { name: "Carga de Vehículos", href: "/carga-vehiculos", icon: Truck },
+      { name: "Carga de Sedes", href: "/carga-sedes", icon: Home },
+      { name: "Carga de Terceros", href: "/carga-terceros", icon: Users },
       { name: "Cliente SOAP", href: "/soap-cliente", icon: Code2 },
     ]
   },
