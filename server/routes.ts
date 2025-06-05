@@ -2302,18 +2302,23 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
         const sede = sedesData[i];
         try {
           // Validar campos requeridos
-          if (!sede.CODIGO_SEDE || !sede.NOMBRE) {
-            throw new Error('Campos requeridos faltantes: CODIGO_SEDE, NOMBRE');
+          if (!sede.codigo_sede || !sede.nombre) {
+            throw new Error('Campos requeridos faltantes: codigo_sede, nombre');
           }
 
           // Crear objeto para insertar en la base de datos
           const nuevaSede = {
-            codigo_sede: sede.CODIGO_SEDE.toString().trim(),
-            nombre: sede.NOMBRE.toString().trim(),
-            direccion: sede.DIRECCION || null,
-            telefono: sede.TELEFONO || null,
-            contacto: sede.CONTACTO || null,
-            email: sede.EMAIL || null
+            codigo_sede: sede.codigo_sede.toString().trim(),
+            nombre: sede.nombre.toString().trim(),
+            direccion: sede.direccion || null,
+            telefono: sede.telefono || null,
+            municipio_codigo: sede.municipio_codigo || '11001000', // Valor por defecto si no se proporciona
+            valor_tonelada: sede.valor_tonelada ? parseFloat(sede.valor_tonelada.toString()) : null,
+            activo: sede.activo ? sede.activo.toString().toLowerCase() === 'true' : true,
+            tipo_sede: sede.tipo_sede || 'granja',
+            tercero_responsable_id: sede.tercero_responsable_id ? parseInt(sede.tercero_responsable_id.toString()) : null,
+            nit: sede.nit || null,
+            responsable: sede.responsable || null
           };
 
           // Intentar crear la sede
@@ -2366,9 +2371,10 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
 
   // ===== ENDPOINT PARA DESCARGA DE PLANTILLA DE SEDES =====
   app.get('/api/sedes/plantilla', (req: Request, res: Response) => {
-    const plantillaCSV = `CODIGO_SEDE,NOMBRE,DIRECCION,TELEFONO,CONTACTO,EMAIL
-001,SEDE PRINCIPAL BOGOTÁ,CALLE 123 # 45-67,+57 1 234 5678,JUAN PÉREZ,contacto@empresa.com
-002,SUCURSAL MEDELLÍN,CARRERA 50 # 32-15,+57 4 123 4567,MARÍA GARCÍA,medellin@empresa.com`;
+    const plantillaCSV = `codigo_sede,nombre,direccion,municipio_codigo,telefono,valor_tonelada,activo,created_at,tipo_sede,tercero_responsable_id,nit,responsable
+001,ALLIANCE,ARBELLAEZ CUNDINAMARCA,25030300,6017424952,69121,true,28/05/2025 2:19,granja,4,860058314,AVICOLA LOS CAMBUJOS S.A.
+002,ARCANGEL,ARBELLAEZ CUNDINAMARCA,25030300,6017424952,69121,true,28/05/2025 2:19,granja,4,860058314,AVICOLA LOS CAMBUJOS S.A.
+003,BUENOS AIRES,ARBELLAEZ CUNDINAMARCA,25030300,6017424952,71505,true,28/05/2025 2:19,granja,4,860058314,AVICOLA LOS CAMBUJOS S.A.`;
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', 'attachment; filename=plantilla_sedes.csv');

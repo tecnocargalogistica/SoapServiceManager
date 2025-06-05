@@ -136,11 +136,15 @@ export default function CargaSedes() {
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Campos obligatorios:</strong> CODIGO_SEDE, NOMBRE
+              <strong>Campos obligatorios:</strong> codigo_sede, nombre
               <br />
-              <strong>Campos opcionales:</strong> DIRECCION, TELEFONO, CONTACTO, EMAIL
+              <strong>Campos opcionales:</strong> direccion, municipio_codigo, telefono, valor_tonelada, activo, created_at, tipo_sede, tercero_responsable_id, nit, responsable
               <br />
               <strong>Formato de código:</strong> Máximo 10 caracteres alfanuméricos
+              <br />
+              <strong>Formato de fecha:</strong> DD/MM/YYYY HH:MM (ejemplo: 28/05/2025 2:19)
+              <br />
+              <strong>Valores booleanos:</strong> true o false para el campo activo
             </AlertDescription>
           </Alert>
           
