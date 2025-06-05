@@ -20,6 +20,7 @@ import Consultas from "@/pages/consultas";
 import CargaVehiculos from "@/pages/carga-vehiculos";
 import CargaSedes from "@/pages/carga-sedes";
 import CargaTerceros from "@/pages/carga-terceros";
+import CargaMunicipios from "@/pages/carga-municipios";
 
 import Configuracion from "@/pages/configuracion";
 import GestionDatos from "@/pages/gestion-datos";
@@ -54,6 +55,7 @@ function Router() {
             <Route path="/carga-vehiculos" component={CargaVehiculos} />
             <Route path="/carga-sedes" component={CargaSedes} />
             <Route path="/carga-terceros" component={CargaTerceros} />
+            <Route path="/carga-municipios" component={CargaMunicipios} />
 
             <Route path="/gestion-datos" component={GestionDatos} />
             <Route path="/soap-cliente" component={SOAPCliente} />

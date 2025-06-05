@@ -2481,5 +2481,107 @@ C,12345678,JUAN CARLOS PÉREZ LÓPEZ,CARRERA 15 # 25-40,+57 300 123 4567,jperez@
     res.send(plantillaCSV);
   });
 
+  // ===== ENDPOINT PARA DESCARGA DE PLANTILLA DE MUNICIPIOS =====
+  app.get('/api/municipios/plantilla', (req: Request, res: Response) => {
+    const plantillaCSV = `codigo;nombre;departamento;activo
+11001000;BOGOTÁ D.C.;BOGOTÁ D.C.;true
+05001000;MEDELLÍN;ANTIOQUIA;true
+76001000;CALI;VALLE DEL CAUCA;true
+08001000;BARRANQUILLA;ATLÁNTICO;true
+13001000;CARTAGENA;BOLÍVAR;true
+25899000;ZIPAQUIRÁ;CUNDINAMARCA;true
+25030000;ARBELÁEZ;CUNDINAMARCA;true
+25286000;FUSAGASUGÁ;CUNDINAMARCA;true`;
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename=plantilla_municipios.csv');
+    res.send(plantillaCSV);
+  });
+
+  // ===== ENDPOINT PARA CARGA MASIVA DE MUNICIPIOS =====
+  app.post('/api/municipios/carga-masiva', upload.single('archivo'), async (req: any, res: any) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No se ha subido ningún archivo' });
+      }
+
+      const buffer = req.file.buffer;
+      const filename = req.file.originalname;
+
+      console.log('📁 Procesando archivo de municipios:', filename);
+
+      // Usar el procesador de Excel que ya maneja punto y coma como delimitador
+      const municipiosData = excelProcessor.parseVehiculosExcel(buffer, filename);
+      console.log(`📊 ${municipiosData.length} municipios encontrados en el archivo`);
+
+      const resultados = [];
+      let exitosos = 0;
+      let errores = 0;
+
+      for (let i = 0; i < municipiosData.length; i++) {
+        const municipio = municipiosData[i];
+        try {
+          // Validar campos requeridos
+          if (!municipio.codigo || !municipio.nombre || !municipio.departamento) {
+            throw new Error('Campos requeridos faltantes: codigo, nombre, departamento');
+          }
+
+          // Crear objeto para insertar en la base de datos
+          const nuevoMunicipio = {
+            codigo: municipio.codigo.toString().trim(),
+            nombre: municipio.nombre.toString().trim(),
+            departamento: municipio.departamento.toString().trim(),
+            activo: municipio.activo ? municipio.activo.toString().toLowerCase() === 'true' : true
+          };
+
+          // Intentar crear el municipio
+          const municipioCreado = await storage.createMunicipio(nuevoMunicipio);
+          resultados.push({
+            fila: i + 2,
+            codigo: municipio.codigo,
+            nombre: municipio.nombre,
+            estado: 'exitoso',
+            mensaje: `Municipio creado con ID: ${municipioCreado.id}`
+          });
+          exitosos++;
+
+        } catch (error: any) {
+          console.error(`Error procesando municipio fila ${i + 2}:`, error);
+          resultados.push({
+            fila: i + 2,
+            codigo: municipio.codigo || 'N/A',
+            nombre: municipio.nombre || 'N/A',
+            estado: 'error',
+            mensaje: error.message
+          });
+          errores++;
+        }
+      }
+
+      // Crear log de actividad
+      await storage.createLogActividad({
+        tipo: 'info',
+        modulo: 'carga-municipios',
+        mensaje: `Carga masiva de municipios completada: ${exitosos} exitosos, ${errores} errores`,
+        detalles: { archivo: filename, total: municipiosData.length, exitosos, errores }
+      });
+
+      res.json({
+        success: true,
+        mensaje: `Procesamiento completado: ${exitosos} municipios creados, ${errores} errores`,
+        resumen: { total: municipiosData.length, exitosos, errores },
+        resultados
+      });
+
+    } catch (error: any) {
+      console.error('Error en carga masiva de municipios:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Error procesando archivo de municipios',
+        detalles: error.message
+      });
+    }
+  });
+
   return httpServer;
 }
