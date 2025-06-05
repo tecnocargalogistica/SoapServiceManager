@@ -2366,28 +2366,13 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
 
   // ===== ENDPOINT PARA DESCARGA DE PLANTILLA DE SEDES =====
   app.get('/api/sedes/plantilla', (req: Request, res: Response) => {
-    try {
-      const path = require('path');
-      const fs = require('fs');
-      const filePath = path.join(process.cwd(), 'plantilla_sedes.csv');
-      
-      if (fs.existsSync(filePath)) {
-        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-        res.setHeader('Content-Disposition', 'attachment; filename=plantilla_sedes.csv');
-        res.sendFile(filePath);
-      } else {
-        const plantillaCSV = `CODIGO_SEDE,NOMBRE,DIRECCION,TELEFONO,CONTACTO,EMAIL
+    const plantillaCSV = `CODIGO_SEDE,NOMBRE,DIRECCION,TELEFONO,CONTACTO,EMAIL
 001,SEDE PRINCIPAL BOGOTÁ,CALLE 123 # 45-67,+57 1 234 5678,JUAN PÉREZ,contacto@empresa.com
 002,SUCURSAL MEDELLÍN,CARRERA 50 # 32-15,+57 4 123 4567,MARÍA GARCÍA,medellin@empresa.com`;
 
-        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-        res.setHeader('Content-Disposition', 'attachment; filename=plantilla_sedes.csv');
-        res.send(plantillaCSV);
-      }
-    } catch (error) {
-      console.error('Error descargando plantilla de sedes:', error);
-      res.status(500).json({ error: 'Error descargando plantilla' });
-    }
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename=plantilla_sedes.csv');
+    res.send(plantillaCSV);
   });
 
   // ===== ENDPOINT PARA CARGA MASIVA DE TERCEROS =====
@@ -2484,28 +2469,13 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
 
   // ===== ENDPOINT PARA DESCARGA DE PLANTILLA DE TERCEROS =====
   app.get('/api/terceros/plantilla', (req: Request, res: Response) => {
-    try {
-      const path = require('path');
-      const fs = require('fs');
-      const filePath = path.join(process.cwd(), 'plantilla_terceros.csv');
-      
-      if (fs.existsSync(filePath)) {
-        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-        res.setHeader('Content-Disposition', 'attachment; filename=plantilla_terceros.csv');
-        res.sendFile(filePath);
-      } else {
-        const plantillaCSV = `TIPO_DOCUMENTO,NUMERO_DOCUMENTO,RAZON_SOCIAL,DIRECCION,TELEFONO,EMAIL,MUNICIPIO_CODIGO,CODIGO_POSTAL
+    const plantillaCSV = `TIPO_DOCUMENTO,NUMERO_DOCUMENTO,RAZON_SOCIAL,DIRECCION,TELEFONO,EMAIL,MUNICIPIO_CODIGO,CODIGO_POSTAL
 N,900123456,TRANSPORTES EL ÁGUILA S.A.S.,CALLE 80 # 15-30,+57 1 555 1234,info@transportesaguila.com,11001000,110111
 C,12345678,JUAN CARLOS PÉREZ LÓPEZ,CARRERA 15 # 25-40,+57 300 123 4567,jperez@email.com,11001000,110111`;
 
-        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-        res.setHeader('Content-Disposition', 'attachment; filename=plantilla_terceros.csv');
-        res.send(plantillaCSV);
-      }
-    } catch (error) {
-      console.error('Error descargando plantilla de terceros:', error);
-      res.status(500).json({ error: 'Error descargando plantilla' });
-    }
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename=plantilla_terceros.csv');
+    res.send(plantillaCSV);
   });
 
   return httpServer;
