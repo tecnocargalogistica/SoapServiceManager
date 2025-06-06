@@ -1,0 +1,54 @@
+ Procesando archivo de terceros: TERCEROS_2.csv
+Parsed 333 terceros from TERCEROS_2.csv
+📊 333 terceros encontrados en el archivo
+Error procesando tercero fila 2: PostgresError: invalid input syntax for type date: "2028-05-26-00:00:00"
+    at ErrorResponse (file:///home/runner/workspace/node_modules/postgres/src/connection.js:794:26)
+    at handle (file:///home/runner/workspace/node_modules/postgres/src/connection.js:480:6)
+    at TLSSocket.data (file:///home/runner/workspace/node_modules/postgres/src/connection.js:315:9)
+    at TLSSocket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:191:23) {
+  severity_local: 'ERROR',
+  severity: 'ERROR',
+  code: '22007',
+  where: "unnamed portal parameter $16 = '...'",
+  file: 'datetime.c',
+  line: '4026',
+  routine: 'DateTimeParseError'
+}
+Error procesando tercero fila 3: PostgresError: invalid input syntax for type date: "2028-05-19-00:00:00"
+    at ErrorResponse (file:///home/runner/workspace/node_modules/postgres/src/connection.js:794:26)
+    at handle (file:///home/runner/workspace/node_modules/postgres/src/connection.js:480:6)
+    at TLSSocket.data (file:///home/runner/workspace/node_modules/postgres/src/connection.js:315:9)
+    at TLSSocket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:191:23) {
+  severity_local: 'ERROR',
+  severity: 'ERROR',
+  code: '22007',
+  where: "unnamed portal parameter $16 = '...'",
+  file: 'datetime.c',
+  line: '4026',
+  routine: 'DateTimeParseError'
+}
+Error procesando tercero fila 4: PostgresError: invalid input syntax for type date: "2028-04-09-00:00:00"
+    at ErrorResponse (file:///home/runner/workspace/node_modules/postgres/src/connection.js:794:26)
+    at handle (file:///home/runner/workspace/node_modules/postgres/src/connection.js:480:6)
+    at TLSSocket.data (file:///home/runner/workspace/node_modules/postgres/src/connection.js:315:9)
+    at TLSSocket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at TLSWrap.onStreamRead (node:internal/stream_base_commons:191:23) {
+  severity_local: 'ERROR',
+  severity: 'ERROR',
+  code: '22007',
+  where: "unnamed portal parameter $16 = '...'",
+  file: 'datetime.c',
+  line: '4026',
+  routine: 'DateTimeParseError'
+}

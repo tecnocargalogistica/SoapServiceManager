@@ -2394,6 +2394,8 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
       const tercerosData = excelProcessor.parseTercerosExcel(buffer, filename);
       console.log(`📊 ${tercerosData.length} terceros encontrados en el archivo`);
 
+
+
       const resultados = [];
       let exitosos = 0;
       let errores = 0;
@@ -2422,7 +2424,19 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
             es_propietario: tercero.es_propietario === 'true' || tercero.es_propietario === true,
             categoria_licencia: tercero.categoria_licencia?.toString().trim() || null,
             numero_licencia: tercero.numero_licencia?.toString().trim() || null,
-            fecha_vencimiento_licencia: tercero.fecha_vencimiento_licencia?.toString().trim() || null,
+            fecha_vencimiento_licencia: (() => {
+              if (!tercero.fecha_vencimiento_licencia) return null;
+              const dateStr = tercero.fecha_vencimiento_licencia.toString().trim();
+              if (dateStr.startsWith('1899-12-30')) return null;
+              if (dateStr.includes('-') && dateStr.length > 10) {
+                const parts = dateStr.split('-');
+                if (parts.length >= 3) return `${parts[0]}-${parts[1]}-${parts[2]}`;
+              }
+              try {
+                const date = new Date(dateStr);
+                return isNaN(date.getTime()) ? null : date.toISOString().split('T')[0];
+              } catch { return null; }
+            })(),
             id_vehiculo_asignado: tercero.id_vehiculo_asignado ? parseInt(tercero.id_vehiculo_asignado.toString()) : null,
             es_responsable_sede: tercero.es_responsable_sede === 'true' || tercero.es_responsable_sede === true,
             activo: tercero.activo !== 'false' && tercero.activo !== false
@@ -2432,7 +2446,7 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
           const terceroCreado = await storage.createTercero(nuevoTercero);
           resultados.push({
             fila: i + 2,
-            documento: tercero.NUMERO_DOCUMENTO,
+            documento: tercero.numero_documento,
             estado: 'exitoso',
             mensaje: 'Tercero creado correctamente',
             id: terceroCreado.id
