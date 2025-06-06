@@ -313,6 +313,48 @@ export class ExcelProcessor {
     return `${day}/${month}/${year}`;
   }
 
+  parseTercerosExcel(buffer: Buffer, filename: string): Array<any> {
+    try {
+      let data: any;
+      
+      if (filename.toLowerCase().endsWith('.csv')) {
+        // Parse CSV with semicolon delimiter
+        const csvContent = buffer.toString('utf-8');
+        const lines = csvContent.split('\n');
+        const headers = lines[0].split(';').map(h => h.trim().replace(/"/g, ''));
+        
+        data = [];
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!line) continue;
+          
+          const values = line.split(';').map(v => v.trim().replace(/"/g, ''));
+          const row: any = {};
+          
+          headers.forEach((header, index) => {
+            row[header] = values[index] || '';
+          });
+          
+          data.push(row);
+        }
+      } else {
+        // Parse Excel file
+        const XLSX = require('xlsx');
+        const workbook = XLSX.read(buffer, { type: 'buffer' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        data = XLSX.utils.sheet_to_json(worksheet);
+      }
+
+      console.log(`Parsed ${data.length} terceros from ${filename}`);
+      return data || [];
+      
+    } catch (error) {
+      console.error('Error parsing terceros file:', error);
+      throw new Error(`Error procesando archivo de terceros: ${error.message}`);
+    }
+  }
+
   parseVehiculosExcel(buffer: Buffer, filename: string): Array<any> {
     try {
       let data: any;

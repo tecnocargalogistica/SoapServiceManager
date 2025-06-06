@@ -2390,11 +2390,8 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
 
       console.log('📁 Procesando archivo de terceros:', filename);
 
-      // Importar el procesador de vehículos para procesar terceros
-      const { vehiculosProcessor } = await import('./vehiculos-processor.js');
-      
-      // Procesar el archivo Excel/CSV
-      const tercerosData = vehiculosProcessor.parseArchivo(buffer, filename);
+      // Procesar el archivo Excel/CSV con el procesador específico para terceros
+      const tercerosData = excelProcessor.parseTercerosExcel(buffer, filename);
       console.log(`📊 ${tercerosData.length} terceros encontrados en el archivo`);
 
       const resultados = [];
@@ -2472,9 +2469,9 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
 
   // ===== ENDPOINT PARA DESCARGA DE PLANTILLA DE TERCEROS =====
   app.get('/api/terceros/plantilla', (req: Request, res: Response) => {
-    const plantillaCSV = `TIPO_DOCUMENTO,NUMERO_DOCUMENTO,RAZON_SOCIAL,DIRECCION,TELEFONO,EMAIL,MUNICIPIO_CODIGO,CODIGO_POSTAL
-N,900123456,TRANSPORTES EL ÁGUILA S.A.S.,CALLE 80 # 15-30,+57 1 555 1234,info@transportesaguila.com,11001000,110111
-C,12345678,JUAN CARLOS PÉREZ LÓPEZ,CARRERA 15 # 25-40,+57 300 123 4567,jperez@email.com,11001000,110111`;
+    const plantillaCSV = `TIPO_DOCUMENTO;NUMERO_DOCUMENTO;RAZON_SOCIAL;PRIMER_APELLIDO;SEGUNDO_APELLIDO;PRIMER_NOMBRE;SEGUNDO_NOMBRE;DIRECCION;TELEFONO;FAX;EMAIL;FECHA_NACIMIENTO;MUNICIPIO_CODIGO;CODIGO_POSTAL;ACTIVO;FECHA_CREACION;TIPO_EMPRESA;DIGITO_VERIFICACION;NIT_EMPRESA;EMPRESA_RAZON_SOCIAL
+N;900123456;TRANSPORTES EL ÁGUILA S.A.S.;;;;;;;CALLE 80 # 15-30;+57 1 555 1234;;info@transportesaguila.com;;11001000;110111;true;01/01/2024;2;4;900123456;TRANSPORTES EL ÁGUILA S.A.S.
+C;12345678;;PÉREZ;LÓPEZ;JUAN;CARLOS;CARRERA 15 # 25-40;+57 300 123 4567;;jperez@email.com;15/03/1985;11001000;110111;true;01/01/2024;1;5;900123456;TRANSPORTES EL ÁGUILA S.A.S.`;
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', 'attachment; filename=plantilla_terceros.csv');
