@@ -2402,21 +2402,37 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
         const tercero = tercerosData[i];
         try {
           // Validar campos requeridos
-          if (!tercero.TIPO_DOCUMENTO || !tercero.NUMERO_DOCUMENTO || !tercero.RAZON_SOCIAL) {
-            throw new Error('Campos requeridos faltantes: TIPO_DOCUMENTO, NUMERO_DOCUMENTO, RAZON_SOCIAL');
+          if (!tercero.TIPO_DOCUMENTO || !tercero.NUMERO_DOCUMENTO) {
+            throw new Error('Campos requeridos faltantes: TIPO_DOCUMENTO, NUMERO_DOCUMENTO');
+          }
+
+          // Determinar el nombre basado en los campos disponibles
+          let nombre = '';
+          if (tercero.RAZON_SOCIAL && tercero.RAZON_SOCIAL.toString().trim()) {
+            nombre = tercero.RAZON_SOCIAL.toString().trim();
+          } else if (tercero.PRIMER_NOMBRE || tercero.PRIMER_APELLIDO) {
+            const partes = [
+              tercero.PRIMER_NOMBRE?.toString().trim(),
+              tercero.SEGUNDO_NOMBRE?.toString().trim(),
+              tercero.PRIMER_APELLIDO?.toString().trim(),
+              tercero.SEGUNDO_APELLIDO?.toString().trim()
+            ].filter(Boolean);
+            nombre = partes.join(' ');
+          } else {
+            nombre = tercero.NUMERO_DOCUMENTO.toString().trim();
           }
 
           // Crear objeto para insertar en la base de datos
           const nuevoTercero = {
-            nombre: tercero.RAZON_SOCIAL.toString().trim(), // Usar razon_social como nombre
+            nombre: nombre,
             tipo_documento: tercero.TIPO_DOCUMENTO.toString().trim(),
             numero_documento: tercero.NUMERO_DOCUMENTO.toString().trim(),
-            razon_social: tercero.RAZON_SOCIAL.toString().trim(),
-            direccion: tercero.DIRECCION || null,
-            telefono: tercero.TELEFONO || null,
-            email: tercero.EMAIL || null,
-            municipio_codigo: tercero.MUNICIPIO_CODIGO || null,
-            codigo_postal: tercero.CODIGO_POSTAL || null
+            razon_social: tercero.RAZON_SOCIAL?.toString().trim() || null,
+            direccion: tercero.DIRECCION?.toString().trim() || null,
+            telefono: tercero.TELEFONO?.toString().trim() || null,
+            email: tercero.EMAIL?.toString().trim() || null,
+            municipio_codigo: tercero.MUNICIPIO_CODIGO?.toString().trim() || null,
+            codigo_postal: tercero.CODIGO_POSTAL?.toString().trim() || null
           };
 
           // Intentar crear el tercero
