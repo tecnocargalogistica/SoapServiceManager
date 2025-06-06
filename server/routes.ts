@@ -2437,7 +2437,13 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
                 return isNaN(date.getTime()) ? null : date.toISOString().split('T')[0];
               } catch { return null; }
             })(),
-            id_vehiculo_asignado: tercero.id_vehiculo_asignado ? parseInt(tercero.id_vehiculo_asignado.toString()) : null,
+            id_vehiculo_asignado: (() => {
+              if (!tercero.id_vehiculo_asignado) return null;
+              const valor = tercero.id_vehiculo_asignado.toString().trim();
+              if (valor === '' || valor === 'NaN' || valor === 'null' || valor === 'undefined') return null;
+              const numero = parseInt(valor);
+              return isNaN(numero) ? null : numero;
+            })(),
             es_responsable_sede: tercero.es_responsable_sede === 'true' || tercero.es_responsable_sede === true,
             activo: tercero.activo !== 'false' && tercero.activo !== false
           };
@@ -2599,6 +2605,86 @@ C;12345678;JUAN CARLOS PÉREZ LÓPEZ;+57 300 123 4567;jperez@email.com;CARRERA 1
         success: false,
         error: 'Error procesando archivo de municipios',
         detalles: error.message
+      });
+    }
+  });
+
+  // ===== ENDPOINT PARA VERIFICAR Y ACTIVAR CÉDULAS =====
+  app.post('/api/terceros/verificar-cedulas', async (req: Request, res: Response) => {
+    try {
+      const { cedulas } = req.body;
+      
+      if (!cedulas || !Array.isArray(cedulas)) {
+        return res.status(400).json({
+          success: false,
+          mensaje: 'Debe enviar un array de cédulas'
+        });
+      }
+
+      // Limpiar y normalizar las cédulas
+      const cedulasLimpias = cedulas.map(cedula => 
+        cedula.toString().replace(/[.,\s]/g, '').trim()
+      ).filter(cedula => cedula !== '');
+
+      console.log(`🔍 Verificando ${cedulasLimpias.length} cédulas...`);
+
+      // Obtener todos los terceros existentes
+      const terceros = await storage.getTerceros();
+      const tercerosMap = new Map();
+      
+      terceros.forEach(tercero => {
+        const doc = tercero.numero_documento.replace(/[.,\s]/g, '').trim();
+        tercerosMap.set(doc, tercero);
+      });
+
+      const resultados = {
+        encontrados: [],
+        faltantes: [],
+        activados: 0,
+        errores: []
+      };
+
+      // Verificar cada cédula
+      for (const cedula of cedulasLimpias) {
+        if (tercerosMap.has(cedula)) {
+          const tercero = tercerosMap.get(cedula);
+          resultados.encontrados.push({
+            cedula,
+            nombre: tercero.nombre,
+            activo: tercero.activo,
+            id: tercero.id
+          });
+
+          // Activar si no está activo
+          if (!tercero.activo) {
+            try {
+              await storage.updateTercero(tercero.id, { activo: true });
+              resultados.activados++;
+              console.log(`✅ Activado tercero: ${tercero.nombre} (${cedula})`);
+            } catch (error) {
+              console.error(`Error activando tercero ${cedula}:`, error);
+              resultados.errores.push(`Error activando ${cedula}: ${error.message}`);
+            }
+          }
+        } else {
+          resultados.faltantes.push(cedula);
+        }
+      }
+
+      console.log(`📊 Resultados: ${resultados.encontrados.length} encontrados, ${resultados.faltantes.length} faltantes, ${resultados.activados} activados`);
+
+      res.json({
+        success: true,
+        mensaje: `Verificación completada: ${resultados.encontrados.length} encontrados, ${resultados.faltantes.length} faltantes`,
+        datos: resultados
+      });
+
+    } catch (error: any) {
+      console.error('Error en verificación de cédulas:', error);
+      res.status(500).json({
+        success: false,
+        mensaje: 'Error interno del servidor',
+        error: error.message
       });
     }
   });

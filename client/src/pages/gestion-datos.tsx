@@ -1,14 +1,22 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { DataTable } from "@/components/data-table";
 import { SedeForm } from "@/components/forms/sede-form";
 import { VehiculoForm } from "@/components/forms/vehiculo-form";
 import { TerceroForm } from "@/components/forms/tercero-form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { Search, UserCheck, UserX, Filter } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function GestionDatos() {
   const [activeTab, setActiveTab] = useState("sedes");
@@ -17,6 +25,13 @@ export default function GestionDatos() {
   const [showTerceroForm, setShowTerceroForm] = useState(false);
   const [showConsecutivoForm, setShowConsecutivoForm] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
+  
+  // Estados para filtrado de terceros
+  const [terceroFilter, setTerceroFilter] = useState("todos");
+  const [terceroSearch, setTerceroSearch] = useState("");
+  
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // Queries para datos
   const { data: sedes = [], isLoading: loadingSedes } = useQuery({
