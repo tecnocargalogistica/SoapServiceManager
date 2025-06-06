@@ -427,7 +427,7 @@ export class DatabaseStorage implements IStorage {
 
   // Terceros
   async getTerceros(): Promise<Tercero[]> {
-    return await db.select().from(terceros).where(eq(terceros.activo, true));
+    return await db.select().from(terceros);
   }
 
   async getTerceroByDocumento(numero: string): Promise<Tercero | undefined> {

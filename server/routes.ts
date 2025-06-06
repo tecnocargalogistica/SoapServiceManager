@@ -2689,5 +2689,45 @@ C;12345678;JUAN CARLOS PÉREZ LÓPEZ;+57 300 123 4567;jperez@email.com;CARRERA 1
     }
   });
 
+  // ===== ENDPOINT PARA CAMBIAR ESTADO DE TERCERO =====
+  app.patch('/api/terceros/:id/estado', async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { activo } = req.body;
+
+      if (isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          mensaje: 'ID de tercero inválido'
+        });
+      }
+
+      if (typeof activo !== 'boolean') {
+        return res.status(400).json({
+          success: false,
+          mensaje: 'El estado activo debe ser un valor booleano'
+        });
+      }
+
+      const terceroActualizado = await storage.updateTercero(id, { activo });
+
+      console.log(`✅ Estado de tercero ${id} cambiado a: ${activo ? 'Activo' : 'Inactivo'}`);
+
+      res.json({
+        success: true,
+        mensaje: `Tercero ${activo ? 'activado' : 'desactivado'} exitosamente`,
+        datos: terceroActualizado
+      });
+
+    } catch (error: any) {
+      console.error('Error cambiando estado de tercero:', error);
+      res.status(500).json({
+        success: false,
+        mensaje: 'Error interno del servidor',
+        error: error.message
+      });
+    }
+  });
+
   return httpServer;
 }

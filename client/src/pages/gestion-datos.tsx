@@ -54,6 +54,46 @@ export default function GestionDatos() {
     queryKey: ["/api/municipios"],
   });
 
+  // Mutación para cambiar estado de tercero
+  const cambiarEstadoTercero = useMutation({
+    mutationFn: async ({ id, activo }: { id: number; activo: boolean }) => {
+      const response = await apiRequest(`/api/terceros/${id}/estado`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ activo })
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/terceros"] });
+      toast({
+        title: data.mensaje,
+        description: `El tercero ha sido ${data.datos.activo ? 'activado' : 'desactivado'} exitosamente`
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error al cambiar estado",
+        description: error.message || "Error desconocido",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Filtrar terceros según los criterios seleccionados
+  const tercerosFiltrados = (terceros as any[]).filter((tercero: any) => {
+    const cumpleFiltroEstado = terceroFilter === "todos" || 
+      (terceroFilter === "activos" && tercero.activo) ||
+      (terceroFilter === "inactivos" && !tercero.activo);
+    
+    const cumpleBusqueda = terceroSearch === "" ||
+      tercero.nombre.toLowerCase().includes(terceroSearch.toLowerCase()) ||
+      tercero.numero_documento.includes(terceroSearch) ||
+      (tercero.razon_social && tercero.razon_social.toLowerCase().includes(terceroSearch.toLowerCase()));
+    
+    return cumpleFiltroEstado && cumpleBusqueda;
+  });
+
   // Configuración de columnas para cada tabla
   const sedeColumns = [
     { key: "codigo_sede", title: "Código" },
@@ -314,9 +354,67 @@ export default function GestionDatos() {
         </TabsContent>
 
         <TabsContent value="terceros" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Filter className="h-5 w-5" />
+                Filtros de Terceros
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Buscar por nombre o cédula</label>
+                  <Input
+                    placeholder="Nombre, razón social o número de documento..."
+                    value={terceroSearch}
+                    onChange={(e) => setTerceroSearch(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Estado</label>
+                  <Select value={terceroFilter} onValueChange={setTerceroFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar estado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todos">Todos</SelectItem>
+                      <SelectItem value="activos">Activos</SelectItem>
+                      <SelectItem value="inactivos">Inactivos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-end">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setTerceroSearch("");
+                      setTerceroFilter("todos");
+                    }}
+                    className="w-full"
+                  >
+                    Limpiar filtros
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="flex justify-between items-center text-sm text-muted-foreground">
+                <span>
+                  Mostrando {tercerosFiltrados.length} de {(terceros as any[]).length} terceros
+                </span>
+                {terceroFilter === "inactivos" && (
+                  <span className="text-orange-600">
+                    Filtrado: Solo terceros inactivos
+                  </span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
           <DataTable
             title="Gestión de Terceros"
-            data={terceros}
+            data={tercerosFiltrados}
             columns={terceroColumns}
             isLoading={loadingTerceros}
             onAdd={handleAddTercero}
