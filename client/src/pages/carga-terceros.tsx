@@ -136,11 +136,13 @@ export default function CargaTerceros() {
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Campos obligatorios:</strong> TIPO_DOCUMENTO, NUMERO_DOCUMENTO
+              <strong>Campos obligatorios:</strong> tipo_documento, numero_documento
               <br />
-              <strong>Campos opcionales:</strong> RAZON_SOCIAL, PRIMER_APELLIDO, SEGUNDO_APELLIDO, PRIMER_NOMBRE, SEGUNDO_NOMBRE, DIRECCION, TELEFONO, FAX, EMAIL, FECHA_NACIMIENTO, MUNICIPIO_CODIGO, CODIGO_POSTAL, ACTIVO, FECHA_CREACION, TIPO_EMPRESA, DIGITO_VERIFICACION, NIT_EMPRESA, EMPRESA_RAZON_SOCIAL
+              <strong>Campos disponibles:</strong> nombre, telefono, email, direccion, municipio_codigo, activo, razon_social, apellido, es_empresa, es_conductor, es_propietario, categoria_licencia, numero_licencia, fecha_vencimiento_licencia, id_vehiculo_asignado, es_responsable_sede
               <br />
               <strong>Tipos de documento:</strong> N (NIT), C (Cédula), P (Pasaporte), T (Tarjeta de Identidad)
+              <br />
+              <strong>Valores booleanos:</strong> true/false para campos es_empresa, es_conductor, es_propietario, es_responsable_sede, activo
               <br />
               <strong>Separador:</strong> Usar punto y coma (;) como delimitador en archivos CSV
             </AlertDescription>

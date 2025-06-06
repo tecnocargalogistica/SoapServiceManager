@@ -2402,37 +2402,30 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
         const tercero = tercerosData[i];
         try {
           // Validar campos requeridos
-          if (!tercero.TIPO_DOCUMENTO || !tercero.NUMERO_DOCUMENTO) {
-            throw new Error('Campos requeridos faltantes: TIPO_DOCUMENTO, NUMERO_DOCUMENTO');
+          if (!tercero.tipo_documento || !tercero.numero_documento) {
+            throw new Error('Campos requeridos faltantes: tipo_documento, numero_documento');
           }
 
-          // Determinar el nombre basado en los campos disponibles
-          let nombre = '';
-          if (tercero.RAZON_SOCIAL && tercero.RAZON_SOCIAL.toString().trim()) {
-            nombre = tercero.RAZON_SOCIAL.toString().trim();
-          } else if (tercero.PRIMER_NOMBRE || tercero.PRIMER_APELLIDO) {
-            const partes = [
-              tercero.PRIMER_NOMBRE?.toString().trim(),
-              tercero.SEGUNDO_NOMBRE?.toString().trim(),
-              tercero.PRIMER_APELLIDO?.toString().trim(),
-              tercero.SEGUNDO_APELLIDO?.toString().trim()
-            ].filter(Boolean);
-            nombre = partes.join(' ');
-          } else {
-            nombre = tercero.NUMERO_DOCUMENTO.toString().trim();
-          }
-
-          // Crear objeto para insertar en la base de datos
+          // Crear objeto para insertar en la base de datos con todos los campos
           const nuevoTercero = {
-            nombre: nombre,
-            tipo_documento: tercero.TIPO_DOCUMENTO.toString().trim(),
-            numero_documento: tercero.NUMERO_DOCUMENTO.toString().trim(),
-            razon_social: tercero.RAZON_SOCIAL?.toString().trim() || null,
-            direccion: tercero.DIRECCION?.toString().trim() || null,
-            telefono: tercero.TELEFONO?.toString().trim() || null,
-            email: tercero.EMAIL?.toString().trim() || null,
-            municipio_codigo: tercero.MUNICIPIO_CODIGO?.toString().trim() || null,
-            codigo_postal: tercero.CODIGO_POSTAL?.toString().trim() || null
+            tipo_documento: tercero.tipo_documento?.toString().trim() || '',
+            numero_documento: tercero.numero_documento?.toString().trim() || '',
+            nombre: tercero.nombre?.toString().trim() || tercero.numero_documento?.toString().trim(),
+            telefono: tercero.telefono?.toString().trim() || null,
+            email: tercero.email?.toString().trim() || null,
+            direccion: tercero.direccion?.toString().trim() || null,
+            municipio_codigo: tercero.municipio_codigo?.toString().trim() || null,
+            razon_social: tercero.razon_social?.toString().trim() || null,
+            apellido: tercero.apellido?.toString().trim() || null,
+            es_empresa: tercero.es_empresa === 'true' || tercero.es_empresa === true,
+            es_conductor: tercero.es_conductor === 'true' || tercero.es_conductor === true,
+            es_propietario: tercero.es_propietario === 'true' || tercero.es_propietario === true,
+            categoria_licencia: tercero.categoria_licencia?.toString().trim() || null,
+            numero_licencia: tercero.numero_licencia?.toString().trim() || null,
+            fecha_vencimiento_licencia: tercero.fecha_vencimiento_licencia?.toString().trim() || null,
+            id_vehiculo_asignado: tercero.id_vehiculo_asignado ? parseInt(tercero.id_vehiculo_asignado.toString()) : null,
+            es_responsable_sede: tercero.es_responsable_sede === 'true' || tercero.es_responsable_sede === true,
+            activo: tercero.activo !== 'false' && tercero.activo !== false
           };
 
           // Intentar crear el tercero
@@ -2485,9 +2478,9 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
 
   // ===== ENDPOINT PARA DESCARGA DE PLANTILLA DE TERCEROS =====
   app.get('/api/terceros/plantilla', (req: Request, res: Response) => {
-    const plantillaCSV = `TIPO_DOCUMENTO;NUMERO_DOCUMENTO;RAZON_SOCIAL;PRIMER_APELLIDO;SEGUNDO_APELLIDO;PRIMER_NOMBRE;SEGUNDO_NOMBRE;DIRECCION;TELEFONO;FAX;EMAIL;FECHA_NACIMIENTO;MUNICIPIO_CODIGO;CODIGO_POSTAL;ACTIVO;FECHA_CREACION;TIPO_EMPRESA;DIGITO_VERIFICACION;NIT_EMPRESA;EMPRESA_RAZON_SOCIAL
-N;900123456;TRANSPORTES EL ÁGUILA S.A.S.;;;;;;;CALLE 80 # 15-30;+57 1 555 1234;;info@transportesaguila.com;;11001000;110111;true;01/01/2024;2;4;900123456;TRANSPORTES EL ÁGUILA S.A.S.
-C;12345678;;PÉREZ;LÓPEZ;JUAN;CARLOS;CARRERA 15 # 25-40;+57 300 123 4567;;jperez@email.com;15/03/1985;11001000;110111;true;01/01/2024;1;5;900123456;TRANSPORTES EL ÁGUILA S.A.S.`;
+    const plantillaCSV = `tipo_documento;numero_documento;nombre;telefono;email;direccion;municipio_codigo;activo;razon_social;apellido;es_empresa;es_conductor;es_propietario;categoria_licencia;numero_licencia;fecha_vencimiento_licencia;id_vehiculo_asignado;es_responsable_sede
+N;900123456;TRANSPORTES EL ÁGUILA S.A.S.;+57 1 555 1234;info@transportesaguila.com;CALLE 80 # 15-30;11001000;true;TRANSPORTES EL ÁGUILA S.A.S.;;true;false;false;;;;false
+C;12345678;JUAN CARLOS PÉREZ LÓPEZ;+57 300 123 4567;jperez@email.com;CARRERA 15 # 25-40;11001000;true;;PÉREZ LÓPEZ;false;true;false;C2;12345678;31/12/2025;10;false`;
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', 'attachment; filename=plantilla_terceros.csv');
