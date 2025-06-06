@@ -2457,7 +2457,7 @@ DEF456,CAMIÓN RÍGIDO DE 3 EJES,CAMION,FORD,PÚBLICO,3,FURGÓN,CARGA,F-350,DIES
           console.error(`Error procesando tercero fila ${i + 2}:`, error);
           resultados.push({
             fila: i + 2,
-            documento: tercero.NUMERO_DOCUMENTO || 'N/A',
+            documento: tercero.numero_documento || 'N/A',
             estado: 'error',
             mensaje: error.message
           });
