@@ -246,6 +246,78 @@ export default function GestionDatos() {
         </Badge>
       )
     },
+    { 
+      key: "acciones", 
+      title: "Acciones",
+      render: (value: any, item: any) => (
+        <div className="flex gap-2">
+          {!item.activo && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 px-3 text-xs"
+                  disabled={cambiarEstadoTercero.isPending}
+                >
+                  <UserCheck className="h-3 w-3 mr-1" />
+                  Activar
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>¿Activar tercero?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    ¿Estás seguro de que quieres activar a "{item.es_empresa ? item.razon_social : item.nombre}"?
+                    Una vez activado, podrá ser utilizado en remesas y manifiestos.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => cambiarEstadoTercero.mutate({ id: item.id, activo: true })}
+                  >
+                    Activar
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+          {item.activo && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 px-3 text-xs"
+                  disabled={cambiarEstadoTercero.isPending}
+                >
+                  <UserX className="h-3 w-3 mr-1" />
+                  Desactivar
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>¿Desactivar tercero?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    ¿Estás seguro de que quieres desactivar a "{item.es_empresa ? item.razon_social : item.nombre}"?
+                    Una vez desactivado, no podrá ser utilizado en nuevas remesas y manifiestos.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => cambiarEstadoTercero.mutate({ id: item.id, activo: false })}
+                  >
+                    Desactivar
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+        </div>
+      )
+    },
   ];
 
   const consecutivoColumns = [
