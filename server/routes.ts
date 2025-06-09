@@ -2730,6 +2730,46 @@ C;12345678;JUAN CARLOS PÉREZ LÓPEZ;+57 300 123 4567;jperez@email.com;CARRERA 1
     }
   });
 
+  // ===== ENDPOINT PARA CAMBIAR ESTADO DE VEHÍCULO =====
+  app.patch('/api/vehiculos/:id/estado', async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { activo } = req.body;
+
+      if (isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          mensaje: 'ID de vehículo inválido'
+        });
+      }
+
+      if (typeof activo !== 'boolean') {
+        return res.status(400).json({
+          success: false,
+          mensaje: 'El estado activo debe ser un valor booleano'
+        });
+      }
+
+      const vehiculoActualizado = await storage.updateVehiculo(id, { activo });
+
+      console.log(`✅ Estado de vehículo ${id} cambiado a: ${activo ? 'Activo' : 'Inactivo'}`);
+
+      res.json({
+        success: true,
+        mensaje: `Vehículo ${activo ? 'activado' : 'desactivado'} exitosamente`,
+        datos: vehiculoActualizado
+      });
+
+    } catch (error: any) {
+      console.error('Error cambiando estado de vehículo:', error);
+      res.status(500).json({
+        success: false,
+        mensaje: 'Error interno del servidor',
+        error: error.message
+      });
+    }
+  });
+
   // Endpoint para consultar información de vehículo en RNDC
   app.post('/api/rndc/consultar-vehiculo', async (req: Request, res: Response) => {
     try {

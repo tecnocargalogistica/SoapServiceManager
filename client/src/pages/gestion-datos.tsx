@@ -30,6 +30,10 @@ export default function GestionDatos() {
   const [terceroFilter, setTerceroFilter] = useState("todos");
   const [terceroSearch, setTerceroSearch] = useState("");
   
+  // Estados para filtrado de vehículos
+  const [vehiculoFilter, setVehiculoFilter] = useState("todos");
+  const [vehiculoSearch, setVehiculoSearch] = useState("");
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -57,18 +61,40 @@ export default function GestionDatos() {
   // Mutación para cambiar estado de tercero
   const cambiarEstadoTercero = useMutation({
     mutationFn: async ({ id, activo }: { id: number; activo: boolean }) => {
-      const response = await apiRequest(`/api/terceros/${id}/estado`, {
+      return await apiRequest(`/api/terceros/${id}/estado`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ activo })
       });
-      return response.json();
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/terceros"] });
       toast({
         title: data.mensaje,
         description: `El tercero ha sido ${data.datos.activo ? 'activado' : 'desactivado'} exitosamente`
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error al cambiar estado",
+        description: error.message || "Error desconocido",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Mutación para cambiar estado de vehículo
+  const cambiarEstadoVehiculo = useMutation({
+    mutationFn: async ({ id, activo }: { id: number; activo: boolean }) => {
+      return await apiRequest(`/api/vehiculos/${id}/estado`, {
+        method: 'PATCH',
+        body: JSON.stringify({ activo })
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/vehiculos"] });
+      toast({
+        title: data.mensaje,
+        description: `El vehículo ha sido ${data.datos.activo ? 'activado' : 'desactivado'} exitosamente`
       });
     },
     onError: (error: any) => {
@@ -90,6 +116,20 @@ export default function GestionDatos() {
       tercero.nombre.toLowerCase().includes(terceroSearch.toLowerCase()) ||
       tercero.numero_documento.includes(terceroSearch) ||
       (tercero.razon_social && tercero.razon_social.toLowerCase().includes(terceroSearch.toLowerCase()));
+    
+    return cumpleFiltroEstado && cumpleBusqueda;
+  });
+
+  // Filtrar vehículos según los criterios seleccionados
+  const vehiculosFiltrados = (vehiculos as any[]).filter((vehiculo: any) => {
+    const cumpleFiltroEstado = vehiculoFilter === "todos" || 
+      (vehiculoFilter === "activos" && vehiculo.activo) ||
+      (vehiculoFilter === "inactivos" && !vehiculo.activo);
+    
+    const cumpleBusqueda = vehiculoSearch === "" ||
+      vehiculo.placa.toLowerCase().includes(vehiculoSearch.toLowerCase()) ||
+      (vehiculo.marca && vehiculo.marca.toLowerCase().includes(vehiculoSearch.toLowerCase())) ||
+      (vehiculo.modelo && vehiculo.modelo.toLowerCase().includes(vehiculoSearch.toLowerCase()));
     
     return cumpleFiltroEstado && cumpleBusqueda;
   });
@@ -176,6 +216,51 @@ export default function GestionDatos() {
         <Badge variant={value ? "default" : "secondary"}>
           {value ? "Activo" : "Inactivo"}
         </Badge>
+      )
+    },
+    {
+      key: "acciones",
+      title: "Acciones",
+      render: (value: any, item: any) => (
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setEditingItem(item)}
+          >
+            Editar
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                size="sm"
+                variant={item.activo ? "destructive" : "default"}
+              >
+                {item.activo ? <UserX className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  {item.activo ? "Desactivar" : "Activar"} vehículo
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  ¿Está seguro que desea {item.activo ? "desactivar" : "activar"} el vehículo {item.placa}?
+                  {item.activo && " Este vehículo no podrá ser usado en nuevas remesas."}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => cambiarEstadoVehiculo.mutate({ id: item.id, activo: !item.activo })}
+                  className={item.activo ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}
+                >
+                  {item.activo ? "Desactivar" : "Activar"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       )
     },
   ];
@@ -411,9 +496,67 @@ export default function GestionDatos() {
         </TabsContent>
 
         <TabsContent value="vehiculos" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Filter className="h-5 w-5" />
+                Filtros de Vehículos
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Buscar por placa, marca o modelo</label>
+                  <Input
+                    placeholder="Placa, marca o modelo..."
+                    value={vehiculoSearch}
+                    onChange={(e) => setVehiculoSearch(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Estado</label>
+                  <Select value={vehiculoFilter} onValueChange={setVehiculoFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar estado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todos">Todos</SelectItem>
+                      <SelectItem value="activos">Activos</SelectItem>
+                      <SelectItem value="inactivos">Inactivos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-end">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setVehiculoSearch("");
+                      setVehiculoFilter("todos");
+                    }}
+                    className="w-full"
+                  >
+                    Limpiar filtros
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="flex justify-between items-center text-sm text-muted-foreground">
+                <span>
+                  Mostrando {vehiculosFiltrados.length} de {(vehiculos as any[]).length} vehículos
+                </span>
+                {vehiculoFilter === "inactivos" && (
+                  <span className="text-orange-600">
+                    Filtrado: Solo vehículos inactivos
+                  </span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
           <DataTable
             title="Gestión de Vehículos"
-            data={vehiculos}
+            data={vehiculosFiltrados}
             columns={vehiculoColumns}
             isLoading={loadingVehiculos}
             onAdd={handleAddVehiculo}
