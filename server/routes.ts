@@ -2767,7 +2767,7 @@ C;12345678;JUAN CARLOS PÉREZ LÓPEZ;+57 300 123 4567;jperez@email.com;CARRERA 1
   <procesoid>48</procesoid>
  </solicitud>
  <variables>
-FECHAVENCE_RTM,CLASE,PBV
+FECHAVENCE_RTM,CLASE,PBV,FECHA_MATRICULA
  </variables>
  <documento>
   <PLACA>'${placa.toUpperCase()}'</PLACA>

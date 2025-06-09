@@ -17,6 +17,7 @@ interface ConsultaResultado {
   fechaVenceRTM?: string;
   clase?: string;
   pesoVehicular?: string;
+  fechaMatricula?: string;
   estado: 'exitoso' | 'error' | 'pendiente';
   error?: string;
 }
@@ -62,6 +63,7 @@ export default function ConsultasMaestros() {
               fechaVenceRTM: data.data.FECHAVENCE_RTM || 'No disponible',
               clase: data.data.CLASE || 'No disponible',
               pesoVehicular: data.data.PBV || 'No disponible',
+              fechaMatricula: data.data.FECHA_MATRICULA || 'No disponible',
               estado: 'exitoso'
             };
           } else {
@@ -126,6 +128,7 @@ export default function ConsultasMaestros() {
           fechaVenceRTM: data.data.FECHAVENCE_RTM || 'No disponible',
           clase: data.data.CLASE || 'No disponible',
           pesoVehicular: data.data.PBV || 'No disponible',
+          fechaMatricula: data.data.FECHA_MATRICULA || 'No disponible',
           estado: 'exitoso'
         };
         setResultados([resultado]);
@@ -196,6 +199,7 @@ export default function ConsultasMaestros() {
       'Fecha Venc. RTM': r.fechaVenceRTM || 'Error',
       'Clase': r.clase || 'Error',
       'Peso Bruto Vehicular': r.pesoVehicular || 'Error',
+      'Fecha Matrícula': r.fechaMatricula || 'Error',
       'Estado': r.estado === 'exitoso' ? 'Exitoso' : 'Error',
       'Error': r.error || ''
     }));
@@ -209,6 +213,7 @@ export default function ConsultasMaestros() {
       { wch: 15 }, // Fecha Venc. RTM
       { wch: 15 }, // Clase
       { wch: 20 }, // Peso Bruto Vehicular
+      { wch: 15 }, // Fecha Matrícula
       { wch: 10 }, // Estado
       { wch: 30 }  // Error
     ];
@@ -594,7 +599,7 @@ TAM080`;
                       <div className="font-medium">{resultado.placa}</div>
                       {resultado.estado === 'exitoso' && (
                         <div className="text-sm text-muted-foreground">
-                          RTM: {resultado.fechaVenceRTM} | Clase: {resultado.clase} | PBV: {resultado.pesoVehicular}
+                          RTM: {resultado.fechaVenceRTM} | Clase: {resultado.clase} | PBV: {resultado.pesoVehicular} | Matrícula: {resultado.fechaMatricula}
                         </div>
                       )}
                       {resultado.estado === 'error' && (
