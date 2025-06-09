@@ -2729,5 +2729,101 @@ C;12345678;JUAN CARLOS PÉREZ LÓPEZ;+57 300 123 4567;jperez@email.com;CARRERA 1
     }
   });
 
+  // Endpoint para consultar información de vehículo en RNDC
+  app.post('/api/rndc/consultar-vehiculo', async (req: Request, res: Response) => {
+    try {
+      const { placa } = req.body;
+
+      if (!placa || typeof placa !== 'string') {
+        return res.status(400).json({ 
+          success: false, 
+          error: "La placa es requerida" 
+        });
+      }
+
+      // Obtener configuración activa
+      const config = await storage.getConfiguracionActiva();
+      if (!config) {
+        return res.status(500).json({ 
+          success: false, 
+          error: "No hay configuración RNDC activa" 
+        });
+      }
+
+      // Construir XML para consulta de vehículo
+      const xmlContent = `<root>
+ <acceso>
+  <username>${config.usuario}</username>
+  <password>${config.password}</password>
+ </acceso>
+ <solicitud>
+  <tipo>6</tipo>
+  <procesoid>48</procesoid>
+ </solicitud>
+ <variables>
+FECHAVENCE_RTM,CLASE,PBV
+ </variables>
+ <documento>
+  <PLACA>'${placa.toUpperCase()}'</PLACA>
+ </documento>
+</root>`;
+
+      console.log(`🔍 Consultando vehículo: ${placa}`);
+      
+      // Enviar solicitud SOAP
+      const soapProxy = new SOAPProxy(config.endpoint_primary, config.endpoint_backup, config.timeout);
+      const soapResponse = await soapProxy.sendSOAPRequest(xmlContent);
+      
+      if (soapResponse.success && soapResponse.data) {
+        // Parsear respuesta XML para extraer datos
+        const responseData = soapResponse.data;
+        
+        // Buscar datos en la respuesta
+        let fechaVenceRTM = '';
+        let clase = '';
+        let pbv = '';
+
+        if (typeof responseData === 'string') {
+          // Extraer datos usando expresiones regulares
+          const fechaMatch = responseData.match(/<FECHAVENCE_RTM[^>]*>([^<]*)<\/FECHAVENCE_RTM>/i);
+          const claseMatch = responseData.match(/<CLASE[^>]*>([^<]*)<\/CLASE>/i);
+          const pbvMatch = responseData.match(/<PBV[^>]*>([^<]*)<\/PBV>/i);
+
+          fechaVenceRTM = fechaMatch ? fechaMatch[1].trim() : '';
+          clase = claseMatch ? claseMatch[1].trim() : '';
+          pbv = pbvMatch ? pbvMatch[1].trim() : '';
+        } else if (responseData && typeof responseData === 'object') {
+          fechaVenceRTM = responseData.FECHAVENCE_RTM || '';
+          clase = responseData.CLASE || '';
+          pbv = responseData.PBV || '';
+        }
+
+        console.log(`✅ Consulta exitosa para ${placa}: RTM=${fechaVenceRTM}, Clase=${clase}, PBV=${pbv}`);
+        
+        res.json({
+          success: true,
+          data: {
+            placa: placa.toUpperCase(),
+            FECHAVENCE_RTM: fechaVenceRTM,
+            CLASE: clase,
+            PBV: pbv
+          }
+        });
+      } else {
+        console.log(`❌ Error en consulta de ${placa}: ${soapResponse.error}`);
+        res.json({
+          success: false,
+          error: soapResponse.error || 'Error desconocido en consulta RNDC'
+        });
+      }
+    } catch (error: any) {
+      console.error('Error en consulta de vehículo:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Error interno del servidor'
+      });
+    }
+  });
+
   return httpServer;
 }

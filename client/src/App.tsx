@@ -24,6 +24,7 @@ import CargaMunicipios from "@/pages/carga-municipios";
 
 import Configuracion from "@/pages/configuracion";
 import GestionDatos from "@/pages/gestion-datos";
+import ConsultasMaestros from "@/pages/consultas-maestros";
 import SOAPCliente from "@/pages/soap-cliente";
 import Logs from "@/pages/logs";
 import NotFound from "@/pages/not-found";
@@ -58,6 +59,7 @@ function Router() {
             <Route path="/carga-municipios" component={CargaMunicipios} />
 
             <Route path="/gestion-datos" component={GestionDatos} />
+            <Route path="/consultas-maestros" component={ConsultasMaestros} />
             <Route path="/soap-cliente" component={SOAPCliente} />
             <Route path="/logs" component={Logs} />
             <Route path="/configuracion" component={Configuracion} />
