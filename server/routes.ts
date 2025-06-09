@@ -2193,11 +2193,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('📁 Procesando archivo de vehículos:', filename);
 
-      // Importar el procesador de vehículos
-      const { vehiculosProcessor } = await import('./vehiculos-processor.js');
-      
-      // Procesar el archivo Excel/CSV
-      const vehiculosData = vehiculosProcessor.parseArchivo(buffer, filename);
+      // Usar el procesador de Excel mejorado
+      const vehiculosData = excelProcessor.parseVehiculosExcel(buffer, filename);
       console.log(`📊 ${vehiculosData.length} vehículos encontrados en el archivo`);
 
       const resultados = [];
@@ -2207,20 +2204,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (let i = 0; i < vehiculosData.length; i++) {
         const vehiculo = vehiculosData[i];
         try {
-          // Validar vehículo
-          const erroresValidacion = vehiculosProcessor.validarVehiculo(vehiculo);
-          if (erroresValidacion.length > 0) {
-            throw new Error(erroresValidacion.join(', '));
+          // Validar campos requeridos
+          if (!vehiculo.placa || vehiculo.placa.trim() === '') {
+            throw new Error('La placa es requerida');
           }
 
-          // Mapear vehículo para la base de datos
-          const nuevoVehiculo = vehiculosProcessor.mapearVehiculo(vehiculo);
+          // Verificar si el vehículo ya existe
+          const vehiculoExistente = await storage.getVehiculoByPlaca(vehiculo.placa);
+          if (vehiculoExistente) {
+            throw new Error('Ya existe un vehículo con esta placa');
+          }
 
-          // Intentar crear el vehículo
-          const vehiculoCreado = await storage.createVehiculo(nuevoVehiculo);
+          // Intentar crear el vehículo con todos los campos mapeados
+          const vehiculoCreado = await storage.createVehiculo(vehiculo);
           resultados.push({
             fila: i + 2,
-            placa: vehiculo.PLACA,
+            placa: vehiculo.placa,
             estado: 'exitoso',
             mensaje: 'Vehículo creado correctamente',
             id: vehiculoCreado.id
@@ -2231,7 +2230,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.error(`Error procesando vehículo fila ${i + 2}:`, error);
           resultados.push({
             fila: i + 2,
-            placa: vehiculo.PLACA || 'N/A',
+            placa: vehiculo.placa || 'N/A',
             estado: 'error',
             mensaje: error.message
           });
