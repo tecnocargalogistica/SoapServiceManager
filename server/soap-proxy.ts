@@ -31,10 +31,8 @@ export class SOAPProxy {
           headers: {
             'Content-Type': 'text/xml; charset=utf-8',
             'SOAPAction': '"urn:BPMServicesIntf-IBPMServices#AtenderMensajeRNDC"',
-            'Accept': 'text/xml, application/xml, text/html',
-            'User-Agent': 'RNDC-Client/1.0',
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
+            'Accept': 'text/xml, application/xml',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
           },
           body: xmlContent,
           signal: AbortSignal.timeout(this.timeout)

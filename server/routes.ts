@@ -2750,8 +2750,13 @@ C;12345678;JUAN CARLOS PÉREZ LÓPEZ;+57 300 123 4567;jperez@email.com;CARRERA 1
         });
       }
 
-      // Construir XML para consulta de vehículo
-      const xmlContent = `<root>
+      // Construir XML SOAP para consulta de vehículo
+      const xmlContent = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:BPMServicesIntf-IBPMServices">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <urn:AtenderMensajeRNDC>
+            <Request>
+                <root>
  <acceso>
   <username>${config.usuario}</username>
   <password>${config.password}</password>
@@ -2766,9 +2771,14 @@ FECHAVENCE_RTM,CLASE,PBV
  <documento>
   <PLACA>'${placa.toUpperCase()}'</PLACA>
  </documento>
-</root>`;
+</root>
+            </Request>
+        </urn:AtenderMensajeRNDC>
+    </soapenv:Body>
+</soapenv:Envelope>`;
 
       console.log(`🔍 Consultando vehículo: ${placa}`);
+      console.log(`📋 XML enviado:\n${xmlContent}`);
       
       // Enviar solicitud SOAP
       const soapProxy = new SOAPProxy(config.endpoint_primary, config.endpoint_backup, config.timeout);
