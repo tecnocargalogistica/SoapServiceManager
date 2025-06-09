@@ -434,24 +434,36 @@ export class ExcelProcessor {
 
   private mapearCamposVehiculo(vehiculo: any): any {
     // Función auxiliar para convertir fechas
-    const convertirFecha = (fecha: string): Date | null => {
-      if (!fecha || fecha.trim() === '') return null;
+    const convertirFecha = (fecha: any): string | null => {
+      if (!fecha || fecha === '' || fecha === 'null' || fecha === 'undefined') return null;
       
-      // Intentar varios formatos de fecha
-      const formatos = [
-        /^\d{4}-\d{2}-\d{2}$/, // YYYY-MM-DD
-        /^\d{2}\/\d{2}\/\d{4}$/, // DD/MM/YYYY
-        /^\d{2}-\d{2}-\d{4}$/, // DD-MM-YYYY
-      ];
+      // Si ya es una fecha válida, convertir a string ISO
+      if (fecha instanceof Date) {
+        return fecha.toISOString().split('T')[0];
+      }
       
-      for (const formato of formatos) {
-        if (formato.test(fecha)) {
-          const fechaObj = new Date(fecha);
-          if (!isNaN(fechaObj.getTime())) {
-            return fechaObj;
+      // Si es string, intentar parsearlo
+      if (typeof fecha === 'string') {
+        const fechaStr = fecha.trim();
+        if (fechaStr === '') return null;
+        
+        // Intentar varios formatos de fecha
+        const formatos = [
+          /^\d{4}-\d{2}-\d{2}/, // YYYY-MM-DD
+          /^\d{2}\/\d{2}\/\d{4}/, // DD/MM/YYYY
+          /^\d{2}-\d{2}-\d{4}/, // DD-MM-YYYY
+        ];
+        
+        for (const formato of formatos) {
+          if (formato.test(fechaStr)) {
+            const fechaObj = new Date(fechaStr);
+            if (!isNaN(fechaObj.getTime())) {
+              return fechaObj.toISOString().split('T')[0];
+            }
           }
         }
       }
+      
       return null;
     };
 
