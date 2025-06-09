@@ -36,6 +36,7 @@ const navigation = [
     section: "Datos",
     items: [
       { name: "Gestión de Datos", href: "/gestion-datos", icon: Building },
+      { name: "Maestros Consulta", href: "/consultas-maestros", icon: Search },
       { name: "Carga de Vehículos", href: "/carga-vehiculos", icon: Truck },
       { name: "Carga de Sedes", href: "/carga-sedes", icon: Home },
       { name: "Carga de Terceros", href: "/carga-terceros", icon: Users },
