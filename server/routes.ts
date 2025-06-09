@@ -2793,6 +2793,7 @@ FECHAVENCE_RTM,CLASE,PBV,FECHA_MATRICULA
         let fechaVenceRTM = '';
         let clase = '';
         let pbv = '';
+        let fechaMatricula = '';
 
         // Obtener el XML completo de la respuesta
         const fullXML = responseData.rawResponse || JSON.stringify(responseData);
@@ -2805,15 +2806,17 @@ FECHAVENCE_RTM,CLASE,PBV,FECHA_MATRICULA
         const fechaMatch = xmlContent.match(/&lt;fechavence_rtm&gt;([^&]+)&lt;\/fechavence_rtm&gt;/i);
         const claseMatch = xmlContent.match(/&lt;clase&gt;([^&]+)&lt;\/clase&gt;/i);
         const pbvMatch = xmlContent.match(/&lt;pbv&gt;([^&]+)&lt;\/pbv&gt;/i);
+        const fechaMatriculaMatch = xmlContent.match(/&lt;fecha_matricula&gt;([^&]+)&lt;\/fecha_matricula&gt;/i);
 
         fechaVenceRTM = fechaMatch ? fechaMatch[1].trim() : '';
         clase = claseMatch ? claseMatch[1].trim() : '';
         pbv = pbvMatch ? pbvMatch[1].trim() : '';
+        fechaMatricula = fechaMatriculaMatch ? fechaMatriculaMatch[1].trim() : '';
 
         console.log(`🔍 XML extraído: ${xmlContent.substring(0, 200)}...`);
-        console.log(`📊 Datos parseados - RTM: ${fechaVenceRTM}, Clase: ${clase}, PBV: ${pbv}`);
+        console.log(`📊 Datos parseados - RTM: ${fechaVenceRTM}, Clase: ${clase}, PBV: ${pbv}, Matrícula: ${fechaMatricula}`);
 
-        console.log(`✅ Consulta exitosa para ${placa}: RTM=${fechaVenceRTM}, Clase=${clase}, PBV=${pbv}`);
+        console.log(`✅ Consulta exitosa para ${placa}: RTM=${fechaVenceRTM}, Clase=${clase}, PBV=${pbv}, Matrícula=${fechaMatricula}`);
         
         res.json({
           success: true,
@@ -2821,7 +2824,8 @@ FECHAVENCE_RTM,CLASE,PBV,FECHA_MATRICULA
             placa: placa.toUpperCase(),
             FECHAVENCE_RTM: fechaVenceRTM,
             CLASE: clase,
-            PBV: pbv
+            PBV: pbv,
+            FECHA_MATRICULA: fechaMatricula
           }
         });
       } else {
