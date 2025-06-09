@@ -2793,20 +2793,24 @@ FECHAVENCE_RTM,CLASE,PBV
         let clase = '';
         let pbv = '';
 
-        if (typeof responseData === 'string') {
-          // Extraer datos usando expresiones regulares
-          const fechaMatch = responseData.match(/<FECHAVENCE_RTM[^>]*>([^<]*)<\/FECHAVENCE_RTM>/i);
-          const claseMatch = responseData.match(/<CLASE[^>]*>([^<]*)<\/CLASE>/i);
-          const pbvMatch = responseData.match(/<PBV[^>]*>([^<]*)<\/PBV>/i);
+        // Obtener el XML completo de la respuesta
+        const fullXML = responseData.rawResponse || JSON.stringify(responseData);
+        
+        // Buscar el contenido dentro del tag <return> que contiene el XML escapado (multiline)
+        const returnMatch = fullXML.match(/<return[^>]*>([\s\S]*?)<\/return>/i);
+        const xmlContent = returnMatch ? returnMatch[1] : fullXML;
+        
+        // Extraer datos del XML escapado
+        const fechaMatch = xmlContent.match(/&lt;fechavence_rtm&gt;([^&]+)&lt;\/fechavence_rtm&gt;/i);
+        const claseMatch = xmlContent.match(/&lt;clase&gt;([^&]+)&lt;\/clase&gt;/i);
+        const pbvMatch = xmlContent.match(/&lt;pbv&gt;([^&]+)&lt;\/pbv&gt;/i);
 
-          fechaVenceRTM = fechaMatch ? fechaMatch[1].trim() : '';
-          clase = claseMatch ? claseMatch[1].trim() : '';
-          pbv = pbvMatch ? pbvMatch[1].trim() : '';
-        } else if (responseData && typeof responseData === 'object') {
-          fechaVenceRTM = responseData.FECHAVENCE_RTM || '';
-          clase = responseData.CLASE || '';
-          pbv = responseData.PBV || '';
-        }
+        fechaVenceRTM = fechaMatch ? fechaMatch[1].trim() : '';
+        clase = claseMatch ? claseMatch[1].trim() : '';
+        pbv = pbvMatch ? pbvMatch[1].trim() : '';
+
+        console.log(`🔍 XML extraído: ${xmlContent.substring(0, 200)}...`);
+        console.log(`📊 Datos parseados - RTM: ${fechaVenceRTM}, Clase: ${clase}, PBV: ${pbv}`);
 
         console.log(`✅ Consulta exitosa para ${placa}: RTM=${fechaVenceRTM}, Clase=${clase}, PBV=${pbv}`);
         
