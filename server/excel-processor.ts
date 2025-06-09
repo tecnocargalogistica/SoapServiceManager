@@ -362,7 +362,10 @@ export class ExcelProcessor {
       if (filename.toLowerCase().endsWith('.csv')) {
         // Procesar CSV
         const csvContent = buffer.toString('utf-8');
+        console.log(`📄 Contenido del archivo (primeros 500 caracteres): ${csvContent.substring(0, 500)}`);
+        
         const lines = csvContent.split('\n').filter((line: string) => line.trim() !== '');
+        console.log(`📝 Total de líneas encontradas: ${lines.length}`);
         
         if (lines.length < 2) {
           throw new Error('El archivo CSV debe contener al menos un encabezado y una fila de datos');
@@ -373,13 +376,19 @@ export class ExcelProcessor {
         const delimiter = firstLine.includes(';') ? ';' : ',';
         
         const headers = firstLine.split(delimiter).map((h: string) => h.trim().replace(/"/g, ''));
+        console.log(`📋 Headers detectados: ${headers.join(', ')}`);
+        console.log(`🔍 Delimitador usado: "${delimiter}"`);
+        
         const vehiculos = [];
         
         for (let i = 1; i < lines.length; i++) {
           const line = lines[i].trim();
           
           // Saltar líneas vacías
-          if (!line) continue;
+          if (!line) {
+            console.log(`⚠️ Línea ${i + 1} vacía, saltando...`);
+            continue;
+          }
           
           const values = line.split(delimiter).map((v: string) => v.trim().replace(/"/g, ''));
           const vehiculo: any = {};
@@ -388,11 +397,16 @@ export class ExcelProcessor {
             vehiculo[header] = values[index] || '';
           });
           
+          console.log(`🔍 Línea ${i + 1}: PLACA="${vehiculo.PLACA}"`);
+          
           // Solo procesar si tiene placa válida
           if (vehiculo.PLACA && vehiculo.PLACA.trim() !== '') {
             // Mapear y validar campos específicos de vehículos
             const vehiculoMapeado = this.mapearCamposVehiculo(vehiculo);
             vehiculos.push(vehiculoMapeado);
+            console.log(`✅ Vehículo agregado: ${vehiculo.PLACA}`);
+          } else {
+            console.log(`❌ Línea ${i + 1} rechazada: placa vacía o inválida`);
           }
         }
         
