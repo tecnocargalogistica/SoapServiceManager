@@ -464,6 +464,13 @@ export class ExcelProcessor {
         // Intentar varios formatos de fecha
         const formatos = [
           { regex: /^\d{4}-\d{2}-\d{2}$/, parser: (str: string) => new Date(str) }, // YYYY-MM-DD
+          { regex: /^\d{4}-\d{2}-\d{2}-\d{2}:\d{2}:\d{2}$/, parser: (str: string) => { // YYYY-MM-DD-HH:MM:SS
+            const fechaParte = str.split('-').slice(0, 3).join('-');
+            const fecha = new Date(fechaParte);
+            // Si la fecha es 1899-12-30, es una fecha inválida de Excel, retornar null
+            if (fecha.getFullYear() === 1899) return null;
+            return fecha;
+          }},
           { regex: /^\d{2}\/\d{2}\/\d{4}$/, parser: (str: string) => { // DD/MM/YYYY
             const [dia, mes, año] = str.split('/');
             return new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
