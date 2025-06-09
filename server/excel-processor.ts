@@ -397,14 +397,15 @@ export class ExcelProcessor {
             vehiculo[header] = values[index] || '';
           });
           
-          console.log(`🔍 Línea ${i + 1}: PLACA="${vehiculo.PLACA}"`);
+          const placa = vehiculo.PLACA || vehiculo.placa || '';
+          console.log(`🔍 Línea ${i + 1}: PLACA="${placa}"`);
           
           // Solo procesar si tiene placa válida
-          if (vehiculo.PLACA && vehiculo.PLACA.trim() !== '') {
+          if (placa && placa.trim() !== '') {
             // Mapear y validar campos específicos de vehículos
             const vehiculoMapeado = this.mapearCamposVehiculo(vehiculo);
             vehiculos.push(vehiculoMapeado);
-            console.log(`✅ Vehículo agregado: ${vehiculo.PLACA}`);
+            console.log(`✅ Vehículo agregado: ${placa}`);
           } else {
             console.log(`❌ Línea ${i + 1} rechazada: placa vacía o inválida`);
           }

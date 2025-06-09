@@ -1,0 +1,369 @@
+5:16:32 PM [express] GET /api/rndc/test 200 in 6343ms :: {"connected":true,"endpoint":"http://rndcws…
+📁 Procesando archivo de vehículos: vehiculos_base_datos_replit.csv
+📄 Contenido del archivo (primeros 500 caracteres): id;placa;capacidad_carga;tipo_vehiculo;marca;modelo;propietario_tipo_doc;propietario_numero_doc;propietario_nombre;activo;created_at;configuracion;clase;servicio;numero_ejes;carroceria;modalidad;linea;tipo_combustible;peso_vacio;fecha_matricula;modelo_año;peso_bruto_vehicular;unidad_medida;numero_poliza;aseguradora;nit_aseguradora;vence_soat;vence_revision_tecnomecanica;propietario_id;tenedor_id;tenedor_tipo_doc;tenedor_numero_doc;tenedor_nombre
+12;SNK427;0;CAMION;CHEVROLET;2003;C;52541478;YEN
+📝 Total de líneas encontradas: 181
+📋 Headers detectados: id, placa, capacidad_carga, tipo_vehiculo, marca, modelo, propietario_tipo_doc, propietario_numero_doc, propietario_nombre, activo, created_at, configuracion, clase, servicio, numero_ejes, carroceria, modalidad, linea, tipo_combustible, peso_vacio, fecha_matricula, modelo_año, peso_bruto_vehicular, unidad_medida, numero_poliza, aseguradora, nit_aseguradora, vence_soat, vence_revision_tecnomecanica, propietario_id, tenedor_id, tenedor_tipo_doc, tenedor_numero_doc, tenedor_nombre
+🔍 Delimitador usado: ";"
+🔍 Línea 2: PLACA="undefined"
+❌ Línea 2 rechazada: placa vacía o inválida
+🔍 Línea 3: PLACA="undefined"
+❌ Línea 3 rechazada: placa vacía o inválida
+🔍 Línea 4: PLACA="undefined"
+❌ Línea 4 rechazada: placa vacía o inválida
+🔍 Línea 5: PLACA="undefined"
+❌ Línea 5 rechazada: placa vacía o inválida
+🔍 Línea 6: PLACA="undefined"
+❌ Línea 6 rechazada: placa vacía o inválida
+🔍 Línea 7: PLACA="undefined"
+❌ Línea 7 rechazada: placa vacía o inválida
+🔍 Línea 8: PLACA="undefined"
+❌ Línea 8 rechazada: placa vacía o inválida
+🔍 Línea 9: PLACA="undefined"
+❌ Línea 9 rechazada: placa vacía o inválida
+🔍 Línea 10: PLACA="undefined"
+❌ Línea 10 rechazada: placa vacía o inválida
+🔍 Línea 11: PLACA="undefined"
+❌ Línea 11 rechazada: placa vacía o inválida
+🔍 Línea 12: PLACA="undefined"
+❌ Línea 12 rechazada: placa vacía o inválida
+🔍 Línea 13: PLACA="undefined"
+❌ Línea 13 rechazada: placa vacía o inválida
+🔍 Línea 14: PLACA="undefined"
+❌ Línea 14 rechazada: placa vacía o inválida
+🔍 Línea 15: PLACA="undefined"
+❌ Línea 15 rechazada: placa vacía o inválida
+🔍 Línea 16: PLACA="undefined"
+❌ Línea 16 rechazada: placa vacía o inválida
+🔍 Línea 17: PLACA="undefined"
+❌ Línea 17 rechazada: placa vacía o inválida
+🔍 Línea 18: PLACA="undefined"
+❌ Línea 18 rechazada: placa vacía o inválida
+🔍 Línea 19: PLACA="undefined"
+❌ Línea 19 rechazada: placa vacía o inválida
+🔍 Línea 20: PLACA="undefined"
+❌ Línea 20 rechazada: placa vacía o inválida
+🔍 Línea 21: PLACA="undefined"
+❌ Línea 21 rechazada: placa vacía o inválida
+🔍 Línea 22: PLACA="undefined"
+❌ Línea 22 rechazada: placa vacía o inválida
+🔍 Línea 23: PLACA="undefined"
+❌ Línea 23 rechazada: placa vacía o inválida
+🔍 Línea 24: PLACA="undefined"
+❌ Línea 24 rechazada: placa vacía o inválida
+🔍 Línea 25: PLACA="undefined"
+❌ Línea 25 rechazada: placa vacía o inválida
+🔍 Línea 26: PLACA="undefined"
+❌ Línea 26 rechazada: placa vacía o inválida
+🔍 Línea 27: PLACA="undefined"
+❌ Línea 27 rechazada: placa vacía o inválida
+🔍 Línea 28: PLACA="undefined"
+❌ Línea 28 rechazada: placa vacía o inválida
+🔍 Línea 29: PLACA="undefined"
+❌ Línea 29 rechazada: placa vacía o inválida
+🔍 Línea 30: PLACA="undefined"
+❌ Línea 30 rechazada: placa vacía o inválida
+🔍 Línea 31: PLACA="undefined"
+❌ Línea 31 rechazada: placa vacía o inválida
+🔍 Línea 32: PLACA="undefined"
+❌ Línea 32 rechazada: placa vacía o inválida
+🔍 Línea 33: PLACA="undefined"
+❌ Línea 33 rechazada: placa vacía o inválida
+🔍 Línea 34: PLACA="undefined"
+❌ Línea 34 rechazada: placa vacía o inválida
+🔍 Línea 35: PLACA="undefined"
+❌ Línea 35 rechazada: placa vacía o inválida
+🔍 Línea 36: PLACA="undefined"
+❌ Línea 36 rechazada: placa vacía o inválida
+🔍 Línea 37: PLACA="undefined"
+❌ Línea 37 rechazada: placa vacía o inválida
+🔍 Línea 38: PLACA="undefined"
+❌ Línea 38 rechazada: placa vacía o inválida
+🔍 Línea 39: PLACA="undefined"
+❌ Línea 39 rechazada: placa vacía o inválida
+🔍 Línea 40: PLACA="undefined"
+❌ Línea 40 rechazada: placa vacía o inválida
+🔍 Línea 41: PLACA="undefined"
+❌ Línea 41 rechazada: placa vacía o inválida
+🔍 Línea 42: PLACA="undefined"
+❌ Línea 42 rechazada: placa vacía o inválida
+🔍 Línea 43: PLACA="undefined"
+❌ Línea 43 rechazada: placa vacía o inválida
+🔍 Línea 44: PLACA="undefined"
+❌ Línea 44 rechazada: placa vacía o inválida
+🔍 Línea 45: PLACA="undefined"
+❌ Línea 45 rechazada: placa vacía o inválida
+🔍 Línea 46: PLACA="undefined"
+❌ Línea 46 rechazada: placa vacía o inválida
+🔍 Línea 47: PLACA="undefined"
+❌ Línea 47 rechazada: placa vacía o inválida
+🔍 Línea 48: PLACA="undefined"
+❌ Línea 48 rechazada: placa vacía o inválida
+🔍 Línea 49: PLACA="undefined"
+❌ Línea 49 rechazada: placa vacía o inválida
+🔍 Línea 50: PLACA="undefined"
+❌ Línea 50 rechazada: placa vacía o inválida
+🔍 Línea 51: PLACA="undefined"
+❌ Línea 51 rechazada: placa vacía o inválida
+🔍 Línea 52: PLACA="undefined"
+❌ Línea 52 rechazada: placa vacía o inválida
+🔍 Línea 53: PLACA="undefined"
+❌ Línea 53 rechazada: placa vacía o inválida
+🔍 Línea 54: PLACA="undefined"
+❌ Línea 54 rechazada: placa vacía o inválida
+🔍 Línea 55: PLACA="undefined"
+❌ Línea 55 rechazada: placa vacía o inválida
+🔍 Línea 56: PLACA="undefined"
+❌ Línea 56 rechazada: placa vacía o inválida
+🔍 Línea 57: PLACA="undefined"
+❌ Línea 57 rechazada: placa vacía o inválida
+🔍 Línea 58: PLACA="undefined"
+❌ Línea 58 rechazada: placa vacía o inválida
+🔍 Línea 59: PLACA="undefined"
+❌ Línea 59 rechazada: placa vacía o inválida
+🔍 Línea 60: PLACA="undefined"
+❌ Línea 60 rechazada: placa vacía o inválida
+🔍 Línea 61: PLACA="undefined"
+❌ Línea 61 rechazada: placa vacía o inválida
+🔍 Línea 62: PLACA="undefined"
+❌ Línea 62 rechazada: placa vacía o inválida
+🔍 Línea 63: PLACA="undefined"
+❌ Línea 63 rechazada: placa vacía o inválida
+🔍 Línea 64: PLACA="undefined"
+❌ Línea 64 rechazada: placa vacía o inválida
+🔍 Línea 65: PLACA="undefined"
+❌ Línea 65 rechazada: placa vacía o inválida
+🔍 Línea 66: PLACA="undefined"
+❌ Línea 66 rechazada: placa vacía o inválida
+🔍 Línea 67: PLACA="undefined"
+❌ Línea 67 rechazada: placa vacía o inválida
+🔍 Línea 68: PLACA="undefined"
+❌ Línea 68 rechazada: placa vacía o inválida
+🔍 Línea 69: PLACA="undefined"
+❌ Línea 69 rechazada: placa vacía o inválida
+🔍 Línea 70: PLACA="undefined"
+❌ Línea 70 rechazada: placa vacía o inválida
+🔍 Línea 71: PLACA="undefined"
+❌ Línea 71 rechazada: placa vacía o inválida
+🔍 Línea 72: PLACA="undefined"
+❌ Línea 72 rechazada: placa vacía o inválida
+🔍 Línea 73: PLACA="undefined"
+❌ Línea 73 rechazada: placa vacía o inválida
+🔍 Línea 74: PLACA="undefined"
+❌ Línea 74 rechazada: placa vacía o inválida
+🔍 Línea 75: PLACA="undefined"
+❌ Línea 75 rechazada: placa vacía o inválida
+🔍 Línea 76: PLACA="undefined"
+❌ Línea 76 rechazada: placa vacía o inválida
+🔍 Línea 77: PLACA="undefined"
+❌ Línea 77 rechazada: placa vacía o inválida
+🔍 Línea 78: PLACA="undefined"
+❌ Línea 78 rechazada: placa vacía o inválida
+🔍 Línea 79: PLACA="undefined"
+❌ Línea 79 rechazada: placa vacía o inválida
+🔍 Línea 80: PLACA="undefined"
+❌ Línea 80 rechazada: placa vacía o inválida
+🔍 Línea 81: PLACA="undefined"
+❌ Línea 81 rechazada: placa vacía o inválida
+🔍 Línea 82: PLACA="undefined"
+❌ Línea 82 rechazada: placa vacía o inválida
+🔍 Línea 83: PLACA="undefined"
+❌ Línea 83 rechazada: placa vacía o inválida
+🔍 Línea 84: PLACA="undefined"
+❌ Línea 84 rechazada: placa vacía o inválida
+🔍 Línea 85: PLACA="undefined"
+❌ Línea 85 rechazada: placa vacía o inválida
+🔍 Línea 86: PLACA="undefined"
+❌ Línea 86 rechazada: placa vacía o inválida
+🔍 Línea 87: PLACA="undefined"
+❌ Línea 87 rechazada: placa vacía o inválida
+🔍 Línea 88: PLACA="undefined"
+❌ Línea 88 rechazada: placa vacía o inválida
+🔍 Línea 89: PLACA="undefined"
+❌ Línea 89 rechazada: placa vacía o inválida
+🔍 Línea 90: PLACA="undefined"
+❌ Línea 90 rechazada: placa vacía o inválida
+🔍 Línea 91: PLACA="undefined"
+❌ Línea 91 rechazada: placa vacía o inválida
+🔍 Línea 92: PLACA="undefined"
+❌ Línea 92 rechazada: placa vacía o inválida
+🔍 Línea 93: PLACA="undefined"
+❌ Línea 93 rechazada: placa vacía o inválida
+🔍 Línea 94: PLACA="undefined"
+❌ Línea 94 rechazada: placa vacía o inválida
+🔍 Línea 95: PLACA="undefined"
+❌ Línea 95 rechazada: placa vacía o inválida
+🔍 Línea 96: PLACA="undefined"
+❌ Línea 96 rechazada: placa vacía o inválida
+🔍 Línea 97: PLACA="undefined"
+❌ Línea 97 rechazada: placa vacía o inválida
+🔍 Línea 98: PLACA="undefined"
+❌ Línea 98 rechazada: placa vacía o inválida
+🔍 Línea 99: PLACA="undefined"
+❌ Línea 99 rechazada: placa vacía o inválida
+🔍 Línea 100: PLACA="undefined"
+❌ Línea 100 rechazada: placa vacía o inválida
+🔍 Línea 101: PLACA="undefined"
+❌ Línea 101 rechazada: placa vacía o inválida
+🔍 Línea 102: PLACA="undefined"
+❌ Línea 102 rechazada: placa vacía o inválida
+🔍 Línea 103: PLACA="undefined"
+❌ Línea 103 rechazada: placa vacía o inválida
+🔍 Línea 104: PLACA="undefined"
+❌ Línea 104 rechazada: placa vacía o inválida
+🔍 Línea 105: PLACA="undefined"
+❌ Línea 105 rechazada: placa vacía o inválida
+🔍 Línea 106: PLACA="undefined"
+❌ Línea 106 rechazada: placa vacía o inválida
+🔍 Línea 107: PLACA="undefined"
+❌ Línea 107 rechazada: placa vacía o inválida
+🔍 Línea 108: PLACA="undefined"
+❌ Línea 108 rechazada: placa vacía o inválida
+🔍 Línea 109: PLACA="undefined"
+❌ Línea 109 rechazada: placa vacía o inválida
+🔍 Línea 110: PLACA="undefined"
+❌ Línea 110 rechazada: placa vacía o inválida
+🔍 Línea 111: PLACA="undefined"
+❌ Línea 111 rechazada: placa vacía o inválida
+🔍 Línea 112: PLACA="undefined"
+❌ Línea 112 rechazada: placa vacía o inválida
+🔍 Línea 113: PLACA="undefined"
+❌ Línea 113 rechazada: placa vacía o inválida
+🔍 Línea 114: PLACA="undefined"
+❌ Línea 114 rechazada: placa vacía o inválida
+🔍 Línea 115: PLACA="undefined"
+❌ Línea 115 rechazada: placa vacía o inválida
+🔍 Línea 116: PLACA="undefined"
+❌ Línea 116 rechazada: placa vacía o inválida
+🔍 Línea 117: PLACA="undefined"
+❌ Línea 117 rechazada: placa vacía o inválida
+🔍 Línea 118: PLACA="undefined"
+❌ Línea 118 rechazada: placa vacía o inválida
+🔍 Línea 119: PLACA="undefined"
+❌ Línea 119 rechazada: placa vacía o inválida
+🔍 Línea 120: PLACA="undefined"
+❌ Línea 120 rechazada: placa vacía o inválida
+🔍 Línea 121: PLACA="undefined"
+❌ Línea 121 rechazada: placa vacía o inválida
+🔍 Línea 122: PLACA="undefined"
+❌ Línea 122 rechazada: placa vacía o inválida
+🔍 Línea 123: PLACA="undefined"
+❌ Línea 123 rechazada: placa vacía o inválida
+🔍 Línea 124: PLACA="undefined"
+❌ Línea 124 rechazada: placa vacía o inválida
+🔍 Línea 125: PLACA="undefined"
+❌ Línea 125 rechazada: placa vacía o inválida
+🔍 Línea 126: PLACA="undefined"
+❌ Línea 126 rechazada: placa vacía o inválida
+🔍 Línea 127: PLACA="undefined"
+❌ Línea 127 rechazada: placa vacía o inválida
+🔍 Línea 128: PLACA="undefined"
+❌ Línea 128 rechazada: placa vacía o inválida
+🔍 Línea 129: PLACA="undefined"
+❌ Línea 129 rechazada: placa vacía o inválida
+🔍 Línea 130: PLACA="undefined"
+❌ Línea 130 rechazada: placa vacía o inválida
+🔍 Línea 131: PLACA="undefined"
+❌ Línea 131 rechazada: placa vacía o inválida
+🔍 Línea 132: PLACA="undefined"
+❌ Línea 132 rechazada: placa vacía o inválida
+🔍 Línea 133: PLACA="undefined"
+❌ Línea 133 rechazada: placa vacía o inválida
+🔍 Línea 134: PLACA="undefined"
+❌ Línea 134 rechazada: placa vacía o inválida
+🔍 Línea 135: PLACA="undefined"
+❌ Línea 135 rechazada: placa vacía o inválida
+🔍 Línea 136: PLACA="undefined"
+❌ Línea 136 rechazada: placa vacía o inválida
+🔍 Línea 137: PLACA="undefined"
+❌ Línea 137 rechazada: placa vacía o inválida
+🔍 Línea 138: PLACA="undefined"
+❌ Línea 138 rechazada: placa vacía o inválida
+🔍 Línea 139: PLACA="undefined"
+❌ Línea 139 rechazada: placa vacía o inválida
+🔍 Línea 140: PLACA="undefined"
+❌ Línea 140 rechazada: placa vacía o inválida
+🔍 Línea 141: PLACA="undefined"
+❌ Línea 141 rechazada: placa vacía o inválida
+🔍 Línea 142: PLACA="undefined"
+❌ Línea 142 rechazada: placa vacía o inválida
+🔍 Línea 143: PLACA="undefined"
+❌ Línea 143 rechazada: placa vacía o inválida
+🔍 Línea 144: PLACA="undefined"
+❌ Línea 144 rechazada: placa vacía o inválida
+🔍 Línea 145: PLACA="undefined"
+❌ Línea 145 rechazada: placa vacía o inválida
+🔍 Línea 146: PLACA="undefined"
+❌ Línea 146 rechazada: placa vacía o inválida
+🔍 Línea 147: PLACA="undefined"
+❌ Línea 147 rechazada: placa vacía o inválida
+🔍 Línea 148: PLACA="undefined"
+❌ Línea 148 rechazada: placa vacía o inválida
+🔍 Línea 149: PLACA="undefined"
+❌ Línea 149 rechazada: placa vacía o inválida
+🔍 Línea 150: PLACA="undefined"
+❌ Línea 150 rechazada: placa vacía o inválida
+🔍 Línea 151: PLACA="undefined"
+❌ Línea 151 rechazada: placa vacía o inválida
+🔍 Línea 152: PLACA="undefined"
+❌ Línea 152 rechazada: placa vacía o inválida
+🔍 Línea 153: PLACA="undefined"
+❌ Línea 153 rechazada: placa vacía o inválida
+🔍 Línea 154: PLACA="undefined"
+❌ Línea 154 rechazada: placa vacía o inválida
+🔍 Línea 155: PLACA="undefined"
+❌ Línea 155 rechazada: placa vacía o inválida
+🔍 Línea 156: PLACA="undefined"
+❌ Línea 156 rechazada: placa vacía o inválida
+🔍 Línea 157: PLACA="undefined"
+❌ Línea 157 rechazada: placa vacía o inválida
+🔍 Línea 158: PLACA="undefined"
+❌ Línea 158 rechazada: placa vacía o inválida
+🔍 Línea 159: PLACA="undefined"
+❌ Línea 159 rechazada: placa vacía o inválida
+🔍 Línea 160: PLACA="undefined"
+❌ Línea 160 rechazada: placa vacía o inválida
+🔍 Línea 161: PLACA="undefined"
+❌ Línea 161 rechazada: placa vacía o inválida
+🔍 Línea 162: PLACA="undefined"
+❌ Línea 162 rechazada: placa vacía o inválida
+🔍 Línea 163: PLACA="undefined"
+❌ Línea 163 rechazada: placa vacía o inválida
+🔍 Línea 164: PLACA="undefined"
+❌ Línea 164 rechazada: placa vacía o inválida
+🔍 Línea 165: PLACA="undefined"
+❌ Línea 165 rechazada: placa vacía o inválida
+🔍 Línea 166: PLACA="undefined"
+❌ Línea 166 rechazada: placa vacía o inválida
+🔍 Línea 167: PLACA="undefined"
+❌ Línea 167 rechazada: placa vacía o inválida
+🔍 Línea 168: PLACA="undefined"
+❌ Línea 168 rechazada: placa vacía o inválida
+🔍 Línea 169: PLACA="undefined"
+❌ Línea 169 rechazada: placa vacía o inválida
+🔍 Línea 170: PLACA="undefined"
+❌ Línea 170 rechazada: placa vacía o inválida
+🔍 Línea 171: PLACA="undefined"
+❌ Línea 171 rechazada: placa vacía o inválida
+🔍 Línea 172: PLACA="undefined"
+❌ Línea 172 rechazada: placa vacía o inválida
+🔍 Línea 173: PLACA="undefined"
+❌ Línea 173 rechazada: placa vacía o inválida
+🔍 Línea 174: PLACA="undefined"
+❌ Línea 174 rechazada: placa vacía o inválida
+🔍 Línea 175: PLACA="undefined"
+❌ Línea 175 rechazada: placa vacía o inválida
+🔍 Línea 176: PLACA="undefined"
+❌ Línea 176 rechazada: placa vacía o inválida
+🔍 Línea 177: PLACA="undefined"
+❌ Línea 177 rechazada: placa vacía o inválida
+🔍 Línea 178: PLACA="undefined"
+❌ Línea 178 rechazada: placa vacía o inválida
+🔍 Línea 179: PLACA="undefined"
+❌ Línea 179 rechazada: placa vacía o inválida
+🔍 Línea 180: PLACA="undefined"
+❌ Línea 180 rechazada: placa vacía o inválida
+🔍 Línea 181: PLACA="undefined"
+❌ Línea 181 rechazada: placa vacía o inválida
+📊 0 vehículos encontrados en el archivo
+5:16:36 PM [express] POST /api/vehiculos/carga-masiva 200 in 145ms :: {"success":true,"mensaje":"Pro…
