@@ -442,6 +442,20 @@ export class ExcelProcessor {
         return fecha.toISOString().split('T')[0];
       }
       
+      // Si es número (fecha serial de Excel)
+      if (typeof fecha === 'number') {
+        try {
+          // Excel fecha serial: días desde 1900-01-01
+          const EXCEL_EPOCH = new Date(1900, 0, 1);
+          const fechaObj = new Date(EXCEL_EPOCH.getTime() + (fecha - 2) * 24 * 60 * 60 * 1000);
+          if (!isNaN(fechaObj.getTime()) && fechaObj.getFullYear() > 1900 && fechaObj.getFullYear() < 2100) {
+            return fechaObj.toISOString().split('T')[0];
+          }
+        } catch (error) {
+          console.warn('Error convirtiendo fecha serial:', error);
+        }
+      }
+      
       // Si es string, intentar parsearlo
       if (typeof fecha === 'string') {
         const fechaStr = fecha.trim();
@@ -449,18 +463,43 @@ export class ExcelProcessor {
         
         // Intentar varios formatos de fecha
         const formatos = [
-          /^\d{4}-\d{2}-\d{2}/, // YYYY-MM-DD
-          /^\d{2}\/\d{2}\/\d{4}/, // DD/MM/YYYY
-          /^\d{2}-\d{2}-\d{4}/, // DD-MM-YYYY
+          { regex: /^\d{4}-\d{2}-\d{2}$/, parser: (str: string) => new Date(str) }, // YYYY-MM-DD
+          { regex: /^\d{2}\/\d{2}\/\d{4}$/, parser: (str: string) => { // DD/MM/YYYY
+            const [dia, mes, año] = str.split('/');
+            return new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
+          }},
+          { regex: /^\d{2}-\d{2}-\d{4}$/, parser: (str: string) => { // DD-MM-YYYY
+            const [dia, mes, año] = str.split('-');
+            return new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
+          }},
+          { regex: /^\d{4}\/\d{2}\/\d{2}$/, parser: (str: string) => new Date(str.replace(/\//g, '-')) }, // YYYY/MM/DD
+          { regex: /^\d{1,2}\/\d{1,2}\/\d{4}$/, parser: (str: string) => { // M/D/YYYY o MM/DD/YYYY
+            const [mes, dia, año] = str.split('/');
+            return new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
+          }},
         ];
         
         for (const formato of formatos) {
-          if (formato.test(fechaStr)) {
-            const fechaObj = new Date(fechaStr);
-            if (!isNaN(fechaObj.getTime())) {
-              return fechaObj.toISOString().split('T')[0];
+          if (formato.regex.test(fechaStr)) {
+            try {
+              const fechaObj = formato.parser(fechaStr);
+              if (!isNaN(fechaObj.getTime()) && fechaObj.getFullYear() > 1900 && fechaObj.getFullYear() < 2100) {
+                return fechaObj.toISOString().split('T')[0];
+              }
+            } catch (error) {
+              console.warn(`Error parseando fecha "${fechaStr}":`, error);
             }
           }
+        }
+        
+        // Último intento con Date constructor nativo
+        try {
+          const fechaObj = new Date(fechaStr);
+          if (!isNaN(fechaObj.getTime()) && fechaObj.getFullYear() > 1900 && fechaObj.getFullYear() < 2100) {
+            return fechaObj.toISOString().split('T')[0];
+          }
+        } catch (error) {
+          console.warn(`Error en último intento de fecha "${fechaStr}":`, error);
         }
       }
       
