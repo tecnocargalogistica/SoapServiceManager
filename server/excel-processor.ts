@@ -349,7 +349,7 @@ export class ExcelProcessor {
       console.log(`Parsed ${data.length} terceros from ${filename}`);
       return data || [];
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error parsing terceros file:', error);
       throw new Error(`Error procesando archivo de terceros: ${error.message}`);
     }
@@ -383,7 +383,9 @@ export class ExcelProcessor {
             vehiculo[header] = values[index] || '';
           });
           
-          vehiculos.push(vehiculo);
+          // Mapear y validar campos específicos de vehículos
+          const vehiculoMapeado = this.mapearCamposVehiculo(vehiculo);
+          vehiculos.push(vehiculoMapeado);
         }
         
         return vehiculos;
@@ -393,6 +395,9 @@ export class ExcelProcessor {
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         data = XLSX.utils.sheet_to_json(worksheet);
+        
+        // Mapear campos para cada vehículo
+        data = data.map((vehiculo: any) => this.mapearCamposVehiculo(vehiculo));
       }
       
       console.log(`📊 Procesando ${data.length} vehículos desde ${filename}`);
@@ -402,6 +407,72 @@ export class ExcelProcessor {
       console.error('Error procesando archivo de vehículos:', error);
       throw new Error(`Error procesando archivo de vehículos: ${error instanceof Error ? error.message : String(error)}`);
     }
+  }
+
+  private mapearCamposVehiculo(vehiculo: any): any {
+    // Función auxiliar para convertir fechas
+    const convertirFecha = (fecha: string): Date | null => {
+      if (!fecha || fecha.trim() === '') return null;
+      
+      // Intentar varios formatos de fecha
+      const formatos = [
+        /^\d{4}-\d{2}-\d{2}$/, // YYYY-MM-DD
+        /^\d{2}\/\d{2}\/\d{4}$/, // DD/MM/YYYY
+        /^\d{2}-\d{2}-\d{4}$/, // DD-MM-YYYY
+      ];
+      
+      for (const formato of formatos) {
+        if (formato.test(fecha)) {
+          const fechaObj = new Date(fecha);
+          if (!isNaN(fechaObj.getTime())) {
+            return fechaObj;
+          }
+        }
+      }
+      return null;
+    };
+
+    // Función auxiliar para convertir números
+    const convertirNumero = (valor: any): number | null => {
+      if (valor === null || valor === undefined || valor === '') return null;
+      const numero = Number(valor);
+      return isNaN(numero) ? null : numero;
+    };
+
+    return {
+      placa: (vehiculo.PLACA || '').toString().toUpperCase().trim(),
+      capacidad_carga: convertirNumero(vehiculo.CAPACIDAD_CARGA) || 0,
+      tipo_vehiculo: vehiculo.TIPO_VEHICULO || null,
+      marca: vehiculo.MARCA || null,
+      modelo: vehiculo.MODELO || null,
+      propietario_tipo_doc: vehiculo.PROPIETARIO_TIPO_DOC || 'C',
+      propietario_numero_doc: vehiculo.PROPIETARIO_NUMERO_DOC || '',
+      propietario_nombre: vehiculo.PROPIETARIO_NOMBRE || '',
+      activo: true,
+      configuracion: vehiculo.CONFIGURACION || null,
+      clase: vehiculo.CLASE || null,
+      servicio: vehiculo.SERVICIO || null,
+      numero_ejes: convertirNumero(vehiculo.NUMERO_EJES) || null,
+      carroceria: vehiculo.CARROCERIA || null,
+      modalidad: vehiculo.MODALIDAD || null,
+      linea: vehiculo.LINEA || null,
+      tipo_combustible: vehiculo.TIPO_COMBUSTIBLE || null,
+      peso_vacio: convertirNumero(vehiculo.PESO_VACIO) || null,
+      fecha_matricula: convertirFecha(vehiculo.FECHA_MATRICULA),
+      modelo_año: convertirNumero(vehiculo.MODELO_AÑO) || convertirNumero(vehiculo.MODELO_ANO) || null,
+      peso_bruto_vehicular: convertirNumero(vehiculo.PESO_BRUTO_VEHICULAR) || null,
+      unidad_medida: vehiculo.UNIDAD_MEDIDA || null,
+      numero_poliza: vehiculo.NUMERO_POLIZA || null,
+      aseguradora: vehiculo.ASEGURADORA || null,
+      nit_aseguradora: vehiculo.NIT_ASEGURADORA || null,
+      vence_soat: convertirFecha(vehiculo.VENCE_SOAT),
+      vence_revision_tecnomecanica: convertirFecha(vehiculo.VENCE_REVISION_TECNOMECANICA),
+      propietario_id: null, // Se asignará más tarde si existe el tercero
+      tenedor_id: null, // Se asignará más tarde si existe el tercero
+      tenedor_tipo_doc: vehiculo.TENEDOR_TIPO_DOC || null,
+      tenedor_numero_doc: vehiculo.TENEDOR_NUMERO_DOC || null,
+      tenedor_nombre: vehiculo.TENEDOR_NOMBRE || null
+    };
   }
 }
 
