@@ -376,16 +376,24 @@ export class ExcelProcessor {
         const vehiculos = [];
         
         for (let i = 1; i < lines.length; i++) {
-          const values = lines[i].split(delimiter).map((v: string) => v.trim().replace(/"/g, ''));
+          const line = lines[i].trim();
+          
+          // Saltar líneas vacías
+          if (!line) continue;
+          
+          const values = line.split(delimiter).map((v: string) => v.trim().replace(/"/g, ''));
           const vehiculo: any = {};
           
           headers.forEach((header: string, index: number) => {
             vehiculo[header] = values[index] || '';
           });
           
-          // Mapear y validar campos específicos de vehículos
-          const vehiculoMapeado = this.mapearCamposVehiculo(vehiculo);
-          vehiculos.push(vehiculoMapeado);
+          // Solo procesar si tiene placa válida
+          if (vehiculo.PLACA && vehiculo.PLACA.trim() !== '') {
+            // Mapear y validar campos específicos de vehículos
+            const vehiculoMapeado = this.mapearCamposVehiculo(vehiculo);
+            vehiculos.push(vehiculoMapeado);
+          }
         }
         
         return vehiculos;
