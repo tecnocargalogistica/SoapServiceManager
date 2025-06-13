@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Search, UserCheck, UserX, Filter } from "lucide-react";
+import { Search, UserCheck, UserX, Filter, Download, Database } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -538,13 +538,65 @@ export default function GestionDatos() {
     setEditingItem(null);
   };
 
+  // Backup functionality
+  const [isDownloadingBackup, setIsDownloadingBackup] = useState(false);
+
+  const handleBackup = async () => {
+    setIsDownloadingBackup(true);
+    try {
+      const response = await fetch('/api/database/backup');
+      if (!response.ok) {
+        throw new Error('Error al generar el backup');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
+      link.download = `backup_rndc_${timestamp}.sql`;
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Backup generado",
+        description: "El respaldo de la base de datos se ha descargado exitosamente.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Error al generar el backup de la base de datos.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDownloadingBackup(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Gestión de Datos</h1>
-        <p className="text-muted-foreground">
-          Administra las sedes, vehículos y consecutivos del sistema RNDC
-        </p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold">Gestión de Datos</h1>
+          <p className="text-muted-foreground">
+            Administra las sedes, vehículos y consecutivos del sistema RNDC
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleBackup}
+            disabled={isDownloadingBackup}
+            variant="outline"
+            className="bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
+          >
+            <Database className="h-4 w-4 mr-2" />
+            {isDownloadingBackup ? "Generando..." : "Respaldar BD"}
+          </Button>
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">

@@ -2940,5 +2940,22 @@ FECHAVENCE_RTM,CLASE,PBV,FECHA_MATRICULA
     }
   });
 
+  // PostgreSQL Backup endpoint
+  app.get('/api/database/backup', async (req: Request, res: Response) => {
+    try {
+      const backup = await storage.createFullBackup();
+      
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const filename = `backup_rndc_${timestamp}.json`;
+      
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.json(backup);
+    } catch (error) {
+      console.error('Error creating backup:', error);
+      res.status(500).json({ error: 'Error al crear el backup de la base de datos' });
+    }
+  });
+
   return httpServer;
 }

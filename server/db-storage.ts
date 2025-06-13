@@ -634,4 +634,52 @@ export class DatabaseStorage implements IStorage {
   async deletePlantillaPdf(id: number): Promise<void> {
     await db.delete(plantillasPdf).where(eq(plantillasPdf.id, id));
   }
+
+  async createFullBackup(): Promise<any> {
+    try {
+      const backup = {
+        timestamp: new Date().toISOString(),
+        version: "1.0",
+        database: "rndc_system",
+        tables: {
+          configuraciones: await db.select().from(configuraciones),
+          consecutivos: await db.select().from(consecutivos),
+          documentos: await db.select().from(documentos),
+          log_actividades: await db.select().from(logActividades),
+          manifiestos: await db.select().from(manifiestos),
+          municipios: await db.select().from(municipios),
+          remesas: await db.select().from(remesas),
+          sedes: await db.select().from(sedes),
+          terceros: await db.select().from(terceros),
+          vehiculos: await db.select().from(vehiculos),
+          plantillas_pdf: await db.select().from(plantillasPdf)
+        },
+        metadata: {
+          total_tables: 11,
+          backup_type: "full",
+          format: "json"
+        }
+      };
+
+      // Add record counts for verification
+      backup.metadata.record_counts = {
+        configuraciones: backup.tables.configuraciones.length,
+        consecutivos: backup.tables.consecutivos.length,
+        documentos: backup.tables.documentos.length,
+        log_actividades: backup.tables.log_actividades.length,
+        manifiestos: backup.tables.manifiestos.length,
+        municipios: backup.tables.municipios.length,
+        remesas: backup.tables.remesas.length,
+        sedes: backup.tables.sedes.length,
+        terceros: backup.tables.terceros.length,
+        vehiculos: backup.tables.vehiculos.length,
+        plantillas_pdf: backup.tables.plantillas_pdf.length
+      };
+
+      return backup;
+    } catch (error) {
+      console.error('Error creating database backup:', error);
+      throw new Error('Error al crear backup de la base de datos');
+    }
+  }
 }
