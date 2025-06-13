@@ -106,6 +106,29 @@ export default function GestionDatos() {
     }
   });
 
+  // Mutación para duplicar sede
+  const duplicarSedeMutation = useMutation({
+    mutationFn: async (sedeId: number) => {
+      return await apiRequest(`/api/sedes/${sedeId}/duplicar`, {
+        method: 'POST'
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/sedes"] });
+      toast({
+        title: "✅ Granja duplicada exitosamente",
+        description: `Se ha creado "${data.datos.nombre}" con código ${data.datos.codigo_sede}`
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error al duplicar granja",
+        description: error.message || "Error desconocido",
+        variant: "destructive"
+      });
+    }
+  });
+
   // Filtrar terceros según los criterios seleccionados
   const tercerosFiltrados = (terceros as any[]).filter((tercero: any) => {
     const cumpleFiltroEstado = terceroFilter === "todos" || 
