@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DataTable } from "@/components/data-table";
 import { SedeForm } from "@/components/forms/sede-form";
 import { VehiculoForm } from "@/components/forms/vehiculo-form";
@@ -721,6 +721,12 @@ export default function GestionDatos() {
       {/* Formulario de Sede */}
       <Dialog open={showSedeForm} onOpenChange={setShowSedeForm}>
         <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{editingItem ? 'Editar Sede' : 'Nueva Sede'}</DialogTitle>
+            <DialogDescription>
+              {editingItem ? 'Modifica los datos de la sede seleccionada' : 'Ingresa los datos para crear una nueva sede'}
+            </DialogDescription>
+          </DialogHeader>
           <SedeForm
             sede={editingItem}
             onSuccess={handleFormSuccess}
@@ -732,6 +738,12 @@ export default function GestionDatos() {
       {/* Formulario de Vehículo */}
       <Dialog open={showVehiculoForm} onOpenChange={setShowVehiculoForm}>
         <DialogContent className="max-w-7xl w-[95vw] max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingItem ? 'Editar Vehículo' : 'Nuevo Vehículo'}</DialogTitle>
+            <DialogDescription>
+              {editingItem ? 'Modifica los datos del vehículo seleccionado' : 'Ingresa los datos para registrar un nuevo vehículo'}
+            </DialogDescription>
+          </DialogHeader>
           <VehiculoForm
             vehiculo={editingItem}
             onSuccess={handleFormSuccess}
@@ -748,6 +760,12 @@ export default function GestionDatos() {
       {/* Formulario de Tercero */}
       <Dialog open={showTerceroForm} onOpenChange={setShowTerceroForm}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editingItem ? 'Editar Tercero' : 'Nuevo Tercero'}</DialogTitle>
+            <DialogDescription>
+              {editingItem ? 'Modifica los datos del tercero seleccionado' : 'Ingresa los datos para registrar un nuevo tercero'}
+            </DialogDescription>
+          </DialogHeader>
           <TerceroForm
             tercero={editingItem}
             onSuccess={handleFormSuccess}
