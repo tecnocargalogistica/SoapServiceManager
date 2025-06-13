@@ -454,18 +454,8 @@ export class DatabaseStorage implements IStorage {
     const nuevoNumero = maxNumero + 1;
     const nuevoNombre = `${baseNombre} ${nuevoNumero}`;
     
-    // Generar nuevo código de sede único
-    const codigoBase = original.codigo_sede.replace(/[a-zA-Z]*$/, ''); // Remover letras del final
-    const sedesConCodigoSimilar = await db.select().from(sedes)
-      .where(sql`${sedes.codigo_sede} LIKE ${codigoBase + '%'}`);
-    
-    let sufijo = 'A';
-    let nuevoCodigo = `${codigoBase}${sufijo}`;
-    
-    while (sedesConCodigoSimilar.some(s => s.codigo_sede === nuevoCodigo)) {
-      sufijo = String.fromCharCode(sufijo.charCodeAt(0) + 1);
-      nuevoCodigo = `${codigoBase}${sufijo}`;
-    }
+    // Mantener el mismo código de sede (mismo código para la zona)
+    const nuevoCodigo = original.codigo_sede;
 
     // Crear la sede duplicada
     const sedeDuplicada: InsertSede = {
