@@ -1087,6 +1087,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update sede
+  app.patch("/api/sedes/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const sede = await storage.updateSede(id, req.body);
+      res.json(sede);
+    } catch (error) {
+      console.error("Error updating sede:", error);
+      res.status(500).json({ error: "Error al actualizar sede" });
+    }
+  });
+
+  // Delete sede
+  app.delete("/api/sedes/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteSede(id);
+      res.json({ success: true, message: "Sede eliminada exitosamente" });
+    } catch (error) {
+      console.error("Error deleting sede:", error);
+      res.status(500).json({ error: "Error al eliminar sede" });
+    }
+  });
+
   // ===== VEHICULOS ROUTES =====
   
   // Get all vehiculos

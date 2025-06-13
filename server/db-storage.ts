@@ -425,6 +425,19 @@ export class DatabaseStorage implements IStorage {
     return sede;
   }
 
+  async updateSede(id: number, updates: Partial<InsertSede>): Promise<Sede> {
+    const [sede] = await db.update(sedes)
+      .set(updates)
+      .where(eq(sedes.id, id))
+      .returning();
+    
+    if (!sede) {
+      throw new Error(`Sede con ID ${id} no encontrada`);
+    }
+    
+    return sede;
+  }
+
   async duplicarSede(sedeId: number): Promise<Sede> {
     // Obtener la sede original
     const sedeOriginal = await db.select().from(sedes).where(eq(sedes.id, sedeId));
@@ -474,6 +487,18 @@ export class DatabaseStorage implements IStorage {
 
     const [nuevaSede] = await db.insert(sedes).values(sedeDuplicada).returning();
     return nuevaSede;
+  }
+
+  async deleteSede(id: number): Promise<void> {
+    // First check if sede exists
+    const existing = await db.select().from(sedes).where(eq(sedes.id, id));
+    
+    if (existing.length === 0) {
+      throw new Error(`Sede con ID ${id} no encontrada`);
+    }
+    
+    // Delete the sede
+    await db.delete(sedes).where(eq(sedes.id, id));
   }
 
   // Terceros
