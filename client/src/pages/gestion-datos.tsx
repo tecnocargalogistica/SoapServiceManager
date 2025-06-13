@@ -115,7 +115,9 @@ export default function GestionDatos() {
       queryClient.invalidateQueries({ queryKey: ["/api/sedes"] });
       toast({
         title: "✅ Granja duplicada exitosamente",
-        description: `Se ha creado "${data.datos.nombre}" con código ${data.datos.codigo_sede}`
+        description: data?.datos ? 
+          `Se ha creado "${data.datos.nombre}" con código ${data.datos.codigo_sede}` :
+          "La granja ha sido duplicada correctamente"
       });
     },
     onError: (error: any) => {
