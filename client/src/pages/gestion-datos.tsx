@@ -109,9 +109,7 @@ export default function GestionDatos() {
   // Mutación para duplicar sede
   const duplicarSedeMutation = useMutation({
     mutationFn: async (sedeId: number) => {
-      return await apiRequest(`/api/sedes/${sedeId}/duplicar`, {
-        method: 'POST'
-      });
+      return await apiRequest(`/api/sedes/${sedeId}/duplicar`, 'POST');
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/sedes"] });
