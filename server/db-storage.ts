@@ -1,4 +1,4 @@
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc, sql, like } from "drizzle-orm";
 import { db } from "./db";
 import { 
   configuraciones, consecutivos, documentos, logActividades, 
@@ -423,6 +423,67 @@ export class DatabaseStorage implements IStorage {
   async createSede(insertSede: InsertSede): Promise<Sede> {
     const [sede] = await db.insert(sedes).values(insertSede).returning();
     return sede;
+  }
+
+  async duplicarSede(sedeId: number): Promise<Sede> {
+    // Obtener la sede original
+    const sedeOriginal = await db.select().from(sedes).where(eq(sedes.id, sedeId));
+    if (sedeOriginal.length === 0) {
+      throw new Error(`Sede con ID ${sedeId} no encontrada`);
+    }
+
+    const original = sedeOriginal[0];
+    
+    // Buscar el próximo número disponible para el duplicado
+    const baseNombre = original.nombre.replace(/\s+\d+$/, ''); // Remover número existente si lo hay
+    const sedesExistentes = await db.select().from(sedes)
+      .where(sql`${sedes.nombre} LIKE ${baseNombre + '%'}`);
+    
+    // Encontrar el próximo número
+    let maxNumero = 0;
+    sedesExistentes.forEach(sede => {
+      const match = sede.nombre.match(/\s+(\d+)$/);
+      if (match) {
+        const numero = parseInt(match[1]);
+        if (numero > maxNumero) {
+          maxNumero = numero;
+        }
+      }
+    });
+    
+    const nuevoNumero = maxNumero + 1;
+    const nuevoNombre = `${baseNombre} ${nuevoNumero}`;
+    
+    // Generar nuevo código de sede único
+    const codigoBase = original.codigo_sede.replace(/[a-zA-Z]*$/, ''); // Remover letras del final
+    const sedesConCodigoSimilar = await db.select().from(sedes)
+      .where(sql`${sedes.codigo_sede} LIKE ${codigoBase + '%'}`);
+    
+    let sufijo = 'A';
+    let nuevoCodigo = `${codigoBase}${sufijo}`;
+    
+    while (sedesConCodigoSimilar.some(s => s.codigo_sede === nuevoCodigo)) {
+      sufijo = String.fromCharCode(sufijo.charCodeAt(0) + 1);
+      nuevoCodigo = `${codigoBase}${sufijo}`;
+    }
+
+    // Crear la sede duplicada
+    const sedeDuplicada: InsertSede = {
+      codigo_sede: nuevoCodigo,
+      nombre: nuevoNombre,
+      tipo_sede: original.tipo_sede,
+      direccion: original.direccion,
+      municipio_codigo: original.municipio_codigo,
+      telefono: original.telefono,
+      nit: original.nit,
+      responsable: original.responsable,
+      valor_tonelada: original.valor_tonelada,
+      tercero_responsable_id: original.tercero_responsable_id,
+      activo: true
+    };
+
+    const [nuevaSede] = await db.insert(sedes).values(sedeDuplicada).returning();
+    return nuevaSede;
   }
 
   // Terceros

@@ -191,6 +191,57 @@ export default function GestionDatos() {
         </Badge>
       )
     },
+    {
+      key: "acciones",
+      title: "Acciones",
+      render: (value: any, item: any) => (
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setEditingItem(item)}
+          >
+            Editar
+          </Button>
+          {item.tipo_sede === "granja" && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="bg-blue-100 hover:bg-blue-200 text-blue-700"
+                >
+                  Duplicar
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Duplicar Granja
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    ¿Está seguro que desea duplicar la granja "{item.nombre}"?
+                    <br />
+                    Se creará una nueva granja con el mismo nombre seguido de un número (ej: {item.nombre} 1).
+                    <br />
+                    Todos los datos serán copiados excepto el código de sede que será generado automáticamente.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => duplicarSedeMutation.mutate(item.id)}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Duplicar Granja
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+        </div>
+      )
+    },
   ];
 
   const vehiculoColumns = [

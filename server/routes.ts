@@ -2770,6 +2770,38 @@ C;12345678;JUAN CARLOS PÉREZ LÓPEZ;+57 300 123 4567;jperez@email.com;CARRERA 1
     }
   });
 
+  // ===== ENDPOINT PARA DUPLICAR SEDE =====
+  app.post('/api/sedes/:id/duplicar', async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+
+      if (isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          mensaje: 'ID de sede inválido'
+        });
+      }
+
+      const sedeDuplicada = await storage.duplicarSede(id);
+
+      console.log(`✅ Sede duplicada: ${sedeDuplicada.nombre} con código ${sedeDuplicada.codigo_sede}`);
+
+      res.json({
+        success: true,
+        mensaje: 'Sede duplicada exitosamente',
+        datos: sedeDuplicada
+      });
+
+    } catch (error: any) {
+      console.error('Error duplicando sede:', error);
+      res.status(500).json({
+        success: false,
+        mensaje: 'Error interno del servidor',
+        error: error.message
+      });
+    }
+  });
+
   // Endpoint para consultar información de vehículo en RNDC
   app.post('/api/rndc/consultar-vehiculo', async (req: Request, res: Response) => {
     try {
