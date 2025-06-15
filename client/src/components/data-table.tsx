@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -53,6 +53,11 @@ export function DataTable({
   const [viewItem, setViewItem] = useState<any>(null);
   const [deleteItem, setDeleteItem] = useState<any>(null);
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
+
+  // Fetch vehicles data for terceros display
+  const { data: vehiculos = [] } = useQuery({
+    queryKey: ["/api/vehiculos"],
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
   
@@ -556,10 +561,20 @@ export function DataTable({
                   <div className="bg-indigo-50 p-4 rounded-lg">
                     <h3 className="text-lg font-semibold text-indigo-800 mb-3">Vehículo Asignado</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div><span className="font-medium">ID del Vehículo:</span> {viewItem.id_vehiculo_asignado}</div>
-                      <div className="text-sm text-gray-600">
-                        <span className="font-medium">Nota:</span> Para ver detalles completos, consulte la sección de vehículos
-                      </div>
+                      {(() => {
+                        const vehiculo = (vehiculos as any[]).find((v: any) => v.id === viewItem.id_vehiculo_asignado);
+                        if (vehiculo) {
+                          return (
+                            <>
+                              <div><span className="font-medium">Placa:</span> {vehiculo.placa || 'Sin placa'}</div>
+                              <div><span className="font-medium">Marca y Modelo:</span> {vehiculo.marca || 'Sin marca'} {vehiculo.modelo || 'Sin modelo'}</div>
+                              <div><span className="font-medium">Tipo:</span> {vehiculo.tipo_vehiculo || 'Sin tipo'}</div>
+                              <div><span className="font-medium">Capacidad:</span> {vehiculo.capacidad_carga || 'Sin capacidad'} kg</div>
+                            </>
+                          );
+                        }
+                        return <div><span className="font-medium">Vehículo ID:</span> {viewItem.id_vehiculo_asignado} (Información no disponible)</div>;
+                      })()}
                     </div>
                   </div>
                 )}
