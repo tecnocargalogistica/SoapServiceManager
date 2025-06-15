@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, decimal, jsonb, date } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, decimal, jsonb, date, varchar, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -376,6 +376,17 @@ export type InsertSede = z.infer<typeof insertSedeSchema>;
 export type Tercero = typeof terceros.$inferSelect;
 export type InsertTercero = z.infer<typeof insertTerceroSchema>;
 
+// Session storage table 
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)],
+);
+
 export type Usuario = typeof usuarios.$inferSelect;
 export type InsertUsuario = z.infer<typeof insertUsuarioSchema>;
 
@@ -387,8 +398,4 @@ export const insertPlantillaPdfSchema = createInsertSchema(plantillasPdf);
 export type PlantillaPdf = typeof plantillasPdf.$inferSelect;
 export type InsertPlantillaPdf = z.infer<typeof insertPlantillaPdfSchema>;
 
-// Keep existing users table for compatibility
-export const users = usuarios;
-export type User = Usuario;
-export type InsertUser = InsertUsuario;
-export const insertUserSchema = insertUsuarioSchema;
+

@@ -1,6 +1,6 @@
 import { 
   configuraciones, consecutivos, documentos, logActividades, 
-  manifiestos, municipios, remesas, sedes, terceros, usuarios, vehiculos,
+  manifiestos, municipios, remesas, sedes, terceros, usuarios, vehiculos, sessions,
   type Configuracion, type InsertConfiguracion,
   type Consecutivo, type InsertConsecutivo,
   type Documento, type InsertDocumento,
@@ -11,8 +11,7 @@ import {
   type Sede, type InsertSede,
   type Tercero, type InsertTercero,
   type Usuario, type InsertUsuario,
-  type Vehiculo, type InsertVehiculo,
-  type User, type InsertUser
+  type Vehiculo, type InsertVehiculo
 } from "@shared/schema";
 
 export interface IStorage {
