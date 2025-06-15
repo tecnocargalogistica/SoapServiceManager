@@ -5,10 +5,15 @@ import { Wifi, WifiOff, HelpCircle, LogOut, User } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function Header() {
+  const { user, logoutMutation } = useAuth();
   const { data: connectionStatus } = useQuery({
     queryKey: ["/api/rndc/test"],
     refetchInterval: 30000
   });
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
 
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
@@ -39,10 +44,29 @@ export default function Header() {
               </>
             )}
           </Badge>
+
+          {/* User Info */}
+          {user && (
+            <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <User className="h-4 w-4" />
+              <span>{user.nombre}</span>
+            </div>
+          )}
           
           <Button variant="outline" size="sm">
             <HelpCircle className="h-4 w-4 mr-2" />
             Ayuda
+          </Button>
+
+          {/* Logout Button */}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleLogout}
+            disabled={logoutMutation.isPending}
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Salir
           </Button>
         </div>
       </div>
