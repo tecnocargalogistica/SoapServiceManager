@@ -15,10 +15,13 @@ import {
 } from "@shared/schema";
 
 export interface IStorage {
-  // Usuarios (legacy compatibility)
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // Session store for authentication
+  sessionStore: any;
+  
+  // Usuarios
+  getUser(id: number): Promise<Usuario | undefined>;
+  getUserByUsername(username: string): Promise<Usuario | undefined>;
+  createUser(user: InsertUsuario): Promise<Usuario>;
 
   // Configuraciones
   getConfiguraciones(): Promise<Configuracion[]>;

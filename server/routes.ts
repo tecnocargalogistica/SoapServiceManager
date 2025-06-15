@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { SOAPProxy } from "./soap-proxy";
 import { xmlGenerator } from "./xml-generator";
 import { excelProcessor } from "./excel-processor";
+import { setupAuth, requireAuth } from "./auth";
 import multer from "multer";
 import { z } from "zod";
 import * as fs from 'fs';
@@ -16,6 +17,9 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  
+  // Setup authentication
+  setupAuth(app, storage as any);
   
   // Get system configuration
   app.get("/api/configuracion", async (req, res) => {

@@ -3,7 +3,7 @@ import { db } from "./db";
 import { 
   configuraciones, consecutivos, documentos, logActividades, 
   manifiestos, municipios, remesas, sedes, terceros, usuarios, vehiculos,
-  plantillasPdf,
+  plantillasPdf, sessions,
   type Configuracion, type InsertConfiguracion,
   type Consecutivo, type InsertConsecutivo,
   type Documento, type InsertDocumento,
@@ -15,27 +15,48 @@ import {
   type Tercero, type InsertTercero,
   type Usuario, type InsertUsuario,
   type Vehiculo, type InsertVehiculo,
-  type PlantillaPdf, type InsertPlantillaPdf,
-  type User, type InsertUser
+  type PlantillaPdf, type InsertPlantillaPdf
 } from "@shared/schema";
+import session from "express-session";
+import connectPg from "connect-pg-simple";
 import { IStorage } from "./storage";
 
 export class DatabaseStorage implements IStorage {
+  
+  // Session store for authentication
+  sessionStore: any;
+  
+  constructor() {
+    const PostgresSessionStore = connectPg(session);
+    this.sessionStore = new PostgresSessionStore({
+      conString: process.env.DATABASE_URL,
+      createTableIfMissing: true
+    });
+  }
 
-  // Legacy user methods for compatibility
-  async getUser(id: number): Promise<User | undefined> {
+  // User methods for authentication
+  async getUser(id: number): Promise<Usuario | undefined> {
     const users = await db.select().from(usuarios).where(eq(usuarios.id, id));
     return users[0];
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
+  async getUserByUsername(username: string): Promise<Usuario | undefined> {
     const users = await db.select().from(usuarios).where(eq(usuarios.username, username));
     return users[0];
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async createUser(insertUser: InsertUsuario): Promise<Usuario> {
     const [user] = await db.insert(usuarios).values(insertUser).returning();
     return user;
+  }
+
+  async updateUsuario(id: number, updates: Partial<InsertUsuario>): Promise<Usuario> {
+    const [usuario] = await db
+      .update(usuarios)
+      .set({ ...updates, updated_at: new Date() })
+      .where(eq(usuarios.id, id))
+      .returning();
+    return usuario;
   }
 
   // Configuraciones
