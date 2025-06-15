@@ -4,6 +4,10 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/lib/protected-route";
+import AuthPage from "@/pages/auth-page";
+
 import Dashboard from "@/pages/dashboard";
 import GenerarRemesas from "@/pages/generar-remesas";
 import GenerarManifiestos from "@/pages/generar-manifiestos";
@@ -34,37 +38,45 @@ import Header from "@/components/layout/header";
 
 function Router() {
   return (
+    <AuthProvider>
+      <Switch>
+        <Route path="/auth" component={AuthPage} />
+        <ProtectedRoute path="/" component={MainApp} />
+        <ProtectedRoute path="/generar-remesas" component={GenerarRemesas} />
+        <ProtectedRoute path="/generar-manifiestos" component={GenerarManifiestos} />
+        <ProtectedRoute path="/cumplir-remesas" component={CumplirRemesas} />
+        <ProtectedRoute path="/cumplimiento" component={Cumplimiento} />
+        <ProtectedRoute path="/cumplimiento-directo" component={CumplimientoDirecto} />
+        <ProtectedRoute path="/cumplimiento-nuevo" component={CumplimientoNuevo} />
+        <ProtectedRoute path="/test-cumplimiento" component={TestCumplimiento} />
+        <ProtectedRoute path="/impresion-manifiestos" component={ImpresionManifiestos} />
+        <ProtectedRoute path="/prototipo-manifiesto" component={PrototipoManifiesto} />
+        <ProtectedRoute path="/test-pdf-manifiesto" component={TestPDFManifiesto} />
+        <ProtectedRoute path="/test-pdf-plantilla" component={TestPDFPlantilla} />
+        <ProtectedRoute path="/consultas" component={Consultas} />
+        <ProtectedRoute path="/carga-vehiculos" component={CargaVehiculos} />
+        <ProtectedRoute path="/carga-sedes" component={CargaSedes} />
+        <ProtectedRoute path="/carga-terceros" component={CargaTerceros} />
+        <ProtectedRoute path="/carga-municipios" component={CargaMunicipios} />
+        <ProtectedRoute path="/gestion-datos" component={GestionDatos} />
+        <ProtectedRoute path="/consultas-maestros" component={ConsultasMaestros} />
+        <ProtectedRoute path="/soap-cliente" component={SOAPCliente} />
+        <ProtectedRoute path="/logs" component={Logs} />
+        <ProtectedRoute path="/configuracion" component={Configuracion} />
+        <Route component={NotFound} />
+      </Switch>
+    </AuthProvider>
+  );
+}
+
+function MainApp() {
+  return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar />
       <main className="flex-1 flex flex-col overflow-hidden">
         <Header />
         <div className="flex-1 overflow-y-auto">
-          <Switch>
-            <Route path="/" component={Dashboard} />
-            <Route path="/generar-remesas" component={GenerarRemesas} />
-            <Route path="/generar-manifiestos" component={GenerarManifiestos} />
-            <Route path="/cumplir-remesas" component={CumplirRemesas} />
-            <Route path="/cumplimiento" component={Cumplimiento} />
-        <Route path="/cumplimiento-directo" component={CumplimientoDirecto} />
-            <Route path="/cumplimiento-nuevo" component={CumplimientoNuevo} />
-            <Route path="/test-cumplimiento" component={TestCumplimiento} />
-            <Route path="/impresion-manifiestos" component={ImpresionManifiestos} />
-        <Route path="/prototipo-manifiesto" component={PrototipoManifiesto} />
-        <Route path="/test-pdf-manifiesto" component={TestPDFManifiesto} />
-        <Route path="/test-pdf-plantilla" component={TestPDFPlantilla} />
-            <Route path="/consultas" component={Consultas} />
-            <Route path="/carga-vehiculos" component={CargaVehiculos} />
-            <Route path="/carga-sedes" component={CargaSedes} />
-            <Route path="/carga-terceros" component={CargaTerceros} />
-            <Route path="/carga-municipios" component={CargaMunicipios} />
-
-            <Route path="/gestion-datos" component={GestionDatos} />
-            <Route path="/consultas-maestros" component={ConsultasMaestros} />
-            <Route path="/soap-cliente" component={SOAPCliente} />
-            <Route path="/logs" component={Logs} />
-            <Route path="/configuracion" component={Configuracion} />
-            <Route component={NotFound} />
-          </Switch>
+          <Dashboard />
         </div>
       </main>
     </div>

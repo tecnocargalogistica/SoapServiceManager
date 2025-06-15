@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Wifi, WifiOff, HelpCircle } from "lucide-react";
+import { Wifi, WifiOff, HelpCircle, LogOut, User } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function Header() {
   const { data: connectionStatus } = useQuery({
