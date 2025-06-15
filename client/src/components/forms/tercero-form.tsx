@@ -39,11 +39,16 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
   // Filtrar vehículos basado en la búsqueda
   const filteredVehiculos = useMemo(() => {
     if (!vehicleSearch) return vehiculos as any[];
-    return (vehiculos as any[]).filter((vehiculo: any) => 
-      vehiculo.placa.toLowerCase().includes(vehicleSearch.toLowerCase()) ||
-      vehiculo.marca.toLowerCase().includes(vehicleSearch.toLowerCase()) ||
-      vehiculo.modelo.toLowerCase().includes(vehicleSearch.toLowerCase())
-    );
+    return (vehiculos as any[]).filter((vehiculo: any) => {
+      const placa = vehiculo.placa || '';
+      const marca = vehiculo.marca || '';
+      const modelo = vehiculo.modelo || '';
+      const searchTerm = vehicleSearch.toLowerCase();
+      
+      return placa.toLowerCase().includes(searchTerm) ||
+             marca.toLowerCase().includes(searchTerm) ||
+             modelo.toLowerCase().includes(searchTerm);
+    });
   }, [vehiculos, vehicleSearch]);
 
   const form = useForm<InsertTercero>({
@@ -468,9 +473,13 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
                           const selectedVehicle = (vehiculos as any[]).find(
                             (v: any) => v.id === form.getValues("id_vehiculo_asignado")
                           );
-                          return selectedVehicle ? 
-                            `${selectedVehicle.placa} - ${selectedVehicle.marca} ${selectedVehicle.modelo}` : 
-                            "Sin vehículo asignado";
+                          if (selectedVehicle) {
+                            const placa = selectedVehicle.placa || 'Sin placa';
+                            const marca = selectedVehicle.marca || 'Sin marca';
+                            const modelo = selectedVehicle.modelo || 'Sin modelo';
+                            return `${placa} - ${marca} ${modelo}`;
+                          }
+                          return "Sin vehículo asignado";
                         })() : 
                         "Buscar y seleccionar vehículo..."
                       }
@@ -520,9 +529,9 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
                                 )}
                               />
                               <div className="flex flex-col">
-                                <span className="font-medium">{vehiculo.placa}</span>
+                                <span className="font-medium">{vehiculo.placa || 'Sin placa'}</span>
                                 <span className="text-sm text-muted-foreground">
-                                  {vehiculo.marca} {vehiculo.modelo} - {vehiculo.tipo_vehiculo}
+                                  {(vehiculo.marca || 'Sin marca')} {(vehiculo.modelo || 'Sin modelo')} - {vehiculo.tipo_vehiculo || 'Sin tipo'}
                                 </span>
                               </div>
                             </CommandItem>
