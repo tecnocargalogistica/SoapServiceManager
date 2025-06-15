@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -9,8 +9,12 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { insertTerceroSchema, type InsertTercero, type Tercero } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import { Check, ChevronDown, Search } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface TerceroFormProps {
   tercero?: Tercero;
@@ -21,6 +25,8 @@ interface TerceroFormProps {
 export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [openVehicleSelect, setOpenVehicleSelect] = useState(false);
+  const [vehicleSearch, setVehicleSearch] = useState("");
 
   const { data: municipios = [] } = useQuery({
     queryKey: ["/api/municipios"],
@@ -29,6 +35,16 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
   const { data: vehiculos = [] } = useQuery({
     queryKey: ["/api/vehiculos"],
   });
+
+  // Filtrar vehículos basado en la búsqueda
+  const filteredVehiculos = useMemo(() => {
+    if (!vehicleSearch) return vehiculos as any[];
+    return (vehiculos as any[]).filter((vehiculo: any) => 
+      vehiculo.placa.toLowerCase().includes(vehicleSearch.toLowerCase()) ||
+      vehiculo.marca.toLowerCase().includes(vehicleSearch.toLowerCase()) ||
+      vehiculo.modelo.toLowerCase().includes(vehicleSearch.toLowerCase())
+    );
+  }, [vehiculos, vehicleSearch]);
 
   const form = useForm<InsertTercero>({
     resolver: zodResolver(insertTerceroSchema),
@@ -438,23 +454,84 @@ export function TerceroForm({ tercero, onSuccess, onCancel }: TerceroFormProps) 
               
               <div>
                 <Label htmlFor="id_vehiculo_asignado">Vehículo</Label>
-                <Select 
-                  onValueChange={(value) => form.setValue("id_vehiculo_asignado", value ? parseInt(value) : undefined)}
-                  defaultValue={form.getValues("id_vehiculo_asignado")?.toString()}
-                  disabled={isLoading}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar vehículo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">Sin vehículo asignado</SelectItem>
-                    {(vehiculos as any[]).map((vehiculo: any) => (
-                      <SelectItem key={vehiculo.id} value={vehiculo.id.toString()}>
-                        {vehiculo.placa} - {vehiculo.marca} {vehiculo.modelo}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover open={openVehicleSelect} onOpenChange={setOpenVehicleSelect}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openVehicleSelect}
+                      className="w-full justify-between"
+                      disabled={isLoading}
+                    >
+                      {form.getValues("id_vehiculo_asignado") ? 
+                        (() => {
+                          const selectedVehicle = (vehiculos as any[]).find(
+                            (v: any) => v.id === form.getValues("id_vehiculo_asignado")
+                          );
+                          return selectedVehicle ? 
+                            `${selectedVehicle.placa} - ${selectedVehicle.marca} ${selectedVehicle.modelo}` : 
+                            "Sin vehículo asignado";
+                        })() : 
+                        "Buscar y seleccionar vehículo..."
+                      }
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0" align="start">
+                    <Command>
+                      <CommandInput 
+                        placeholder="Buscar por placa, marca o modelo..." 
+                        value={vehicleSearch}
+                        onValueChange={setVehicleSearch}
+                      />
+                      <CommandList>
+                        <CommandEmpty>No se encontraron vehículos.</CommandEmpty>
+                        <CommandGroup>
+                          <CommandItem
+                            value="0"
+                            onSelect={() => {
+                              form.setValue("id_vehiculo_asignado", undefined);
+                              setOpenVehicleSelect(false);
+                              setVehicleSearch("");
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                !form.getValues("id_vehiculo_asignado") ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            Sin vehículo asignado
+                          </CommandItem>
+                          {filteredVehiculos.map((vehiculo: any) => (
+                            <CommandItem
+                              key={vehiculo.id}
+                              value={`${vehiculo.placa} ${vehiculo.marca} ${vehiculo.modelo}`}
+                              onSelect={() => {
+                                form.setValue("id_vehiculo_asignado", vehiculo.id);
+                                setOpenVehicleSelect(false);
+                                setVehicleSearch("");
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  form.getValues("id_vehiculo_asignado") === vehiculo.id ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              <div className="flex flex-col">
+                                <span className="font-medium">{vehiculo.placa}</span>
+                                <span className="text-sm text-muted-foreground">
+                                  {vehiculo.marca} {vehiculo.modelo} - {vehiculo.tipo_vehiculo}
+                                </span>
+                              </div>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
           )}
