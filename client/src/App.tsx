@@ -36,50 +36,48 @@ import NotFound from "@/pages/not-found";
 import Sidebar from "@/components/layout/sidebar";
 import Header from "@/components/layout/header";
 
-function Router() {
-  return (
-    <AuthProvider>
-      <Switch>
-        <Route path="/auth" component={AuthPage} />
-        <ProtectedRoute path="/" component={MainApp} />
-        <ProtectedRoute path="/generar-remesas" component={GenerarRemesas} />
-        <ProtectedRoute path="/generar-manifiestos" component={GenerarManifiestos} />
-        <ProtectedRoute path="/cumplir-remesas" component={CumplirRemesas} />
-        <ProtectedRoute path="/cumplimiento" component={Cumplimiento} />
-        <ProtectedRoute path="/cumplimiento-directo" component={CumplimientoDirecto} />
-        <ProtectedRoute path="/cumplimiento-nuevo" component={CumplimientoNuevo} />
-        <ProtectedRoute path="/test-cumplimiento" component={TestCumplimiento} />
-        <ProtectedRoute path="/impresion-manifiestos" component={ImpresionManifiestos} />
-        <ProtectedRoute path="/prototipo-manifiesto" component={PrototipoManifiesto} />
-        <ProtectedRoute path="/test-pdf-manifiesto" component={TestPDFManifiesto} />
-        <ProtectedRoute path="/test-pdf-plantilla" component={TestPDFPlantilla} />
-        <ProtectedRoute path="/consultas" component={Consultas} />
-        <ProtectedRoute path="/carga-vehiculos" component={CargaVehiculos} />
-        <ProtectedRoute path="/carga-sedes" component={CargaSedes} />
-        <ProtectedRoute path="/carga-terceros" component={CargaTerceros} />
-        <ProtectedRoute path="/carga-municipios" component={CargaMunicipios} />
-        <ProtectedRoute path="/gestion-datos" component={GestionDatos} />
-        <ProtectedRoute path="/consultas-maestros" component={ConsultasMaestros} />
-        <ProtectedRoute path="/soap-cliente" component={SOAPCliente} />
-        <ProtectedRoute path="/logs" component={Logs} />
-        <ProtectedRoute path="/configuracion" component={Configuracion} />
-        <Route component={NotFound} />
-      </Switch>
-    </AuthProvider>
-  );
-}
-
-function MainApp() {
+function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar />
       <main className="flex-1 flex flex-col overflow-hidden">
         <Header />
         <div className="flex-1 overflow-y-auto">
-          <Dashboard />
+          {children}
         </div>
       </main>
     </div>
+  );
+}
+
+function Router() {
+  return (
+    <Switch>
+      <Route path="/auth" component={AuthPage} />
+      <ProtectedRoute path="/" component={() => <Layout><Dashboard /></Layout>} />
+      <ProtectedRoute path="/generar-remesas" component={() => <Layout><GenerarRemesas /></Layout>} />
+      <ProtectedRoute path="/generar-manifiestos" component={() => <Layout><GenerarManifiestos /></Layout>} />
+      <ProtectedRoute path="/cumplir-remesas" component={() => <Layout><CumplirRemesas /></Layout>} />
+      <ProtectedRoute path="/cumplimiento" component={() => <Layout><Cumplimiento /></Layout>} />
+      <ProtectedRoute path="/cumplimiento-directo" component={() => <Layout><CumplimientoDirecto /></Layout>} />
+      <ProtectedRoute path="/cumplimiento-nuevo" component={() => <Layout><CumplimientoNuevo /></Layout>} />
+      <ProtectedRoute path="/test-cumplimiento" component={() => <Layout><TestCumplimiento /></Layout>} />
+      <ProtectedRoute path="/impresion-manifiestos" component={() => <Layout><ImpresionManifiestos /></Layout>} />
+      <ProtectedRoute path="/prototipo-manifiesto" component={() => <Layout><PrototipoManifiesto /></Layout>} />
+      <ProtectedRoute path="/test-pdf-manifiesto" component={() => <Layout><TestPDFManifiesto /></Layout>} />
+      <ProtectedRoute path="/test-pdf-plantilla" component={() => <Layout><TestPDFPlantilla /></Layout>} />
+      <ProtectedRoute path="/consultas" component={() => <Layout><Consultas /></Layout>} />
+      <ProtectedRoute path="/carga-vehiculos" component={() => <Layout><CargaVehiculos /></Layout>} />
+      <ProtectedRoute path="/carga-sedes" component={() => <Layout><CargaSedes /></Layout>} />
+      <ProtectedRoute path="/carga-terceros" component={() => <Layout><CargaTerceros /></Layout>} />
+      <ProtectedRoute path="/carga-municipios" component={() => <Layout><CargaMunicipios /></Layout>} />
+      <ProtectedRoute path="/gestion-datos" component={() => <Layout><GestionDatos /></Layout>} />
+      <ProtectedRoute path="/consultas-maestros" component={() => <Layout><ConsultasMaestros /></Layout>} />
+      <ProtectedRoute path="/soap-cliente" component={() => <Layout><SOAPCliente /></Layout>} />
+      <ProtectedRoute path="/logs" component={() => <Layout><Logs /></Layout>} />
+      <ProtectedRoute path="/configuracion" component={() => <Layout><Configuracion /></Layout>} />
+      <Route component={NotFound} />
+    </Switch>
   );
 }
 
