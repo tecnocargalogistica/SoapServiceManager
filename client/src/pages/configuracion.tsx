@@ -346,7 +346,7 @@ export default function Configuracion() {
       </div>
 
       <Tabs defaultValue="soap" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="soap" className="flex items-center space-x-2">
             <Settings className="h-4 w-4" />
             <span>Configuración SOAP</span>
@@ -362,6 +362,10 @@ export default function Configuracion() {
           <TabsTrigger value="plantillas" className="flex items-center space-x-2">
             <Upload className="h-4 w-4" />
             <span>Plantillas PDF</span>
+          </TabsTrigger>
+          <TabsTrigger value="usuarios" className="flex items-center space-x-2">
+            <Users className="h-4 w-4" />
+            <span>Usuarios</span>
           </TabsTrigger>
           <TabsTrigger value="sistema" className="flex items-center space-x-2">
             <Settings className="h-4 w-4" />
@@ -673,6 +677,57 @@ export default function Configuracion() {
                       Ir al Editor de Plantillas
                     </Button>
                   </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Usuarios */}
+        <TabsContent value="usuarios">
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-medium">Gestión de Usuarios</h3>
+                <p className="text-sm text-gray-600">Administra los usuarios del sistema</p>
+              </div>
+              <Button onClick={() => setShowUserForm(true)}>
+                <UserPlus className="h-4 w-4 mr-2" />
+                Crear Usuario
+              </Button>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Usuarios del Sistema</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {usuarios.map((usuario: any) => (
+                    <div key={usuario.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                          <Users className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{usuario.nombre}</p>
+                          <p className="text-sm text-gray-600">@{usuario.username}</p>
+                          <p className="text-xs text-gray-500">{usuario.email}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant={usuario.activo ? "default" : "secondary"}>
+                          {usuario.activo ? "Activo" : "Inactivo"}
+                        </Badge>
+                        <Badge variant="outline">{usuario.rol || "Usuario"}</Badge>
+                      </div>
+                    </div>
+                  ))}
+                  {usuarios.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      No hay usuarios registrados
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

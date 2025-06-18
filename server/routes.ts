@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { SOAPProxy } from "./soap-proxy";
 import { xmlGenerator } from "./xml-generator";
 import { excelProcessor } from "./excel-processor";
-import { setupAuth, requireAuth } from "./auth";
+import { setupAuth, requireAuth, requireAdmin } from "./auth";
 import multer from "multer";
 import { z } from "zod";
 import * as fs from 'fs';
@@ -1005,6 +1005,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     } catch (error) {
       res.status(500).json({ error: "Error al generar manifiestos" });
+    }
+  });
+
+  // ===== USUARIOS ROUTES =====
+  
+  // Get all users (admin only)
+  app.get("/api/usuarios", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const usuarios = await storage.getUsers();
+      res.json(usuarios);
+    } catch (error) {
+      console.error('Error al obtener usuarios:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
     }
   });
 

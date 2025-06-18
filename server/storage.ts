@@ -243,6 +243,10 @@ export class MemStorage implements IStorage {
     return user;
   }
 
+  async getUsers(): Promise<User[]> {
+    return Array.from(this.usuariosMap.values());
+  }
+
   // Configuraciones
   async getConfiguraciones(): Promise<Configuracion[]> {
     return Array.from(this.configuracionesMap.values());
