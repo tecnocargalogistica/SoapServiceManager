@@ -59,6 +59,10 @@ export class DatabaseStorage implements IStorage {
     return usuario;
   }
 
+  async getUsers(): Promise<Usuario[]> {
+    return await db.select().from(usuarios);
+  }
+
   // Configuraciones
   async getConfiguraciones(): Promise<Configuracion[]> {
     return await db.select().from(configuraciones);

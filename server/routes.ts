@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { SOAPProxy } from "./soap-proxy";
 import { xmlGenerator } from "./xml-generator";
 import { excelProcessor } from "./excel-processor";
-import { setupAuth, requireAuth, requireAdmin } from "./auth";
+import { setupAuth, requireAuth, requireAdmin, hashPassword } from "./auth";
 import multer from "multer";
 import { z } from "zod";
 import * as fs from 'fs';
@@ -1018,6 +1018,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error al obtener usuarios:', error);
       res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  });
+
+  // Create new user (admin only)
+  app.post("/api/usuarios", requireAuth, requireAdmin, async (req, res) => {
+    try {
+      const usuario = await storage.createUser({
+        ...req.body,
+        password: await hashPassword(req.body.password)
+      });
+      res.json(usuario);
+    } catch (error) {
+      console.error('Error al crear usuario:', error);
+      res.status(500).json({ error: 'Error al crear usuario' });
     }
   });
 

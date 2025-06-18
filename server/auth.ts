@@ -202,3 +202,6 @@ export function requireAdmin(req: any, res: any, next: any) {
   
   next();
 }
+
+// Export hashPassword function for creating new users
+export { hashPassword };

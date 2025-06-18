@@ -703,7 +703,7 @@ export default function Configuracion() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {usuarios.map((usuario: any) => (
+                  {Array.isArray(usuarios) && usuarios.map((usuario: any) => (
                     <div key={usuario.id} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center space-x-4">
                         <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
@@ -723,7 +723,7 @@ export default function Configuracion() {
                       </div>
                     </div>
                   ))}
-                  {usuarios.length === 0 && (
+                  {(!Array.isArray(usuarios) || usuarios.length === 0) && (
                     <div className="text-center py-8 text-gray-500">
                       No hay usuarios registrados
                     </div>
@@ -794,6 +794,83 @@ export default function Configuracion() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Diálogo para crear usuario */}
+      <Dialog open={showUserForm} onOpenChange={setShowUserForm}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Crear Nuevo Usuario</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="username">Nombre de Usuario</Label>
+              <Input
+                id="username"
+                value={newUserData.username}
+                onChange={(e) => setNewUserData({ ...newUserData, username: e.target.value })}
+                placeholder="Ej: jorge.franco"
+              />
+            </div>
+            <div>
+              <Label htmlFor="password">Contraseña</Label>
+              <Input
+                id="password"
+                type="password"
+                value={newUserData.password}
+                onChange={(e) => setNewUserData({ ...newUserData, password: e.target.value })}
+                placeholder="Contraseña segura"
+              />
+            </div>
+            <div>
+              <Label htmlFor="nombre">Nombre Completo</Label>
+              <Input
+                id="nombre"
+                value={newUserData.nombre}
+                onChange={(e) => setNewUserData({ ...newUserData, nombre: e.target.value })}
+                placeholder="Ej: Jorge Franco"
+              />
+            </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={newUserData.email}
+                onChange={(e) => setNewUserData({ ...newUserData, email: e.target.value })}
+                placeholder="usuario@empresa.com"
+              />
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setShowUserForm(false)}>
+                Cancelar
+              </Button>
+              <Button 
+                onClick={async () => {
+                  try {
+                    const response = await apiRequest("/api/usuarios", "POST", newUserData);
+                    setShowUserForm(false);
+                    setNewUserData({ username: "", password: "", nombre: "", email: "", activo: true });
+                    queryClient.invalidateQueries({ queryKey: ['/api/usuarios'] });
+                    toast({
+                      title: "Usuario creado",
+                      description: "El usuario ha sido creado exitosamente",
+                    });
+                  } catch (error) {
+                    console.error('Error al crear usuario:', error);
+                    toast({
+                      title: "Error",
+                      description: "No se pudo crear el usuario",
+                      variant: "destructive"
+                    });
+                  }
+                }}
+              >
+                Crear Usuario
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Diálogo para formulario de municipio */}
       <Dialog open={showMunicipioForm} onOpenChange={setShowMunicipioForm}>
