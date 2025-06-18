@@ -11,7 +11,8 @@ import { DataTable } from "@/components/data-table";
 import { MunicipioForm } from "@/components/forms/municipio-form";
 import { ConsecutivoForm } from "@/components/forms/consecutivo-form";
 import { useToast } from "@/hooks/use-toast";
-import { Save, TestTube, Settings, Database, Wifi, WifiOff, MapPin, Upload, Plus, FileText, Edit, Download } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { Save, TestTube, Settings, Database, Wifi, WifiOff, MapPin, Upload, Plus, FileText, Edit, Download, UserPlus, Users } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
 
@@ -26,8 +27,17 @@ export default function Configuracion() {
   const [editingConsecutivo, setEditingConsecutivo] = useState<any>(null);
   const [editingPlantilla, setEditingPlantilla] = useState<any>(null);
   const [coordenadasPlantilla, setCoordenadasPlantilla] = useState<any>(null);
+  const [showUserForm, setShowUserForm] = useState(false);
+  const [newUserData, setNewUserData] = useState({
+    username: "",
+    password: "",
+    nombre: "",
+    email: "",
+    activo: true
+  });
   
   const { toast } = useToast();
+  const { registerMutation } = useAuth();
   const queryClient = useQueryClient();
 
   const { data: config, isLoading } = useQuery({
@@ -56,6 +66,10 @@ export default function Configuracion() {
 
   const { data: plantillaActiva } = useQuery({
     queryKey: ["/api/plantillas-pdf/activa"]
+  });
+
+  const { data: usuarios = [] } = useQuery({
+    queryKey: ["/api/usuarios"]
   });
 
   const updateConfigMutation = useMutation({
@@ -227,6 +241,26 @@ export default function Configuracion() {
       toast({
         title: "No hay plantilla activa",
         description: "No se encontró una plantilla activa para cargar",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await registerMutation.mutateAsync(newUserData);
+      setNewUserData({ username: "", password: "", nombre: "", email: "", activo: true });
+      setShowUserForm(false);
+      queryClient.invalidateQueries({ queryKey: ["/api/usuarios"] });
+      toast({
+        title: "Usuario creado",
+        description: "El usuario se ha creado exitosamente"
+      });
+    } catch (error) {
+      toast({
+        title: "Error al crear usuario",
+        description: "No se pudo crear el usuario",
         variant: "destructive"
       });
     }
