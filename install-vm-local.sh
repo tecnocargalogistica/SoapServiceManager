@@ -23,7 +23,7 @@ log_step() { echo -e "${PURPLE}[PASO]${NC} $1"; }
 log_detail() { echo -e "${CYAN}[DETALLE]${NC} $1"; }
 
 # Configuración específica para VM local
-DOMAIN="192.168.2.132"
+DOMAIN="192.168.2.139"
 DB_PASSWORD="alejandro_rndc_2024"
 SESSION_SECRET="rndc_local_vm_session_$(date +%s)"
 APP_USER="server"
