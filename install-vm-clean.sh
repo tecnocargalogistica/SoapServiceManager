@@ -22,7 +22,7 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 log_step() { echo -e "${PURPLE}[PASO]${NC} $1"; }
 
 # Configuración específica para VM local
-DOMAIN="192.168.2.132"
+DOMAIN="192.168.2.139"
 DB_PASSWORD="alejandro_rndc_2024"
 SESSION_SECRET="rndc_local_vm_$(date +%s)"
 APP_USER="server"
@@ -36,7 +36,7 @@ echo "════════════════════════�
 echo "           INSTALACIÓN AUTOMATIZADA RNDC - VM LOCAL"
 echo "════════════════════════════════════════════════════════════════"
 echo "Sistema: Ubuntu 22.04 LTS"
-echo "IP: $DOMAIN"
+echo "IP: 192.168.2.139"
 echo "Usuario: $APP_USER"
 echo "════════════════════════════════════════════════════════════════"
 
@@ -173,7 +173,7 @@ app.get('/', (req, res) => {
     res.json({ 
         message: 'RNDC Application Running on VM Local', 
         status: 'OK',
-        ip: '192.168.2.132',
+        ip: '192.168.2.139',
         timestamp: new Date().toISOString()
     });
 });
@@ -200,8 +200,8 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`================================`);
     console.log(`RNDC Server Running`);
     console.log(`Port: ${PORT}`);
-    console.log(`IP: 192.168.2.132`);
-    console.log(`URL: http://192.168.2.132:${PORT}`);
+    console.log(`IP: 192.168.2.139`);
+    console.log(`URL: http://192.168.2.139:${PORT}`);
     console.log(`================================`);
 });
 EOF
@@ -382,11 +382,11 @@ case "$1" in
         echo "Nginx (80):"
         curl -I http://localhost 2>/dev/null || echo "No responde"
         echo "IP local:"
-        curl -I http://192.168.2.132 2>/dev/null || echo "No responde"
+        curl -I http://192.168.2.139 2>/dev/null || echo "No responde"
         ;;
     info)
         echo "═══ Información del Sistema ═══"
-        echo "IP: 192.168.2.132"
+        echo "IP: 192.168.2.139"
         echo "Puerto aplicación: 5000"
         echo "Puerto web: 80"
         echo "Directorio: /home/server/rndc-app"
@@ -450,8 +450,8 @@ echo ""
 log_success "RNDC instalado exitosamente en VM local"
 echo ""
 echo "INFORMACIÓN DE ACCESO:"
-echo "   URL Principal: http://$DOMAIN"
-echo "   Acceso Directo: http://$DOMAIN:$NODE_PORT"
+echo "   URL Principal: http://192.168.2.139"
+echo "   Acceso Directo: http://192.168.2.139:5000"
 echo "   Acceso Local: http://localhost"
 echo ""
 echo "BASE DE DATOS:"
@@ -474,5 +474,5 @@ sleep 2
 ./rndc-admin test
 
 echo ""
-log_success "Instalación completada! Accede a http://$DOMAIN"
+log_success "Instalación completada! Accede a http://192.168.2.139"
 echo ""

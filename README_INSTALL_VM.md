@@ -3,7 +3,7 @@
 ## Especificaciones del Sistema
 - **Sistema Operativo:** Ubuntu 22.04 LTS
 - **Tipo:** Máquina Virtual Local
-- **IP:** 192.168.2.132
+- **IP:** 192.168.2.139
 - **Usuario:** server
 - **Contraseña:** alejandro
 
@@ -14,23 +14,23 @@
 ### Paso 1: Preparar el Script
 ```bash
 # Conectarse a la VM como usuario 'server'
-ssh server@192.168.2.132
+ssh server@192.168.2.139
 
 # O desde la consola local de la VM
 su - server
 
 # Descargar el script de instalación
-wget https://raw.githubusercontent.com/tu-repo/install-vm-local.sh
+wget https://raw.githubusercontent.com/tu-repo/install-vm-clean.sh
 # O copiar manualmente el archivo desde el host
 
 # Dar permisos de ejecución
-chmod +x install-vm-local.sh
+chmod +x install-vm-clean.sh
 ```
 
 ### Paso 2: Ejecutar Instalación
 ```bash
 # Ejecutar el script (tomará 10-15 minutos)
-./install-vm-local.sh
+./install-vm-clean.sh
 ```
 
 El script realizará automáticamente:
@@ -52,8 +52,8 @@ El script realizará automáticamente:
 Una vez completada la instalación, puedes acceder desde:
 
 ### Desde tu computadora host:
-- **URL Principal:** http://192.168.2.132
-- **Puerto Directo:** http://192.168.2.132:5000
+- **URL Principal:** http://192.168.2.139
+- **Puerto Directo:** http://192.168.2.139:5000
 
 ### Desde la propia VM:
 - **Localhost:** http://localhost
@@ -148,7 +148,7 @@ sudo netstat -tlnp | grep -E ':(80|5000|5432)'
 
 # Verificar conectividad
 curl -I http://localhost:5000
-curl -I http://192.168.2.132
+curl -I http://192.168.2.139
 ```
 
 ---
@@ -252,13 +252,13 @@ PGPASSWORD=alejandro_rndc_2024 psql -h localhost -U rndc_user -d rndc_db < backu
    ```
 
 3. **Acceder desde otras máquinas:**
-   - http://192.168.2.132 (desde cualquier PC en la red 192.168.2.x)
+   - http://192.168.2.139 (desde cualquier PC en la red 192.168.2.x)
 
 ---
 
 ## 📋 Lista de Verificación Post-Instalación
 
-- [ ] ✅ La aplicación responde en http://192.168.2.132
+- [ ] ✅ La aplicación responde en http://192.168.2.139
 - [ ] ✅ PostgreSQL está funcionando
 - [ ] ✅ Nginx está configurado correctamente
 - [ ] ✅ El servicio rndc está habilitado
