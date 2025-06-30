@@ -150,7 +150,10 @@ This is a comprehensive RNDC (National Register of Cargo Transportation) managem
 
 ```
 Changelog:
-- June 30, 2025. Initial setup
+- June 30, 2025: Initial setup
+- June 30, 2025: VM deployment scripts created for Ubuntu 22.04
+- June 30, 2025: IP updated to 192.168.2.139, base installation verified
+- June 30, 2025: RNDC complete deployment script created (deploy-rndc-final.sh)
 ```
 
 ## User Preferences
